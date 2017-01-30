@@ -25,7 +25,7 @@
         android:id="@+id/signIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign In"/>
+        android:text="Log In"/>
     <TextView
         android:id="@+id/signUp"
         android:layout_width="wrap_content"
