@@ -1,5 +1,6 @@
 package com.doandstevensen.lifecollage;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ public class LogInActivity extends AppCompatActivity {
     @BindView(R.id.username) EditText usernameView;
     @BindView(R.id.password) EditText passwordView;
 
+    private ProgressDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +32,15 @@ public class LogInActivity extends AppCompatActivity {
         if (user != null) {
             loginComplete(user);
         }
+
+        createProgressDialog();
+    }
+
+    private void createProgressDialog() {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle("Loading...");
+        mProgressDialog.setMessage("Authenticating user...");
+        mProgressDialog.setCancelable(false);
     }
 
     private void loginComplete(SyncUser user) {
@@ -57,10 +69,12 @@ public class LogInActivity extends AppCompatActivity {
         }
 
         if (!cancel) {
+            mProgressDialog.show();
             SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, false), ThisApplication.AUTH_URL, new SyncUser.Callback() {
                 @Override
                 public void onSuccess(SyncUser user) {
                     loginComplete(user);
+                    mProgressDialog.dismiss();
                 }
                 @Override
                 public void onError(ObjectServerError error) {
