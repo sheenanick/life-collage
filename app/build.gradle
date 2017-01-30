@@ -31,6 +31,10 @@ android {
     }
 }
 
+realm {
+    syncEnabled = true;
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
