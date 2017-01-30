@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
@@ -12,9 +13,20 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        def host = InetAddress.getLocalHost().getCanonicalHostName()
+        debug {
+            // This will automatically detect the IP address of the machine building RealmTasks.
+            // It is assumed that this machine is also running the Object Server.
+            // If not, replace 'host' with the IP of the machine hosting the server.
+            buildConfigField "String", "OBJECT_SERVER_IP", "\"${host}\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // This will automatically detect the IP address of the machine building RealmTasks.
+            // It is assumed that this machine is also running the Object Server.
+            // If not, replace 'host' with the IP of the machine hosting the server.
+            buildConfigField "String", "OBJECT_SERVER_IP", "\"${host}\""
         }
     }
 }
@@ -26,4 +38,10 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'io.realm:android-adapters:1.4.0'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:design:25.1.0'
 }
