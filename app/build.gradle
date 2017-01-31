@@ -13,7 +13,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        def host = InetAddress.getLocalHost().getCanonicalHostName()
+        def host = "107.170.237.35"
         debug {
             // This will automatically detect the IP address of the machine building RealmTasks.
             // It is assumed that this machine is also running the Object Server.
