@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.doandstevensen.lifecollage.model.Collage;
+import com.doandstevensen.lifecollage.model.Picture;
 import com.doandstevensen.lifecollage.model.User;
 
 import butterknife.BindView;
@@ -106,6 +108,16 @@ public class SignUpActivity extends AppCompatActivity {
             public void execute(Realm realm){
                 User user = realm.createObject(User.class, currentUser.getIdentity());
                 user.setUsername(username);
+
+                Picture picture = new Picture();
+
+                Collage collage = new Collage();
+                collage.setName("Test Collage");
+                collage.addPicture(picture);
+                collage.addPicture(picture);
+                collage.addPicture(picture);
+
+                user.addCollage(collage);
             }
         });
     }
