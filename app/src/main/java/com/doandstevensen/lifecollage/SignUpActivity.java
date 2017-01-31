@@ -1,5 +1,6 @@
 package com.doandstevensen.lifecollage;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,12 +26,22 @@ public class SignUpActivity extends AppCompatActivity {
 
     private Realm realm;
     private String username;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
+
+        createProgressDialog();
+    }
+
+    private void createProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setMessage("Authenticating user...");
+        progressDialog.setCancelable(false);
     }
 
     @OnClick(R.id.signUp)
@@ -62,9 +73,11 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         if (!cancel) {
+            progressDialog.show();
             SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), ThisApplication.AUTH_URL, new SyncUser.Callback() {
                 @Override
                 public void onSuccess(SyncUser user) {
+                    progressDialog.dismiss();
                     signUpComplete(user);
                 }
                 @Override
