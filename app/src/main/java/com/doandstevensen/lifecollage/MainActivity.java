@@ -21,6 +21,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.cognitoidentity.model.Credentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,7 +138,6 @@ public class MainActivity extends AppCompatActivity
         );
 
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d(TAG, "createImagefile: " + image);
         return image;
     }
 
@@ -138,6 +145,38 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
             File f = new File(mCurrentPhotoPath);
+            Log.d(TAG, "onActivityResult: " + f.getName());
+            try {
+                uploadFile(MainActivity.this, f);
+            } catch (IOException exc) {
+                exc.printStackTrace();
+            }
         }
     }
+
+    public void uploadFile(Context context, File file) throws IOException {
+        CognitoCachingCredentialsProvider sCredProvider = new CognitoCachingCredentialsProvider(
+                context.getApplicationContext(),
+                Constants.COGNITO_POOL_ID,
+                Regions.US_WEST_2);
+
+
+
+        AmazonS3 s3 = new AmazonS3Client(sCredProvider);
+
+        TransferUtility transferUtility = new TransferUtility(s3, MainActivity.this);
+
+        TransferObserver observer = transferUtility.upload(
+                Constants.BUCKET_NAME,
+                file.getName(),
+                file);
+
+//        AmazonS3Client amazonS3Client = Util.getsS3Client(context);
+//        TransferUtility transferUtility = Util.getsTransferUtility(context);
+//        TransferObserver observer = transferUtility.upload(
+//                                                    Constants.BUCKET_NAME,
+//                                                    file.getName(),
+//                                                    file);
+    }
+
 }
