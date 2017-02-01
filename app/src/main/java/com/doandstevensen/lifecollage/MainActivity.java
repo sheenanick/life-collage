@@ -1,10 +1,15 @@
 package com.doandstevensen.lifecollage;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.NavigationView;
@@ -16,6 +21,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.doandstevensen.lifecollage.adapter.PicturesRecyclerViewAdapter;
 import com.doandstevensen.lifecollage.adapter.SearchViewAdapter;
@@ -30,6 +44,8 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public static final String TAG = MainActivity.class.getSimpleName();
+    private static final int REQUEST_IMAGE_CAPTURE = 111;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
     @BindView(R.id.autoCompleteTextView) AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -50,14 +66,15 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Launch camera", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Log.d(TAG, "onClick: FAB clicked");
+                launchCamera();
             }
         });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.setDrawerListener(toggle);
+        drawerLayout.addDrawerListener(toggle);
+
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -112,6 +129,63 @@ public class MainActivity extends AppCompatActivity
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    String mCurrentPhotoPath;
+
+    public void launchCamera() {
+        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePicture.resolveActivity(MainActivity.this.getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImagefile();
+            } catch (IOException exc) {
+                exc.printStackTrace();
+            }
+
+            if (photoFile != null) {
+                 Uri photoURI = FileProvider.getUriForFile(this,
+                                                        "com.doandstevensen.fileprovider",
+                                                        photoFile);
+                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private File createImagefile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".png",
+                storageDir
+        );
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
+            File f = new File(mCurrentPhotoPath);
+            try {
+                uploadFile(MainActivity.this, f);
+            } catch (IOException exc) {
+                exc.printStackTrace();
+            }
+        }
+    }
+
+    public void uploadFile(Context context, File file) throws IOException {
+        AmazonS3Client amazonS3Client = Util.getsS3Client(context);
+        TransferUtility transferUtility = Util.getsTransferUtility(context);
+        TransferObserver observer = transferUtility.upload(
+                                                    Constants.BUCKET_NAME,
+                                                    file.getName(),
+                                                    file);
     }
 
     @Override
