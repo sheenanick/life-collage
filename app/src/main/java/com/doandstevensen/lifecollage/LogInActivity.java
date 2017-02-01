@@ -30,7 +30,7 @@ public class LogInActivity extends AppCompatActivity {
 
         final SyncUser user = SyncUser.currentUser();
         if (user != null) {
-            loginComplete(user);
+            loginComplete();
         }
 
         createProgressDialog();
@@ -43,8 +43,7 @@ public class LogInActivity extends AppCompatActivity {
         mProgressDialog.setCancelable(false);
     }
 
-    private void loginComplete(SyncUser user) {
-        UserManager.setActiveUser(user);
+    private void loginComplete() {
         Intent intent = new Intent(LogInActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -73,13 +72,14 @@ public class LogInActivity extends AppCompatActivity {
             SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, false), ThisApplication.AUTH_URL, new SyncUser.Callback() {
                 @Override
                 public void onSuccess(SyncUser user) {
-                    loginComplete(user);
+                    loginComplete();
                     mProgressDialog.dismiss();
                 }
                 @Override
                 public void onError(ObjectServerError error) {
                     String errorMsg = error.toString();
                     Toast.makeText(LogInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                    mProgressDialog.dismiss();
                 }
             });
         }
