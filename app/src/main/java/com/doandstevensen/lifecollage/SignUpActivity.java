@@ -84,6 +84,7 @@ public class SignUpActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onError(ObjectServerError error) {
+                    progressDialog.dismiss();
                     String errorMsg = error.toString();
                     Log.d("error", errorMsg);
                     usernameView.setError("Username already exists");
@@ -93,9 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signUpComplete(SyncUser user) {
-        com.doandstevensen.lifecollage.UserManager.setActiveUser(user);
         createUserObject(user);
-
         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -109,10 +108,10 @@ public class SignUpActivity extends AppCompatActivity {
                 User user = realm.createObject(User.class, currentUser.getIdentity());
                 user.setUsername(username);
 
-                Picture picture = new Picture();
-
                 Collage collage = new Collage();
                 collage.setName("Test Collage");
+
+                Picture picture = new Picture();
                 collage.addPicture(picture);
                 collage.addPicture(picture);
                 collage.addPicture(picture);
@@ -125,6 +124,8 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        realm.close();
+        if (realm != null) {
+            realm.close();
+        }
     }
 }
