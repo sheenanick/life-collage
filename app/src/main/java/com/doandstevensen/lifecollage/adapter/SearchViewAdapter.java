@@ -10,8 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
+import com.doandstevensen.lifecollage.MainActivity;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.SearchCollageActivity;
+import com.doandstevensen.lifecollage.UserManager;
 import com.doandstevensen.lifecollage.model.User;
 
 import java.util.ArrayList;
@@ -57,9 +59,15 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, SearchCollageActivity.class);
-                intent.putExtra("uid", user.getUid());
-                mContext.startActivity(intent);
+                if (user.getUid().equals(UserManager.getCurrentUserId())) {
+                    Intent myCollageIntent = new Intent(mContext, MainActivity.class);
+                    mContext.startActivity(myCollageIntent);
+                } else {
+                    Intent searchIntent = new Intent(mContext, SearchCollageActivity.class);
+                    searchIntent.putExtra("uid", user.getUid());
+                    searchIntent.putExtra("username", user.getUsername());
+                    mContext.startActivity(searchIntent);
+                }
             }
         });
         return convertView;
