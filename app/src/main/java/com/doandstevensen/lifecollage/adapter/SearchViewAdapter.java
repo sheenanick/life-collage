@@ -1,6 +1,7 @@
 package com.doandstevensen.lifecollage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.SearchCollageActivity;
 import com.doandstevensen.lifecollage.model.User;
 
 import java.util.ArrayList;
@@ -56,7 +57,9 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, user.getUid(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext, SearchCollageActivity.class);
+                intent.putExtra("uid", user.getUid());
+                mContext.startActivity(intent);
             }
         });
         return convertView;
