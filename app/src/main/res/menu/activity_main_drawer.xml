@@ -17,9 +17,9 @@
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_info_black_24dp"
-            android:title="About" />
+            android:title="@string/about_text" />
         <item
             android:id="@+id/nav_logout"
-            android:title="Logout" />
+            android:title="@string/logout_text" />
     </group>
 </menu>

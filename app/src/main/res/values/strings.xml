@@ -2,4 +2,6 @@
     <string name="app_name">LifeCollage</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="logout_text">Logout</string>
+    <string name="about_text">About</string>
 </resources>

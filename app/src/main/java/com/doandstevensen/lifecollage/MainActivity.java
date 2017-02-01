@@ -2,16 +2,15 @@ package com.doandstevensen.lifecollage;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,33 +20,39 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.cognitoidentity.model.Credentials;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
+
+import com.doandstevensen.lifecollage.adapter.PicturesRecyclerViewAdapter;
+import com.doandstevensen.lifecollage.model.Picture;
+import com.doandstevensen.lifecollage.model.User;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 111;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -63,11 +68,23 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        realm = Realm.getDefaultInstance();
+        User user = realm.where(User.class).equalTo("uid", UserManager.getCurrentUserId()).findFirst();
+        if (user != null && user.getCollages().size() != 0) {
+            setupRecyclerView(user.getCollages().get(0).getPictures());
+        }
+    }
+
+    private void setupRecyclerView(RealmList<Picture> pictures) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new PicturesRecyclerViewAdapter(this, pictures));
+        recyclerView.setHasFixedSize(true);
     }
 
     @Override
@@ -160,5 +177,11 @@ public class MainActivity extends AppCompatActivity
                                                     Constants.BUCKET_NAME,
                                                     file.getName(),
                                                     file);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }
