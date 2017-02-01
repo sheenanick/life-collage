@@ -145,7 +145,6 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
             File f = new File(mCurrentPhotoPath);
-            Log.d(TAG, "onActivityResult: " + f.getName());
             try {
                 uploadFile(MainActivity.this, f);
             } catch (IOException exc) {
@@ -162,5 +161,4 @@ public class MainActivity extends AppCompatActivity
                                                     file.getName(),
                                                     file);
     }
-
 }
