@@ -59,8 +59,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         realm = Realm.getDefaultInstance();
-        User user = realm.where(User.class).equalTo("uid", UserManager.getCurrentUserId()).findFirst();
-        setupRecyclerView(user.getCollages().get(0).getPictures());
+        User user = new User();
+        if (user == null ) {
+           user = realm.where(User.class).equalTo("uid", UserManager.getCurrentUserId()).findFirst();
+        }
+        if (user.getCollages().size() != 0) {
+            setupRecyclerView(user.getCollages().get(0).getPictures());
+        }
     }
 
     private void setupRecyclerView(RealmList<Picture> pictures) {
