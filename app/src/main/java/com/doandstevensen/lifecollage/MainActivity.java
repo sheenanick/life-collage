@@ -155,28 +155,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void uploadFile(Context context, File file) throws IOException {
-        CognitoCachingCredentialsProvider sCredProvider = new CognitoCachingCredentialsProvider(
-                context.getApplicationContext(),
-                Constants.COGNITO_POOL_ID,
-                Regions.US_WEST_2);
-
-
-
-        AmazonS3 s3 = new AmazonS3Client(sCredProvider);
-
-        TransferUtility transferUtility = new TransferUtility(s3, MainActivity.this);
-
+        AmazonS3Client amazonS3Client = Util.getsS3Client(context);
+        TransferUtility transferUtility = Util.getsTransferUtility(context);
         TransferObserver observer = transferUtility.upload(
-                Constants.BUCKET_NAME,
-                file.getName(),
-                file);
-
-//        AmazonS3Client amazonS3Client = Util.getsS3Client(context);
-//        TransferUtility transferUtility = Util.getsTransferUtility(context);
-//        TransferObserver observer = transferUtility.upload(
-//                                                    Constants.BUCKET_NAME,
-//                                                    file.getName(),
-//                                                    file);
+                                                    Constants.BUCKET_NAME,
+                                                    file.getName(),
+                                                    file);
     }
 
 }
