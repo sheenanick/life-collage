@@ -22,8 +22,8 @@
         <activity
             android:name=".MainActivity"
             android:label="MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".SearchCollageActivity"></activity>
     </application>
 
 </manifest>
