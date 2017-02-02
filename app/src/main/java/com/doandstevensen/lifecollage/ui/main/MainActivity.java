@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage;
+package com.doandstevensen.lifecollage.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,10 +31,14 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.doandstevensen.lifecollage.adapter.PicturesRecyclerViewAdapter;
+import com.doandstevensen.lifecollage.Constants;
+import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.adapter.SearchViewAdapter;
-import com.doandstevensen.lifecollage.model.Picture;
-import com.doandstevensen.lifecollage.model.User;
+import com.doandstevensen.lifecollage.data.model.Picture;
+import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.ui.login.LogInActivity;
+import com.doandstevensen.lifecollage.util.RealmUserManager;
+import com.doandstevensen.lifecollage.util.S3Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity
 
         realm = Realm.getDefaultInstance();
 
-        User user = realm.where(User.class).equalTo("uid", UserManager.getCurrentUserId()).findFirst();
+        User user = realm.where(User.class).equalTo("uid", RealmUserManager.getCurrentUserId()).findFirst();
         if (user != null && user.getCollages().size() != 0) {
             setupRecyclerView(user.getCollages().get(0).getPictures());
         }
@@ -121,7 +125,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_logout) {
-            UserManager.logoutActiveUser();
+            RealmUserManager.logoutActiveUser();
             Intent intent = new Intent(MainActivity.this, LogInActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -180,8 +184,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void uploadFile(Context context, File file) throws IOException {
-        AmazonS3Client amazonS3Client = Util.getsS3Client(context);
-        TransferUtility transferUtility = Util.getsTransferUtility(context);
+        AmazonS3Client amazonS3Client = S3Util.getsS3Client(context);
+        TransferUtility transferUtility = S3Util.getsTransferUtility(context);
         TransferObserver observer = transferUtility.upload(
                                                     Constants.BUCKET_NAME,
                                                     file.getName(),

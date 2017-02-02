@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.adapter;
+package com.doandstevensen.lifecollage.ui.main;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.model.Picture;
+import com.doandstevensen.lifecollage.data.model.Picture;
 import com.squareup.picasso.Picasso;
 
 import io.realm.OrderedRealmCollection;

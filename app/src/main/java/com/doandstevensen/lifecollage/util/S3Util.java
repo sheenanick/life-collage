@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage;
+package com.doandstevensen.lifecollage.util;
 
 import android.content.Context;
 
@@ -6,12 +6,13 @@ import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.doandstevensen.lifecollage.Constants;
 
 /**
  * Created by CGrahamS on 1/31/17.
  */
 
-public class Util {
+public class S3Util {
 
     private static AmazonS3Client sS3Client;
     private static CognitoCachingCredentialsProvider sCredProvider;

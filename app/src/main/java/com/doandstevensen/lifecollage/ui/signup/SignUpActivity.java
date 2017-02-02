@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage;
+package com.doandstevensen.lifecollage.ui.signup;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.doandstevensen.lifecollage.model.Collage;
-import com.doandstevensen.lifecollage.model.Picture;
-import com.doandstevensen.lifecollage.model.User;
+import com.doandstevensen.lifecollage.ui.main.MainActivity;
+import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.ThisApplication;
+import com.doandstevensen.lifecollage.data.model.Collage;
+import com.doandstevensen.lifecollage.data.model.Picture;
+import com.doandstevensen.lifecollage.data.model.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

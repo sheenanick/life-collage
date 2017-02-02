@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage;
+package com.doandstevensen.lifecollage.ui.search_collage;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.AutoCompleteTextView;
 
-import com.doandstevensen.lifecollage.adapter.PicturesRecyclerViewAdapter;
+import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.ui.main.PicturesRecyclerViewAdapter;
 import com.doandstevensen.lifecollage.adapter.SearchViewAdapter;
-import com.doandstevensen.lifecollage.model.Picture;
-import com.doandstevensen.lifecollage.model.User;
+import com.doandstevensen.lifecollage.data.model.Picture;
+import com.doandstevensen.lifecollage.data.model.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

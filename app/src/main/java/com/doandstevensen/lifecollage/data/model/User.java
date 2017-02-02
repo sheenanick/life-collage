@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.model;
+package com.doandstevensen.lifecollage.data.model;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
