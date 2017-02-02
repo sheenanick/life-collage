@@ -1,18 +1,17 @@
 package com.doandstevensen.lifecollage.ui.signup;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ThisApplication;
 import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.Picture;
 import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.ui.base.BaseActivity;
+import com.doandstevensen.lifecollage.ui.main.MainActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,29 +23,22 @@ import io.realm.SyncUser;
 
 import static android.text.TextUtils.isEmpty;
 
-public class SignUpActivity extends AppCompatActivity {
-    @BindView(R.id.username) EditText usernameView;
-    @BindView(R.id.password) EditText passwordView;
-    @BindView(R.id.confirmPassword) EditText passwordConfirmationView;
+public class SignUpActivity extends BaseActivity {
+    @BindView(R.id.username)
+    EditText usernameView;
+    @BindView(R.id.password)
+    EditText passwordView;
+    @BindView(R.id.confirmPassword)
+    EditText passwordConfirmationView;
 
     private Realm realm;
     private String username;
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
-
-        createProgressDialog();
-    }
-
-    private void createProgressDialog() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Loading...");
-        progressDialog.setMessage("Authenticating user...");
-        progressDialog.setCancelable(false);
     }
 
     @OnClick(R.id.signUp)
@@ -78,16 +70,16 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         if (!cancel) {
-            progressDialog.show();
+            displayLoadingAnimation();
             SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), ThisApplication.AUTH_URL, new SyncUser.Callback() {
                 @Override
                 public void onSuccess(SyncUser user) {
-                    progressDialog.dismiss();
+                    hideLoadingAnimation();
                     signUpComplete(user);
                 }
                 @Override
                 public void onError(ObjectServerError error) {
-                    progressDialog.dismiss();
+                    hideLoadingAnimation();
                     String errorMsg = error.toString();
                     Log.d("error", errorMsg);
                     usernameView.setError("Username already exists");
