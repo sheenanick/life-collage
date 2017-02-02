@@ -7,7 +7,7 @@ import com.doandstevensen.lifecollage.ui.base.BasePresenter;
  * Created by Sheena on 2/2/17.
  */
 
-public class MyCollageContract {
+public interface MyCollageContract {
     interface Presenter extends BasePresenter {
         void loadCollage();
         void searchUsers();
