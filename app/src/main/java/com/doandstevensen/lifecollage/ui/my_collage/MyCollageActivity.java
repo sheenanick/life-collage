@@ -79,47 +79,16 @@ public class MyCollageActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void initRecyclerViewAdapter(RealmList<Picture> pictures) {
+    public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {
         PicturesRecyclerViewAdapter recyclerViewAdapter = new PicturesRecyclerViewAdapter(this, pictures);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setHasFixedSize(true);
     }
 
-    public void initSearchAdapter(RealmResults<User> users) {
+    public void setupSearchAdapter(RealmResults<User> users) {
         SearchViewAdapter adapter = new SearchViewAdapter(this, users);
         autoCompleteTextView.setAdapter(adapter);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_search) {
-
-        } else if (id == R.id.nav_pass) {
-
-        } else if (id == R.id.nav_about) {
-
-        } else if (id == R.id.nav_logout) {
-            RealmUserManager.logoutActiveUser();
-            Intent intent = new Intent(getBaseContext(), LogInActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @OnClick(R.id.fab)
@@ -161,12 +130,44 @@ public class MyCollageActivity extends BaseActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
             File f = new File(mCurrentPhotoPath);
-            try {
-                mPresenter.uploadFile(f);
-            } catch (IOException exc) {
-                exc.printStackTrace();
-            }
+            mPresenter.uploadFile(f);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.nav_search) {
+
+        } else if (id == R.id.nav_pass) {
+
+        } else if (id == R.id.nav_about) {
+
+        } else if (id == R.id.nav_logout) {
+            logout();
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void logout() {
+        RealmUserManager.logoutActiveUser();
+        Intent intent = new Intent(getBaseContext(), LogInActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     @Override

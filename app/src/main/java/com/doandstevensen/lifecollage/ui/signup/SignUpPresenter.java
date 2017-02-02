@@ -51,8 +51,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                 Collage collage = new Collage();
                 collage.setName("Test Collage");
 
-                Picture picture = new Picture();
-                collage.addPicture(picture);
+                Picture picture = new Picture("https://source.unsplash.com/random");
                 collage.addPicture(picture);
                 collage.addPicture(picture);
 

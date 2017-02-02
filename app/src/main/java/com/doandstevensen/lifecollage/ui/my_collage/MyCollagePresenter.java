@@ -12,7 +12,6 @@ import com.doandstevensen.lifecollage.util.RealmUserManager;
 import com.doandstevensen.lifecollage.util.S3Util;
 
 import java.io.File;
-import java.io.IOException;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -26,6 +25,7 @@ public class MyCollagePresenter implements MyCollageContract.Presenter {
     private MyCollageActivity mView;
     private Context mContext;
     private Realm mRealm;
+    private User mUser;
 
     public MyCollagePresenter(MyCollageActivity view, Context context) {
         mView = view;
@@ -35,32 +35,42 @@ public class MyCollagePresenter implements MyCollageContract.Presenter {
 
     @Override
     public void loadCollage() {
-        User user = mRealm.where(User.class).equalTo("uid", RealmUserManager.getCurrentUserId()).findFirst();
-        if (user != null && user.getCollages().size() != 0) {
-            RealmList<Picture> pictures = user.getCollages().get(0).getPictures();
-            mView.initRecyclerViewAdapter(pictures);
+        mUser = mRealm.where(User.class).equalTo("uid", RealmUserManager.getCurrentUserId()).findFirst();
+        if (mUser != null && mUser.getCollages().size() != 0) {
+            RealmList<Picture> pictures = mUser.getCollages().get(0).getPictures();
+            mView.setupRecyclerViewAdapter(pictures);
         }
     }
 
     @Override
     public void searchUsers() {
         RealmResults<User> users = mRealm.where(User.class).findAll();
-        mView.initSearchAdapter(users);
+        mView.setupSearchAdapter(users);
     }
 
-    public void uploadFile(File file) throws IOException {
+    public void uploadFile(final File file) {
         AmazonS3Client amazonS3Client = S3Util.getsS3Client(mContext);
         TransferUtility transferUtility = S3Util.getsTransferUtility(mContext);
         TransferObserver observer = transferUtility.upload(
                 Constants.BUCKET_NAME,
                 file.getName(),
                 file);
+
+        mRealm.executeTransaction( new Realm.Transaction() {
+            String picPath = Constants.ROOT_URL + Constants.BUCKET_NAME + "/" + file.getName();
+            Picture pic = new Picture(picPath);
+            @Override
+            public void execute(Realm realm) {
+                mUser.getCollages().get(0).addPicture(pic);
+            }
+        });
     }
 
     @Override
     public void detach() {
         mView = null;
         mContext = null;
+        mUser = null;
         if (mRealm != null) {
             mRealm.close();
         }
