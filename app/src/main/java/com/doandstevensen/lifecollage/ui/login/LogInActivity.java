@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 
 import com.doandstevensen.lifecollage.R;
@@ -44,17 +45,20 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
         final String username = usernameView.getText().toString().trim();
         final String password = passwordView.getText().toString().trim();
 
-        boolean cancel = false;
-        if (isEmpty(username)) {
-            usernameView.setError("This field is required");
-            cancel = true;
-        }
-        if (isEmpty(password)) {
-            passwordView.setError("This field is required");
-            cancel = true;
-        }
-        if (!cancel) {
+        boolean validUsername = validateInput(usernameView, username);
+        boolean validPassword = validateInput(passwordView, password);
+
+        if (validUsername && validPassword) {
             mPresenter.logIn(username, password);
+        }
+    }
+
+    public boolean validateInput(EditText view, String input) {
+        if (isEmpty(input)) {
+            view.setError("This field is required");
+            return false;
+        } else {
+            return true;
         }
     }
 
