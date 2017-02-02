@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.main;
+package com.doandstevensen.lifecollage.ui.my_collage;
 
 import android.content.Context;
 import android.content.Intent;
@@ -46,9 +46,9 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity
+public class MyCollageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG = MyCollageActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 111;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
     @BindView(R.id.autoCompleteTextView) AutoCompleteTextView autoCompleteTextView;
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             RealmUserManager.logoutActiveUser();
-            Intent intent = new Intent(MainActivity.this, LogInActivity.class);
+            Intent intent = new Intent(MyCollageActivity.this, LogInActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity
 
     public void launchCamera() {
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePicture.resolveActivity(MainActivity.this.getPackageManager()) != null) {
+        if (takePicture.resolveActivity(MyCollageActivity.this.getPackageManager()) != null) {
             File photoFile = null;
             try {
                 photoFile = createImagefile();
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
             File f = new File(mCurrentPhotoPath);
             try {
-                uploadFile(MainActivity.this, f);
+                uploadFile(MyCollageActivity.this, f);
             } catch (IOException exc) {
                 exc.printStackTrace();
             }
