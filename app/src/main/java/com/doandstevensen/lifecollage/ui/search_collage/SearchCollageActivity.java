@@ -66,7 +66,9 @@ public class SearchCollageActivity extends BaseActivity implements SearchCollage
 
     @Override
     public void onDestroy() {
-        mPresenter.detach();
+        if (mPresenter != null) {
+            mPresenter.detach();
+        }
         super.onDestroy();
     }
 }
