@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 111;
+    private User user;
+    String mCurrentPhotoPath;
+
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
     @BindView(R.id.autoCompleteTextView) AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity
 
         realm = Realm.getDefaultInstance();
 
-        User user = realm.where(User.class).equalTo("uid", UserManager.getCurrentUserId()).findFirst();
+        user = realm.where(User.class).equalTo("uid", UserManager.getCurrentUserId()).findFirst();
         if (user != null && user.getCollages().size() != 0) {
             setupRecyclerView(user.getCollages().get(0).getPictures());
         }
@@ -131,8 +134,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    String mCurrentPhotoPath;
-
     public void launchCamera() {
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePicture.resolveActivity(MainActivity.this.getPackageManager()) != null) {
@@ -170,9 +171,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
-            File f = new File(mCurrentPhotoPath);
+            final File f = new File(mCurrentPhotoPath);
             try {
                 uploadFile(MainActivity.this, f);
+                realm.executeTransaction( new Realm.Transaction() {
+                    String picPath = Constants.ROOT_URL + Constants.BUCKET_NAME + "/" + f.getName();
+                    Picture pic = new Picture(picPath);
+                    @Override
+                    public void execute(Realm realm) {
+                        user.getCollages().get(0).addPicture(pic);
+                    }
+                });
             } catch (IOException exc) {
                 exc.printStackTrace();
             }

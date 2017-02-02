@@ -7,7 +7,15 @@ import io.realm.RealmObject;
  */
 
 public class Picture extends RealmObject {
-    private String path = "https://source.unsplash.com/random";
+    private String path;
+
+    public Picture() {
+
+    }
+
+    public Picture(String path) {
+        this.path = path;
+    }
 
     public String getPath() {
         return path;

@@ -18,6 +18,7 @@ import io.realm.ObjectServerError;
 import io.realm.Realm;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
+import io.realm.permissions.PermissionChange;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -110,11 +111,6 @@ public class SignUpActivity extends AppCompatActivity {
 
                 Collage collage = new Collage();
                 collage.setName("Test Collage");
-
-                Picture picture = new Picture();
-                collage.addPicture(picture);
-                collage.addPicture(picture);
-                collage.addPicture(picture);
 
                 user.addCollage(collage);
             }

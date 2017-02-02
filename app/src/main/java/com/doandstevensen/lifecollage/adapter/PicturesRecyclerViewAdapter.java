@@ -39,9 +39,11 @@ public class PicturesRecyclerViewAdapter extends RealmRecyclerViewAdapter<Pictur
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Picture photo = getData().get(position);
         String url = photo.getPath();
-        Picasso.with(context).load(url).into(holder.imageView);
+        Picasso.with(context)
+                .load(url)
+                .fit()
+                .into(holder.imageView);
     }
-
     class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
         public MyViewHolder(View view) {
