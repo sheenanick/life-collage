@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
-import com.doandstevensen.lifecollage.ui.main.MainActivity;
+import com.doandstevensen.lifecollage.ui.my_collage.MyCollageActivity;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.search_collage.SearchCollageActivity;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
@@ -60,7 +60,7 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
             @Override
             public void onClick(View view) {
                 if (user.getUid().equals(RealmUserManager.getCurrentUserId())) {
-                    Intent myCollageIntent = new Intent(mContext, MainActivity.class);
+                    Intent myCollageIntent = new Intent(mContext, MyCollageActivity.class);
                     mContext.startActivity(myCollageIntent);
                 } else {
                     Intent searchIntent = new Intent(mContext, SearchCollageActivity.class);

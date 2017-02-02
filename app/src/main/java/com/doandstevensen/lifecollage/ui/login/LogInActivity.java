@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.doandstevensen.lifecollage.ui.main.MainActivity;
+import com.doandstevensen.lifecollage.ui.my_collage.MyCollageActivity;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ThisApplication;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
@@ -49,7 +49,7 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void loginComplete() {
-        Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+        Intent intent = new Intent(LogInActivity.this, MyCollageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.AutoCompleteTextView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.ui.main.PicturesRecyclerViewAdapter;
+import com.doandstevensen.lifecollage.ui.my_collage.PicturesRecyclerViewAdapter;
 import com.doandstevensen.lifecollage.adapter.SearchViewAdapter;
 import com.doandstevensen.lifecollage.data.model.Picture;
 import com.doandstevensen.lifecollage.data.model.User;
