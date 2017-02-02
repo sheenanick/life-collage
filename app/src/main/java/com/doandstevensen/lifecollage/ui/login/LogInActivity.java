@@ -1,31 +1,26 @@
 package com.doandstevensen.lifecollage.ui.login;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.doandstevensen.lifecollage.ui.my_collage.MyCollageActivity;
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.ThisApplication;
+import com.doandstevensen.lifecollage.ui.base.BaseActivity;
+import com.doandstevensen.lifecollage.ui.my_collage.MyCollageActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.ObjectServerError;
-import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
 import static android.text.TextUtils.isEmpty;
 
-public class LogInActivity extends AppCompatActivity {
+public class LogInActivity extends BaseActivity implements LogInContract.MvpView {
     @BindView(R.id.username) EditText usernameView;
     @BindView(R.id.password) EditText passwordView;
 
-    private ProgressDialog mProgressDialog;
+    private LogInPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +28,12 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
         ButterKnife.bind(this);
 
+        mPresenter = new LogInPresenter(this, getBaseContext());
+
         final SyncUser user = SyncUser.currentUser();
         if (user != null) {
-            loginComplete();
+            navigateToMain();
         }
-
-        createProgressDialog();
-    }
-
-    private void createProgressDialog() {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setTitle("Loading...");
-        mProgressDialog.setMessage("Authenticating user...");
-        mProgressDialog.setCancelable(false);
-    }
-
-    private void loginComplete() {
-        Intent intent = new Intent(LogInActivity.this, MyCollageActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 
     @OnClick(R.id.logIn)
@@ -71,22 +53,8 @@ public class LogInActivity extends AppCompatActivity {
             passwordView.setError("This field is required");
             cancel = true;
         }
-
         if (!cancel) {
-            mProgressDialog.show();
-            SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, false), ThisApplication.AUTH_URL, new SyncUser.Callback() {
-                @Override
-                public void onSuccess(SyncUser user) {
-                    loginComplete();
-                    mProgressDialog.dismiss();
-                }
-                @Override
-                public void onError(ObjectServerError error) {
-                    String errorMsg = error.toString();
-                    Toast.makeText(LogInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-                    mProgressDialog.dismiss();
-                }
-            });
+            mPresenter.logIn(username, password);
         }
     }
 
@@ -94,5 +62,20 @@ public class LogInActivity extends AppCompatActivity {
     public void signUp() {
         Intent intent = new Intent(LogInActivity.this, SignUpActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void navigateToMain() {
+        Intent intent = new Intent(getBaseContext(), MyCollageActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        if(mPresenter != null) {
+            mPresenter.detach();
+        }
+        super.onDestroy();
     }
 }
