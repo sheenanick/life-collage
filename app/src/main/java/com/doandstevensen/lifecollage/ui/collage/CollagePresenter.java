@@ -1,6 +1,7 @@
 package com.doandstevensen.lifecollage.ui.collage;
 
 import android.content.Context;
+import android.view.View;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
@@ -41,16 +42,20 @@ public class CollagePresenter implements CollageContract.Presenter {
             mView.setupRecyclerViewAdapter(pictures);
 
             String title;
+            int visibility;
             boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
 
             if (sameUser) {
                 title = "My Collage";
+                visibility = View.VISIBLE;
             } else {
                 title = mUser.getUsername() + "'s Collage";
+                visibility = View.GONE;
             }
 
             mView.setToolbarTitle(title);
             mView.setNavViewCheckedItem(sameUser);
+            mView.setFabVisibility(visibility);
         }
     }
 

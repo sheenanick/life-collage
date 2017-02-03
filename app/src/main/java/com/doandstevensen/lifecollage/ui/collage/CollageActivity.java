@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
@@ -49,6 +50,8 @@ public class CollageActivity extends BaseActivity
     NavigationView navigationView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
@@ -61,12 +64,13 @@ public class CollageActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        mCurrentUser = RealmUserManager.getCurrentUserId();
+
         initToolbar();
         initDrawer();
 
         mPresenter = new CollagePresenter(this, getBaseContext());
 
-        mCurrentUser = RealmUserManager.getCurrentUserId();
         populateRecyclerView(mCurrentUser);
 
         mPresenter.searchUsers();
@@ -83,7 +87,7 @@ public class CollageActivity extends BaseActivity
     }
 
     private void initDrawer() {
-        if (RealmUserManager.getCurrentUserId() != null) {
+        if (mCurrentUser != null) {
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawerLayout.addDrawerListener(toggle);
@@ -95,6 +99,10 @@ public class CollageActivity extends BaseActivity
 
     public void setNavViewCheckedItem(boolean checked) {
         navigationView.getMenu().findItem(R.id.nav_collage).setChecked(checked);
+    }
+
+    public void setFabVisibility(int visibility) {
+        fab.setVisibility(visibility);
     }
 
     public void populateRecyclerView(String uid) {
