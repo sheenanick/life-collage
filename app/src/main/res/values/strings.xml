@@ -4,4 +4,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="logout_text">Logout</string>
     <string name="about_text">About</string>
+    <string name="my_collage_text">My Collage</string>
+    <string name="pass_text">Pass</string>
 </resources>
