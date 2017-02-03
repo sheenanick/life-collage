@@ -1,5 +1,6 @@
-package com.doandstevensen.lifecollage.adapter;
+package com.doandstevensen.lifecollage.ui.collage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -10,11 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
-import com.doandstevensen.lifecollage.MainActivity;
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.SearchCollageActivity;
-import com.doandstevensen.lifecollage.UserManager;
-import com.doandstevensen.lifecollage.model.User;
+import com.doandstevensen.lifecollage.data.model.Collage;
+import com.doandstevensen.lifecollage.data.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +27,12 @@ import io.realm.RealmResults;
 public class SearchViewAdapter extends ArrayAdapter<User> {
     private final RealmResults<User> mUsers;
     private List<User> mResults;
-    private Context mContext;
+    private CollageActivity mCollageActivity;
 
     public SearchViewAdapter(Context context, RealmResults<User> users) {
         super(context, 0);
         mUsers = users;
-        mContext = context;
+        mCollageActivity = (CollageActivity) context;
     }
 
     public int getCount() {
@@ -47,7 +46,6 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final User user = getItem(position);
-        // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.search_item, parent, false);
         }
@@ -59,17 +57,11 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (user.getUid().equals(UserManager.getCurrentUserId())) {
-                    Intent myCollageIntent = new Intent(mContext, MainActivity.class);
-                    mContext.startActivity(myCollageIntent);
-                } else {
-                    Intent searchIntent = new Intent(mContext, SearchCollageActivity.class);
-                    searchIntent.putExtra("uid", user.getUid());
-                    searchIntent.putExtra("username", user.getUsername());
-                    mContext.startActivity(searchIntent);
-                }
+                mCollageActivity.populateRecyclerView(user.getUid());
+                mCollageActivity.clearSearchView();
             }
         });
+
         return convertView;
     }
 

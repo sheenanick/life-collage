@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.adapter;
+package com.doandstevensen.lifecollage.ui.collage;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.model.Picture;
+import com.doandstevensen.lifecollage.data.model.Picture;
 import com.squareup.picasso.Picasso;
 
 import io.realm.OrderedRealmCollection;
@@ -18,8 +18,8 @@ import io.realm.RealmRecyclerViewAdapter;
  * Created by Sheena on 1/31/17.
  */
 
-public class PicturesRecyclerViewAdapter extends RealmRecyclerViewAdapter<Picture,
-        PicturesRecyclerViewAdapter.MyViewHolder> {
+public class PicturesRecyclerViewAdapter extends
+        RealmRecyclerViewAdapter<Picture, PicturesRecyclerViewAdapter.MyViewHolder> {
 
     private final Context context;
 
@@ -43,8 +43,8 @@ public class PicturesRecyclerViewAdapter extends RealmRecyclerViewAdapter<Pictur
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageView;
-        public MyViewHolder(View view) {
+        ImageView imageView;
+        MyViewHolder(View view) {
             super(view);
             imageView = (ImageView) view.findViewById(R.id.imageView);
         }
