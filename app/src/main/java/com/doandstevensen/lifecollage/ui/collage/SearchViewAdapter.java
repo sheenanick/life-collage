@@ -1,5 +1,6 @@
 package com.doandstevensen.lifecollage.ui.collage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.User;
 
 import java.util.ArrayList;
@@ -25,13 +27,12 @@ import io.realm.RealmResults;
 public class SearchViewAdapter extends ArrayAdapter<User> {
     private final RealmResults<User> mUsers;
     private List<User> mResults;
-    private Context mContext;
+    private CollageActivity mCollageActivity;
 
     public SearchViewAdapter(Context context, RealmResults<User> users) {
         super(context, 0);
         mUsers = users;
-        mContext = context;
-
+        mCollageActivity = (CollageActivity) context;
     }
 
     public int getCount() {
@@ -45,7 +46,6 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final User user = getItem(position);
-        // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.search_item, parent, false);
         }
@@ -57,11 +57,11 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, CollageActivity.class);
-                intent.putExtra("uid", user.getUid());
-                mContext.startActivity(intent);
+                mCollageActivity.populateRecyclerView(user.getUid());
+                mCollageActivity.clearSearchView();
             }
         });
+
         return convertView;
     }
 

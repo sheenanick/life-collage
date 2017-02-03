@@ -50,6 +50,8 @@ public class CollageActivity extends BaseActivity
 
     private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
+    private String mCurrentCollageId;
+    private String mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,8 @@ public class CollageActivity extends BaseActivity
 
         mPresenter = new CollagePresenter(this, getBaseContext());
 
-        populateRecyclerView();
+        mCurrentUser = RealmUserManager.getCurrentUserId();
+        populateRecyclerView(mCurrentUser);
 
         mPresenter.searchUsers();
     }
@@ -92,14 +95,9 @@ public class CollageActivity extends BaseActivity
         navigationView.getMenu().findItem(R.id.nav_collage).setChecked(checked);
     }
 
-    private void populateRecyclerView() {
-        Intent intent = getIntent();
-        String searchedUid = intent.getStringExtra("uid");
-        if (searchedUid != null) {
-            mPresenter.loadCollage(searchedUid);
-        } else {
-            mPresenter.loadCollage(RealmUserManager.getCurrentUserId());
-        }
+    public void populateRecyclerView(String uid) {
+        mCurrentCollageId = uid;
+        mPresenter.loadCollage(uid);
     }
 
     public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {
@@ -112,6 +110,10 @@ public class CollageActivity extends BaseActivity
     public void setupSearchAdapter(RealmResults<User> users) {
         SearchViewAdapter adapter = new SearchViewAdapter(this, users);
         autoCompleteTextView.setAdapter(adapter);
+    }
+
+    public void clearSearchView() {
+        autoCompleteTextView.setText("");
     }
 
     @OnClick(R.id.fab)
@@ -171,8 +173,10 @@ public class CollageActivity extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_search) {
-
+        if (id == R.id.nav_collage) {
+            if (!mCurrentCollageId.equals(mCurrentUser)) {
+                populateRecyclerView(mCurrentUser);
+            }
         } else if (id == R.id.nav_pass) {
 
         } else if (id == R.id.nav_about) {
