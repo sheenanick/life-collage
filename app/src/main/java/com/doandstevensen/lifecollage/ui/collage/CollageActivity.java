@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
@@ -52,6 +53,8 @@ public class CollageActivity extends BaseActivity
     Toolbar toolbar;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.titleTextView)
+    TextView titleTextView;
 
     private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
@@ -81,9 +84,7 @@ public class CollageActivity extends BaseActivity
     }
 
     public void setToolbarTitle(String title) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
+        titleTextView.setText(title);
     }
 
     private void initDrawer() {

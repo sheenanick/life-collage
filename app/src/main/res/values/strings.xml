@@ -6,4 +6,5 @@
     <string name="about_text">About</string>
     <string name="my_collage_text">My Collage</string>
     <string name="pass_text">Pass</string>
+    <string name="search_for_users_hint">Search for users...</string>
 </resources>
