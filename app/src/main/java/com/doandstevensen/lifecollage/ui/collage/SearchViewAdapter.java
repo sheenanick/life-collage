@@ -1,8 +1,6 @@
 package com.doandstevensen.lifecollage.ui.collage;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +10,6 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.User;
 
 import java.util.ArrayList;
