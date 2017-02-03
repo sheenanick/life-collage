@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.my_collage;
+package com.doandstevensen.lifecollage.ui.collage;
 
 import android.content.Context;
 
@@ -21,24 +21,36 @@ import io.realm.RealmResults;
  * Created by Sheena on 2/2/17.
  */
 
-public class MyCollagePresenter implements MyCollageContract.Presenter {
-    private MyCollageActivity mView;
+public class CollagePresenter implements CollageContract.Presenter {
+    private CollageActivity mView;
     private Context mContext;
     private Realm mRealm;
     private User mUser;
 
-    public MyCollagePresenter(MyCollageActivity view, Context context) {
+    public CollagePresenter(CollageActivity view, Context context) {
         mView = view;
         mContext = context;
         mRealm = Realm.getDefaultInstance();
     }
 
     @Override
-    public void loadCollage() {
-        mUser = mRealm.where(User.class).equalTo("uid", RealmUserManager.getCurrentUserId()).findFirst();
+    public void loadCollage(String uid) {
+        mUser = mRealm.where(User.class).equalTo("uid", uid).findFirst();
         if (mUser != null && mUser.getCollages().size() != 0) {
             RealmList<Picture> pictures = mUser.getCollages().get(0).getPictures();
             mView.setupRecyclerViewAdapter(pictures);
+
+            String title;
+            boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
+
+            if (sameUser) {
+                title = "My Collage";
+            } else {
+                title = mUser.getUsername() + "'s Collage";
+            }
+
+            mView.setToolbarTitle(title);
+            mView.setNavViewCheckedItem(sameUser);
         }
     }
 

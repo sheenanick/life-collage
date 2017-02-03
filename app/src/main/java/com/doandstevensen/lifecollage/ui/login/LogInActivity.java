@@ -2,12 +2,11 @@ package com.doandstevensen.lifecollage.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.my_collage.MyCollageActivity;
+import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
 
 import butterknife.BindView;
@@ -70,7 +69,7 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
 
     @Override
     public void navigateToMain() {
-        Intent intent = new Intent(getBaseContext(), MyCollageActivity.class);
+        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

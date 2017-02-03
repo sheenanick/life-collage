@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.my_collage;
+package com.doandstevensen.lifecollage.ui.collage;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

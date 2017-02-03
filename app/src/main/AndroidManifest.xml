@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.my_collage.MyCollageActivity"
+            android:name=".ui.collage.CollageActivity"
             android:label="MainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 

@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.my_collage;
+package com.doandstevensen.lifecollage.ui.collage;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,7 +18,6 @@ import android.widget.AutoCompleteTextView;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.adapter.SearchViewAdapter;
 import com.doandstevensen.lifecollage.data.model.Picture;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
@@ -36,8 +35,8 @@ import butterknife.OnClick;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-public class MyCollageActivity extends BaseActivity
-        implements MyCollageContract.MvpView ,NavigationView.OnNavigationItemSelectedListener {
+public class CollageActivity extends BaseActivity
+        implements CollageContract.MvpView ,NavigationView.OnNavigationItemSelectedListener {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.autoCompleteTextView)
@@ -49,7 +48,7 @@ public class MyCollageActivity extends BaseActivity
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private MyCollagePresenter mPresenter;
+    private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
 
     @Override
@@ -58,25 +57,49 @@ public class MyCollageActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mPresenter = new MyCollagePresenter(this, getBaseContext());
-        mPresenter.loadCollage();
-        mPresenter.searchUsers();
-
         initToolbar();
         initDrawer();
+
+        mPresenter = new CollagePresenter(this, getBaseContext());
+
+        populateRecyclerView();
+
+        mPresenter.searchUsers();
     }
 
     private void initToolbar() {
         setSupportActionBar(toolbar);
     }
 
+    public void setToolbarTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
     private void initDrawer() {
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setCheckedItem(R.id.nav_collage);
-        navigationView.setNavigationItemSelectedListener(this);
+        if (RealmUserManager.getCurrentUserId() != null) {
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+            navigationView.setCheckedItem(R.id.nav_collage);
+            navigationView.setNavigationItemSelectedListener(this);
+        }
+    }
+
+    public void setNavViewCheckedItem(boolean checked) {
+        navigationView.getMenu().findItem(R.id.nav_collage).setChecked(checked);
+    }
+
+    private void populateRecyclerView() {
+        Intent intent = getIntent();
+        String searchedUid = intent.getStringExtra("uid");
+        if (searchedUid != null) {
+            mPresenter.loadCollage(searchedUid);
+        } else {
+            mPresenter.loadCollage(RealmUserManager.getCurrentUserId());
+        }
     }
 
     public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {
@@ -94,7 +117,7 @@ public class MyCollageActivity extends BaseActivity
     @OnClick(R.id.fab)
     public void launchCamera() {
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePicture.resolveActivity(MyCollageActivity.this.getPackageManager()) != null) {
+        if (takePicture.resolveActivity(CollageActivity.this.getPackageManager()) != null) {
             File photoFile = null;
             try {
                 photoFile = createImagefile();

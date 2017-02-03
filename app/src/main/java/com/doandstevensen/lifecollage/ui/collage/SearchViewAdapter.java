@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.adapter;
+package com.doandstevensen.lifecollage.ui.collage;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
-import com.doandstevensen.lifecollage.ui.my_collage.MyCollageActivity;
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.ui.search_collage.SearchCollageActivity;
-import com.doandstevensen.lifecollage.util.RealmUserManager;
 import com.doandstevensen.lifecollage.data.model.User;
 
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
         super(context, 0);
         mUsers = users;
         mContext = context;
+
     }
 
     public int getCount() {
@@ -59,15 +57,9 @@ public class SearchViewAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (user.getUid().equals(RealmUserManager.getCurrentUserId())) {
-                    Intent myCollageIntent = new Intent(mContext, MyCollageActivity.class);
-                    mContext.startActivity(myCollageIntent);
-                } else {
-                    Intent searchIntent = new Intent(mContext, SearchCollageActivity.class);
-                    searchIntent.putExtra("uid", user.getUid());
-                    searchIntent.putExtra("username", user.getUsername());
-                    mContext.startActivity(searchIntent);
-                }
+                Intent intent = new Intent(mContext, CollageActivity.class);
+                intent.putExtra("uid", user.getUid());
+                mContext.startActivity(intent);
             }
         });
         return convertView;

@@ -6,7 +6,7 @@ import android.widget.EditText;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.my_collage.MyCollageActivity;
+import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +72,7 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
 
     @Override
     public void navigateToMain() {
-        Intent intent = new Intent(getBaseContext(), MyCollageActivity.class);
+        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
