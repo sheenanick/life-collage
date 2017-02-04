@@ -8,11 +8,11 @@ import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
+import com.doandstevensen.lifecollage.util.RealmUserManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.SyncUser;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -30,9 +30,9 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
 
         mPresenter = new LogInPresenter(this, getBaseContext());
 
-        final SyncUser user = SyncUser.currentUser();
-        if (user != null) {
-            navigateToMain();
+        String uid = RealmUserManager.getCurrentUserId();
+        if (uid != null) {
+            navigateToMain(uid);
         }
     }
 
@@ -68,8 +68,9 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
     }
 
     @Override
-    public void navigateToMain() {
+    public void navigateToMain(String uid) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        intent.putExtra("uid", uid);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

@@ -15,10 +15,10 @@ import io.realm.SyncUser;
  */
 
 public class SignUpPresenter implements SignUpContract.Presenter {
-    private SignUpActivity mSignUpMvpView;
+    private SignUpContract.MvpView mSignUpMvpView;
     private Realm mRealm;
 
-    public SignUpPresenter(SignUpActivity view) {
+    public SignUpPresenter(SignUpContract.MvpView view) {
         mSignUpMvpView = view;
     }
 
@@ -30,7 +30,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
             public void onSuccess(SyncUser user) {
                 mSignUpMvpView.hideLoadingAnimation();
                 createUserObject(user, username);
-                mSignUpMvpView.navigateToMain();
+                mSignUpMvpView.navigateToMain(user.getIdentity());
             }
             @Override
             public void onError(ObjectServerError error) {

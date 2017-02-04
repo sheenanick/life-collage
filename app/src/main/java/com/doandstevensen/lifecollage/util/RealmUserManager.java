@@ -12,6 +12,12 @@ public class RealmUserManager {
     }
 
     public static String getCurrentUserId() {
-        return SyncUser.currentUser().getIdentity();
+        SyncUser currentUser = SyncUser.currentUser();
+        if (currentUser != null) {
+            return currentUser.getIdentity();
+        } else {
+            return null;
+        }
+
     }
 }

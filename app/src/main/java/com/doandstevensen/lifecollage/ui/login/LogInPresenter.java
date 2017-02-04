@@ -15,10 +15,10 @@ import io.realm.SyncUser;
  */
 
 public class LogInPresenter implements Presenter {
-    private LogInActivity mLogInMvpView;
+    private LogInContract.MvpView mLogInMvpView;
     private Context mContext;
 
-    public LogInPresenter(LogInActivity view, Context context) {
+    public LogInPresenter(LogInContract.MvpView view, Context context) {
         mLogInMvpView = view;
         mContext = context;
     }
@@ -29,7 +29,7 @@ public class LogInPresenter implements Presenter {
         SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, false), ThisApplication.AUTH_URL, new SyncUser.Callback() {
             @Override
             public void onSuccess(SyncUser user) {
-                mLogInMvpView.navigateToMain();
+                mLogInMvpView.navigateToMain(user.getIdentity());
                 mLogInMvpView.hideLoadingAnimation();
             }
             @Override

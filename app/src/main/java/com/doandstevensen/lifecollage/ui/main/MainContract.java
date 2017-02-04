@@ -1,7 +1,10 @@
 package com.doandstevensen.lifecollage.ui.main;
 
+import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseMvpView;
 import com.doandstevensen.lifecollage.ui.base.BasePresenter;
+
+import java.util.ArrayList;
 
 /**
  * Created by Sheena on 2/3/17.
@@ -9,13 +12,14 @@ import com.doandstevensen.lifecollage.ui.base.BasePresenter;
 
 public interface MainContract {
     interface Presenter extends BasePresenter {
-        void populateGridView();
+        void getGridViewUsers();
         void searchUsers();
 
     }
 
     interface MvpView extends BaseMvpView {
-        void navigateToCollage();
+        void setupGridViewAdapter(ArrayList<User> featuredUsers);
+        void navigateToCollage(String uid);
         void navigateToSignUp();
         void navigateToLogIn();
     }

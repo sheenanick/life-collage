@@ -71,8 +71,9 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
     }
 
     @Override
-    public void navigateToMain() {
+    public void navigateToMain(String uid) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        intent.putExtra("uid", uid);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
