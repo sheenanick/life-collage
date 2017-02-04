@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
 
 import com.doandstevensen.lifecollage.R;
@@ -20,10 +21,13 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.RealmResults;
 
 public class MainActivity extends BaseActivity implements MvpView {
     @BindView(R.id.gridView)
     GridView gridView;
+    @BindView(R.id.autoCompleteTextView)
+    AutoCompleteTextView autoCompleteTextView;
 
     private MainPresenter mPresenter;
 
@@ -34,13 +38,15 @@ public class MainActivity extends BaseActivity implements MvpView {
 
         ButterKnife.bind(this);
 
-        mPresenter = new MainPresenter(this, this);
+        mPresenter = new MainPresenter(this);
         mPresenter.getGridViewUsers();
+        mPresenter.searchUsers();
 
         String currentUserId = RealmUserManager.getCurrentUserId();
         if (currentUserId != null) {
             navigateToCollage(currentUserId);
         }
+
     }
 
     public void setupGridViewAdapter(final ArrayList<User> featuredUsers) {
@@ -53,6 +59,16 @@ public class MainActivity extends BaseActivity implements MvpView {
             }
         });
     }
+
+    public void setupSearchAdapter(RealmResults<User> users) {
+        MainSearchAdapter adapter = new MainSearchAdapter(this, users);
+        autoCompleteTextView.setAdapter(adapter);
+    }
+
+    public void clearSearchView() {
+        autoCompleteTextView.setText("");
+    }
+
 
     @Override
     public void navigateToCollage(String uid) {

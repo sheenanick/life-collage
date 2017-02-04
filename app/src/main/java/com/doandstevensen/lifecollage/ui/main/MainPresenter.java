@@ -1,6 +1,5 @@
 package com.doandstevensen.lifecollage.ui.main;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.doandstevensen.lifecollage.data.model.User;
@@ -17,11 +16,9 @@ import io.realm.RealmResults;
 public class MainPresenter implements MainContract.Presenter {
     private Realm mRealm;
     private MainContract.MvpView mView;
-    private Context mContext;
 
-    public MainPresenter(MainContract.MvpView view, Context context) {
+    public MainPresenter(MainContract.MvpView view) {
         mView = view;
-        mContext = context;
         mRealm = Realm.getDefaultInstance();
     }
 
@@ -42,13 +39,13 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void searchUsers() {
-
+        RealmResults<User> users = mRealm.where(User.class).findAll();
+        mView.setupSearchAdapter(users);
     }
 
     @Override
     public void detach() {
         mView = null;
-        mContext = null;
         if (mRealm != null) {
             mRealm.close();
         }
