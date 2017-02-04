@@ -24,7 +24,7 @@ import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.Picture;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.login.LogInActivity;
+import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
 
 import java.io.File;
@@ -64,7 +64,7 @@ public class CollageActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_collage);
         ButterKnife.bind(this);
 
         mCurrentUser = RealmUserManager.getCurrentUserId();
@@ -74,7 +74,8 @@ public class CollageActivity extends BaseActivity
 
         mPresenter = new CollagePresenter(this, getBaseContext());
 
-        populateRecyclerView(mCurrentUser);
+        String uid = getIntent().getStringExtra("uid");
+        populateRecyclerView(uid);
 
         mPresenter.searchUsers();
     }
@@ -119,7 +120,7 @@ public class CollageActivity extends BaseActivity
     }
 
     public void setupSearchAdapter(RealmResults<User> users) {
-        SearchViewAdapter adapter = new SearchViewAdapter(this, users);
+        CollageSearchAdapter adapter = new CollageSearchAdapter(this, users);
         autoCompleteTextView.setAdapter(adapter);
     }
 
@@ -200,10 +201,9 @@ public class CollageActivity extends BaseActivity
         return true;
     }
 
-    @Override
-    public void logout() {
+    private void logout() {
         RealmUserManager.logoutActiveUser();
-        Intent intent = new Intent(getBaseContext(), LogInActivity.class);
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

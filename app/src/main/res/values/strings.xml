@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LifeCollage</string>
+    <string name="app_name">Life Collage</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="logout_text">Logout</string>
@@ -7,4 +7,6 @@
     <string name="my_collage_text">My Collage</string>
     <string name="pass_text">Pass</string>
     <string name="search_for_users_hint">Search for users...</string>
+    <string name="log_in_text">Log In</string>
+    <string name="sign_up_text">Sign Up</string>
 </resources>

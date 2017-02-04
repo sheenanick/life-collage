@@ -13,6 +13,7 @@ public interface SignUpContract {
     }
 
     interface MvpView extends BaseMvpView {
-        void navigateToMain();
+        void navigateToMain(String uid);
+        void showSignUpError(String error);
     }
 }

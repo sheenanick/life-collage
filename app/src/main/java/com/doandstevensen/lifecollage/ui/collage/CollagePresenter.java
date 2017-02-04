@@ -23,12 +23,12 @@ import io.realm.RealmResults;
  */
 
 public class CollagePresenter implements CollageContract.Presenter {
-    private CollageActivity mView;
+    private CollageContract.MvpView mView;
     private Context mContext;
     private Realm mRealm;
     private User mUser;
 
-    public CollagePresenter(CollageActivity view, Context context) {
+    public CollagePresenter(CollageContract.MvpView view, Context context) {
         mView = view;
         mContext = context;
         mRealm = Realm.getDefaultInstance();
