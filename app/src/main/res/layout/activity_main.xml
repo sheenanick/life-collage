@@ -6,41 +6,67 @@
     android:layout_height="match_parent"
     tools:context="com.doandstevensen.lifecollage.ui.main.MainActivity">
 
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="3"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/buttonsLayout"
+        android:layout_below="@+id/gridView"
+        android:layout_above="@+id/horizontalDivider"
+        android:background="@android:color/white"
+        android:gravity="center"
         android:orientation="vertical">
-
-        <GridView
-            android:id="@+id/gridView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="3"/>
 
         <TextView
             android:id="@+id/appName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="28sp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="32sp"
             android:text="@string/app_name"/>
 
         <TextView
             android:id="@+id/tagline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:gravity="center"
             android:textSize="18sp"
             android:text="lorem ipsum lorem ipsum lorem ipsum"/>
 
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="80dp"
+            android:drawableLeft="@drawable/ic_search_black_24dp"
+            android:drawableStart="@drawable/ic_search_black_24dp"
+            android:hint="@string/search_for_users_hint"
+            android:textSize="18sp"/>
+
     </LinearLayout>
 
+    <View
+        android:id="@+id/horizontalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/buttonsLayout"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="?android:attr/dividerHorizontal" />
     <LinearLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@android:color/white"
         style="?android:attr/buttonBarStyle"
         android:layout_alignParentBottom="true">
 
@@ -51,6 +77,13 @@
             android:layout_weight="1"
             style="?android:attr/buttonBarButtonStyle"
             android:text="@string/log_in_text"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:background="?android:attr/dividerVertical" />
 
         <Button
             android:id="@+id/signUpButton"
