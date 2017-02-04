@@ -21,12 +21,12 @@ import io.realm.RealmResults;
  * Created by Sheena on 1/31/17.
  */
 
-public class SearchViewAdapter extends ArrayAdapter<User> {
+public class CollageSearchAdapter extends ArrayAdapter<User> {
     private final RealmResults<User> mUsers;
     private List<User> mResults;
     private CollageActivity mCollageActivity;
 
-    public SearchViewAdapter(Context context, RealmResults<User> users) {
+    public CollageSearchAdapter(Context context, RealmResults<User> users) {
         super(context, 0);
         mUsers = users;
         mCollageActivity = (CollageActivity) context;

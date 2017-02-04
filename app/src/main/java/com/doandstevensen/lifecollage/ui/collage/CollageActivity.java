@@ -120,7 +120,7 @@ public class CollageActivity extends BaseActivity
     }
 
     public void setupSearchAdapter(RealmResults<User> users) {
-        SearchViewAdapter adapter = new SearchViewAdapter(this, users);
+        CollageSearchAdapter adapter = new CollageSearchAdapter(this, users);
         autoCompleteTextView.setAdapter(adapter);
     }
 
