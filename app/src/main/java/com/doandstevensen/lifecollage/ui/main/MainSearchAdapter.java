@@ -26,12 +26,11 @@ import io.realm.RealmResults;
 public class MainSearchAdapter extends ArrayAdapter<User> {
     private final RealmResults<User> mUsers;
     private List<User> mResults;
-    private MainActivity mMainActivity;
+    private ClickListener mClickListener;
 
     public MainSearchAdapter(Context context, RealmResults<User> users) {
         super(context, 0);
         mUsers = users;
-        mMainActivity = (MainActivity) context;
     }
 
     public int getCount() {
@@ -56,10 +55,7 @@ public class MainSearchAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMainActivity.clearSearchView();
-                Intent intent = new Intent(mMainActivity, CollageActivity.class);
-                intent.putExtra("uid", user.getUid());
-                mMainActivity.startActivity(intent);
+               mClickListener.onUserClick(user.getUid());
             }
         });
 
@@ -92,6 +88,14 @@ public class MainSearchAdapter extends ArrayAdapter<User> {
             }
         }
         return filteredResults;
+    }
+
+    public void setClickListener(ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onUserClick(String uuid);
     }
 
 }

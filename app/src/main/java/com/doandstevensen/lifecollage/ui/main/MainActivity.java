@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.RealmResults;
 
-public class MainActivity extends BaseActivity implements MvpView {
+public class MainActivity extends BaseActivity implements MainContract.MvpView, MainSearchAdapter.ClickListener {
     @BindView(R.id.gridView)
     GridView gridView;
     @BindView(R.id.autoCompleteTextView)
@@ -63,6 +63,7 @@ public class MainActivity extends BaseActivity implements MvpView {
     public void setupSearchAdapter(RealmResults<User> users) {
         MainSearchAdapter adapter = new MainSearchAdapter(this, users);
         autoCompleteTextView.setAdapter(adapter);
+        adapter.setClickListener(this);
     }
 
     public void clearSearchView() {
@@ -97,5 +98,13 @@ public class MainActivity extends BaseActivity implements MvpView {
             mPresenter.detach();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onUserClick(String uuid) {
+        clearSearchView();
+        Intent intent = new Intent(this, CollageActivity.class);
+        intent.putExtra("uid", uuid);
+        startActivity(intent);
     }
 }
