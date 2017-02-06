@@ -54,8 +54,7 @@ public class MainImageAdapter extends BaseAdapter {
 
         User user = mFeaturedUsers.get(position);
         RealmList<Picture> pictures = user.getCollages().get(0).getPictures();
-        int last = pictures.size() - 1;
-        Picture picture = pictures.get(last);
+        Picture picture = pictures.get(0);
 
         Picasso.with(mContext).load(picture.getPath()).into(imageView);
         return imageView;
