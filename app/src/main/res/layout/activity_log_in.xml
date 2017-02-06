@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -13,25 +14,27 @@
 
     <EditText
         android:id="@+id/username"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:hint="Username"/>
+        android:hint="@string/username_hint"/>
     <EditText
         android:id="@+id/password"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:hint="Password"/>
+        android:fontFamily="sans-serif"
+        android:hint="@string/password_hint"/>
     <Button
         android:id="@+id/logIn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Log In"/>
+        android:text="@string/log_in_text"/>
     <TextView
         android:id="@+id/signUp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="32sp"
-        android:text="Sign Up"/>
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:textSize="20sp"
+        android:text="@string/don_t_have_an_account_sign_up"/>
 </LinearLayout>
