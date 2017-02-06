@@ -7,6 +7,7 @@ import android.widget.EditText;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
+import com.doandstevensen.lifecollage.ui.login.LogInActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,6 +77,12 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
         intent.putExtra("uid", uid);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.logIn)
+    public void navigateToLogIn() {
+        Intent logInIntent = new Intent(getBaseContext(), LogInActivity.class);
+        startActivity(logInIntent);
     }
 
     @Override
