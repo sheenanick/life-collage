@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.collage;
+package com.doandstevensen.lifecollage.ui.collage_detail;
 
 import android.content.Context;
 import android.view.View;
@@ -16,7 +16,6 @@ import java.io.File;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by Sheena on 2/2/17.
@@ -54,15 +53,8 @@ public class CollagePresenter implements CollageContract.Presenter {
             }
 
             mView.setToolbarTitle(title);
-            mView.setNavViewCheckedItem(sameUser);
             mView.setFabVisibility(visibility);
         }
-    }
-
-    @Override
-    public void searchUsers() {
-        RealmResults<User> users = mRealm.where(User.class).findAll();
-        mView.setupSearchAdapter(users);
     }
 
     public void uploadFile(final File file) {

@@ -10,9 +10,9 @@ import android.widget.GridView;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
+import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
+import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.login.LogInActivity;
-import com.doandstevensen.lifecollage.ui.main.MainContract.MvpView;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
 
@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
 
     @Override
     public void navigateToCollage(String uid) {
-        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         intent.putExtra("uid", uid);
         startActivity(intent);
     }

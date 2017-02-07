@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.collage;
+package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -24,12 +24,11 @@ import io.realm.RealmResults;
 public class CollageSearchAdapter extends ArrayAdapter<User> {
     private final RealmResults<User> mUsers;
     private List<User> mResults;
-    private CollageActivity mCollageActivity;
+    private CollageSearchAdapter.ClickListener mClickListener;
 
     public CollageSearchAdapter(Context context, RealmResults<User> users) {
         super(context, 0);
         mUsers = users;
-        mCollageActivity = (CollageActivity) context;
     }
 
     public int getCount() {
@@ -54,8 +53,7 @@ public class CollageSearchAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCollageActivity.populateRecyclerView(user.getUid());
-                mCollageActivity.clearSearchView();
+                mClickListener.onUserClick(user.getUid());
             }
         });
 
@@ -90,4 +88,11 @@ public class CollageSearchAdapter extends ArrayAdapter<User> {
         return filteredResults;
     }
 
+    public void setClickListener(CollageSearchAdapter.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onUserClick(String uuid);
+    }
 }
