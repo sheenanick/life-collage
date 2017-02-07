@@ -14,4 +14,5 @@
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? <u>Sign Up</u></string>
     <string name="confirm_password_hint">Confirm Password</string>
     <string name="already_have_an_account_log_in">Already have an account? <u>Log In</u></string>
+    <string name="account_text">Account</string>
 </resources>
