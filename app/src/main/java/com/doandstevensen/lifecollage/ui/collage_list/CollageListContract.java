@@ -16,6 +16,7 @@ public interface CollageListContract {
     interface Presenter extends BasePresenter {
         void searchUsers();
         void loadCollageList(String uid);
+        void createNewCollage(String name);
     }
 
     interface MvpView extends BaseMvpView {
@@ -24,5 +25,6 @@ public interface CollageListContract {
         void setToolbarTitle(String title);
         void setupSearchAdapter(RealmResults<User> users);
         void setFabVisibility(int visibility);
+        void navigateToCollage(String collageName);
     }
 }

@@ -46,9 +46,11 @@ public class CollageListRecyclerViewAdapter extends
         final String collageName = collage.getName();
         holder.textView.setText(collageName);
 
-        Picture firstPicture = collage.getPictures().get(0);
-        String url = firstPicture.getPath();
-        Picasso.with(context).load(url).into(holder.imageView);
+        if (collage.getPictures().size() > 0) {
+            Picture firstPicture = collage.getPictures().get(0);
+            String url = firstPicture.getPath();
+            Picasso.with(context).load(url).into(holder.imageView);
+        }
 
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override

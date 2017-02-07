@@ -56,6 +56,20 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     }
 
     @Override
+    public void createNewCollage(final String name) {
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Collage collage = realm.createObject(Collage.class);
+                collage.setName(name);
+                collage.setUid(mUser.getUid());
+                mUser.getCollages().add(collage);
+            }
+        });
+        mView.navigateToCollage(name);
+    }
+
+    @Override
     public void detach() {
         mView = null;
         mUser = null;

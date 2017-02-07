@@ -5,17 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.Collage;
@@ -33,7 +32,7 @@ import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class CollageListActivity extends BaseActivity
-        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener{
+        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, NewCollageDialogFragment.NewCollageDialogListener{
     @BindView(R.id.autoCompleteTextView)
     AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.drawer_layout)
@@ -127,6 +126,11 @@ public class CollageListActivity extends BaseActivity
 
     @Override
     public void onCollageClick(String collageName) {
+        navigateToCollage(collageName);
+    }
+
+    @Override
+    public void navigateToCollage(String collageName) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.putExtra("name", collageName);
         intent.putExtra("uid", mCurrentCollageId);
@@ -140,7 +144,21 @@ public class CollageListActivity extends BaseActivity
 
     @OnClick(R.id.fab)
     public void addNewCollage() {
-        Toast.makeText(this, "Add new collage", Toast.LENGTH_SHORT).show();
+        launchAlertDialog();
+    }
+
+    private void launchAlertDialog() {
+        NewCollageDialogFragment dialogFragment = new NewCollageDialogFragment();
+        dialogFragment.show(getSupportFragmentManager(), "newCollage");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, String name) {
+        mPresenter.createNewCollage(name);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
