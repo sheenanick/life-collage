@@ -29,6 +29,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.RealmList;
 
+import static android.os.Environment.getExternalStoragePublicDirectory;
+
 public class CollageActivity extends BaseActivity implements CollageContract.MvpView {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -83,31 +85,32 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     public void launchCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
-            File photoFile = createImageFile();
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+
+            }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.doandstevensen.fileprovider",
-                        photoFile);
+                                                        "com.doandstevensen.fileprovider",
+                                                        photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
             }
         }
     }
 
-    private File createImageFile() {
+    private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "PNG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = null;
-        try {
-            image = File.createTempFile(
+
+        File image = File.createTempFile(
                     imageFileName,
                     ".png",
                     storageDir
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        );
 
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
