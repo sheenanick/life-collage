@@ -15,14 +15,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.Picture;
 import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
@@ -100,7 +103,10 @@ public class CollageActivity extends BaseActivity
     }
 
     public void setNavViewCheckedItem(boolean checked) {
-        navigationView.getMenu().findItem(R.id.nav_collage).setChecked(checked);
+        Menu drawerMenu = navigationView.getMenu();
+        drawerMenu.findItem(R.id.nav_collage).setChecked(checked);
+        drawerMenu.findItem(R.id.nav_account).setChecked(false);
+
     }
 
     public void setFabVisibility(int visibility) {
@@ -191,6 +197,8 @@ public class CollageActivity extends BaseActivity
             }
         } else if (id == R.id.nav_pass) {
 
+        } else if (id == R.id.nav_account) {
+            navigateToAccount();
         } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_logout) {
@@ -199,6 +207,11 @@ public class CollageActivity extends BaseActivity
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void navigateToAccount() {
+        Intent intent = new Intent(CollageActivity.this, AccountActivity.class);
+        startActivity(intent);
     }
 
     private void logout() {
@@ -214,5 +227,11 @@ public class CollageActivity extends BaseActivity
             mPresenter.detach();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        setNavViewCheckedItem(mCurrentCollageId.equals(mCurrentUser));
+        super.onStart();
     }
 }
