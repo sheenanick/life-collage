@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
@@ -21,6 +22,7 @@ import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
+import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
 
@@ -31,7 +33,7 @@ import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class CollageListActivity extends BaseActivity
-        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener{
+        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener{
     @BindView(R.id.autoCompleteTextView)
     AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.drawer_layout)
@@ -96,6 +98,7 @@ public class CollageListActivity extends BaseActivity
     @Override
     public void setupRecyclerViewAdapter(RealmList<Collage> collages) {
         CollageListRecyclerViewAdapter recyclerViewAdapter = new CollageListRecyclerViewAdapter(this, collages);
+        recyclerViewAdapter.setClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setHasFixedSize(true);
@@ -117,6 +120,20 @@ public class CollageListActivity extends BaseActivity
     }
 
     @Override
+    public void onSearchClick(String uid) {
+        clearSearchView();
+        populateRecyclerView(uid);
+    }
+
+    @Override
+    public void onCollageClick(String collageName) {
+        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        intent.putExtra("name", collageName);
+        intent.putExtra("uid", mCurrentCollageId);
+        startActivity(intent);
+    }
+
+    @Override
     public void setFabVisibility(int visibility) {
         fab.setVisibility(visibility);
     }
@@ -124,12 +141,6 @@ public class CollageListActivity extends BaseActivity
     @OnClick(R.id.fab)
     public void addNewCollage() {
         Toast.makeText(this, "Add new collage", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onUserClick(String uid) {
-        clearSearchView();
-        populateRecyclerView(uid);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -189,4 +200,5 @@ public class CollageListActivity extends BaseActivity
         }
         super.onDestroy();
     }
+
 }

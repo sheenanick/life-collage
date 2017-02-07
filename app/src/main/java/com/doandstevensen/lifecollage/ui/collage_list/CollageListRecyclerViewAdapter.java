@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
@@ -24,6 +25,7 @@ public class CollageListRecyclerViewAdapter extends
         RealmRecyclerViewAdapter<Collage, CollageListRecyclerViewAdapter.MyViewHolder> {
 
     private final Context context;
+    private CollageListRecyclerViewAdapter.ClickListener mClickListener;
 
     public CollageListRecyclerViewAdapter(Context context, OrderedRealmCollection<Collage> data) {
         super(context, data, true);
@@ -41,22 +43,39 @@ public class CollageListRecyclerViewAdapter extends
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Collage collage = getData().get(position);
 
-        String title = collage.getName();
-        holder.textView.setText(title);
+        final String collageName = collage.getName();
+        holder.textView.setText(collageName);
 
         Picture firstPicture = collage.getPictures().get(0);
         String url = firstPicture.getPath();
         Picasso.with(context).load(url).into(holder.imageView);
+
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mClickListener.onCollageClick(collageName);
+            }
+        });
+    }
+
+    public void setClickListener(CollageListRecyclerViewAdapter.ClickListener clickListener) {
+        mClickListener = clickListener;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textView;
+        LinearLayout linearLayout;
 
         MyViewHolder(View view) {
             super(view);
             imageView = (ImageView) view.findViewById(R.id.imageView);
             textView = (TextView) view.findViewById(R.id.collageTitleTextView);
+            linearLayout = (LinearLayout) view.findViewById(R.id.linearLayout);
         }
+    }
+
+    public interface ClickListener {
+        void onCollageClick(String collageName);
     }
 }

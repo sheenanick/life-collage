@@ -14,7 +14,7 @@ import io.realm.RealmList;
 
 public interface CollageContract {
     interface Presenter extends BasePresenter {
-        void loadCollage(String uid);
+        void loadCollage(String uid, String title);
         void uploadFile(File file);
     }
 

@@ -53,7 +53,7 @@ public class CollageSearchAdapter extends ArrayAdapter<User> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClickListener.onUserClick(user.getUid());
+                mClickListener.onSearchClick(user.getUid());
             }
         });
 
@@ -93,6 +93,6 @@ public class CollageSearchAdapter extends ArrayAdapter<User> {
     }
 
     public interface ClickListener {
-        void onUserClick(String uuid);
+        void onSearchClick(String uid);
     }
 }

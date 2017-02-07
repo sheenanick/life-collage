@@ -63,4 +63,5 @@ public class CollageListPresenter implements CollageListContract.Presenter {
             mRealm.close();
         }
     }
+
 }

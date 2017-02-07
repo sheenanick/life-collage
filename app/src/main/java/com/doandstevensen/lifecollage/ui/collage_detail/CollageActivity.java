@@ -43,8 +43,10 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
 
         mPresenter = new CollagePresenter(this, getBaseContext());
 
-        String uid = getIntent().getStringExtra("uid");
-        populateRecyclerView(uid);
+        Intent intent = getIntent();
+        String uid = intent.getStringExtra("uid");
+        String name = intent.getStringExtra("name");
+        populateRecyclerView(uid, name);
     }
 
     public void setToolbarTitle(String title) {
@@ -55,8 +57,8 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         fab.setVisibility(visibility);
     }
 
-    public void populateRecyclerView(String uid) {
-        mPresenter.loadCollage(uid);
+    public void populateRecyclerView(String uid, String title) {
+        mPresenter.loadCollage(uid, title);
     }
 
     public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {
