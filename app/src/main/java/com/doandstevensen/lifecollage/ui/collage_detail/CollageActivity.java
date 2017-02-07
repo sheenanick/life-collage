@@ -89,7 +89,7 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-
+                ex.printStackTrace();
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
