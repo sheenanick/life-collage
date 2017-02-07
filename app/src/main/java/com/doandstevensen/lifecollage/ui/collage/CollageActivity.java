@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -102,7 +103,10 @@ public class CollageActivity extends BaseActivity
     }
 
     public void setNavViewCheckedItem(boolean checked) {
-        navigationView.getMenu().findItem(R.id.nav_collage).setChecked(checked);
+        Menu drawerMenu = navigationView.getMenu();
+        drawerMenu.findItem(R.id.nav_collage).setChecked(checked);
+        drawerMenu.findItem(R.id.nav_account).setChecked(false);
+
     }
 
     public void setFabVisibility(int visibility) {
@@ -223,5 +227,11 @@ public class CollageActivity extends BaseActivity
             mPresenter.detach();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        setNavViewCheckedItem(mCurrentCollageId.equals(mCurrentUser));
+        super.onStart();
     }
 }
