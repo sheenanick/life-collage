@@ -35,8 +35,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ui.collage_detail.CollageActivity"
-            android:label="My Collage" />
+            android:name=".ui.collage_detail.CollageActivity" />
 
         <activity android:name=".ui.account.AccountActivity" />
 

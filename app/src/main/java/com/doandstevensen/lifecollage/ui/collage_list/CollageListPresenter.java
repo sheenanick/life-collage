@@ -42,10 +42,10 @@ public class CollageListPresenter implements CollageListContract.Presenter {
             boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
 
             if (sameUser) {
-                title = "My Collage";
+                title = "My Collages";
                 visibility = View.VISIBLE;
             } else {
-                title = mUser.getUsername() + "'s Collage";
+                title = mUser.getUsername() + "'s Collages";
                 visibility = View.GONE;
             }
 

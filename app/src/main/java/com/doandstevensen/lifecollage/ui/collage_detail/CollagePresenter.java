@@ -42,16 +42,15 @@ public class CollagePresenter implements CollageContract.Presenter {
         RealmList<Picture> pictures = mCollage.getPictures();
         mView.setupRecyclerViewAdapter(pictures);
 
-        String title;
+        String title = mCollage.getName();
         int visibility;
         boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
 
         if (sameUser) {
-            title = "My Collage";
             visibility = View.VISIBLE;
         } else {
-            title = user.getUsername() + "'s Collage";
             visibility = View.GONE;
+            title = title + " (" + user.getUsername() + ")";
         }
 
         mView.setToolbarTitle(title);
