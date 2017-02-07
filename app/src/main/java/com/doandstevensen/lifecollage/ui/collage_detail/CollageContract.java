@@ -22,5 +22,6 @@ public interface CollageContract {
         void setupRecyclerViewAdapter(RealmList<Picture> pictures);
         void setToolbarTitle(String title);
         void setFabVisibility(int visibility);
+        void setEmptyViewVisibility(int visibility);
     }
 }

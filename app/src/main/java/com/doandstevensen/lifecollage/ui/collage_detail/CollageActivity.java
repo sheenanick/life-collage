@@ -9,6 +9,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
@@ -31,9 +34,12 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     RecyclerView recyclerView;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.emptyView)
+    TextView emptyView;
 
     private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
+    private Intent mPictureIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,11 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         fab.setVisibility(visibility);
     }
 
+    @Override
+    public void setEmptyViewVisibility(int visibility) {
+        emptyView.setVisibility(visibility);
+    }
+
     public void populateRecyclerView(String uid, String title) {
         mPresenter.loadCollage(uid, title);
     }
@@ -70,34 +81,33 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
 
     @OnClick(R.id.fab)
     public void launchCamera() {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePicture.resolveActivity(CollageActivity.this.getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImagefile();
-            } catch (IOException exc) {
-                exc.printStackTrace();
-            }
-
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
+            File photoFile = createImageFile();
             if (photoFile != null) {
-                 Uri photoURI = FileProvider.getUriForFile(this,
-                                                        "com.doandstevensen.fileprovider",
-                                                        photoFile);
-                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePicture, Constants.REQUEST_IMAGE_CAPTURE);
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.doandstevensen.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
             }
         }
     }
 
-    private File createImagefile() throws IOException {
+    private File createImageFile() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "PNG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".png",
-                storageDir
-        );
+        File image = null;
+        try {
+            image = File.createTempFile(
+                    imageFileName,
+                    ".png",
+                    storageDir
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;

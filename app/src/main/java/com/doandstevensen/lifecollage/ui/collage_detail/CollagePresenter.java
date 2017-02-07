@@ -42,6 +42,15 @@ public class CollagePresenter implements CollageContract.Presenter {
         RealmList<Picture> pictures = mCollage.getPictures();
         mView.setupRecyclerViewAdapter(pictures);
 
+        int emptyView;
+        if (pictures.size() == 0) {
+            emptyView = View.VISIBLE;
+        } else {
+            emptyView = View.GONE;
+        }
+
+        mView.setEmptyViewVisibility(emptyView);
+
         String title = mCollage.getName();
         int visibility;
         boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
