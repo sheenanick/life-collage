@@ -56,7 +56,7 @@ public class CollageListActivity extends BaseActivity
 
         ButterKnife.bind(this);
 
-        mPresenter = new CollageListPresenter(this, this);
+        mPresenter = new CollageListPresenter(this);
         mCurrentUser = RealmUserManager.getCurrentUserId();
 
         String uid = getIntent().getStringExtra("uid");

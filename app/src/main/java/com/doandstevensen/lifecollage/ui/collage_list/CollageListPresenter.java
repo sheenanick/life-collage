@@ -1,6 +1,5 @@
 package com.doandstevensen.lifecollage.ui.collage_list;
 
-import android.content.Context;
 import android.view.View;
 
 import com.doandstevensen.lifecollage.data.model.Collage;
@@ -17,13 +16,11 @@ import io.realm.RealmResults;
 
 public class CollageListPresenter implements CollageListContract.Presenter {
     private CollageListContract.MvpView mView;
-    private Context mContext;
     private Realm mRealm;
     private User mUser;
 
-    public CollageListPresenter(CollageListContract.MvpView view, Context context) {
+    public CollageListPresenter(CollageListContract.MvpView view) {
         mView = view;
-        mContext = context;
         mRealm = Realm.getDefaultInstance();
     }
 
@@ -61,7 +58,6 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     @Override
     public void detach() {
         mView = null;
-        mContext = null;
         mUser = null;
         if (mRealm != null) {
             mRealm.close();
