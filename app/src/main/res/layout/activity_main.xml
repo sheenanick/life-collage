@@ -13,6 +13,7 @@
         android:numColumns="3"/>
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/gridView"
@@ -48,6 +49,9 @@
             android:drawableLeft="@drawable/ic_search_black_24dp"
             android:drawableStart="@drawable/ic_search_black_24dp"
             android:hint="@string/search_for_users_hint"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
             android:textSize="18sp"/>
 
     </LinearLayout>
