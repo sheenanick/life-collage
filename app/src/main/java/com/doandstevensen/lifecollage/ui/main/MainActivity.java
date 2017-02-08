@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -111,8 +112,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
     @Override
     public void onUserClick(String uuid) {
         clearSearchView();
-        Intent intent = new Intent(this, CollageActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Intent intent = new Intent(this, CollageListActivity.class);
         intent.putExtra("uid", uuid);
         startActivity(intent);
     }
