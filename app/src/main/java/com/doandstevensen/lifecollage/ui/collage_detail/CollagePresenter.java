@@ -82,6 +82,7 @@ public class CollagePresenter implements CollageContract.Presenter {
                 mCollage.addPicture(pic);
             }
         });
+        mView.setEmptyViewVisibility(View.GONE);
     }
 
     @Override
