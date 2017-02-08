@@ -134,6 +134,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
     @Override
     public void navigateToCollageList(String uid) {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("uid", uid);
         startActivity(intent);
     }
