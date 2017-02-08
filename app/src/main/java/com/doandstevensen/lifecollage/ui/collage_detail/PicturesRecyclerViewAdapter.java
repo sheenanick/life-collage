@@ -24,10 +24,12 @@ public class PicturesRecyclerViewAdapter extends
         RealmRecyclerViewAdapter<Picture, PicturesRecyclerViewAdapter.MyViewHolder> {
 
     private final Context mContext;
+    private OrderedRealmCollection<Picture> mPictures;
 
     public PicturesRecyclerViewAdapter(Context context, OrderedRealmCollection<Picture> data) {
         super(context, data, true);
         mContext = context;
+        mPictures = data;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class PicturesRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Picture photo = getData().get(position);
+        Picture photo = mPictures.get(position);
         final String url = photo.getPath();
 
         Picasso.Builder builder = new Picasso.Builder(mContext);
