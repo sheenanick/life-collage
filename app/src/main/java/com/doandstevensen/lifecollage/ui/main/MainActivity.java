@@ -44,7 +44,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
 
         String currentUserId = RealmUserManager.getCurrentUserId();
         if (currentUserId != null) {
-            navigateToCollage(currentUserId);
+            navigateToCollageList(currentUserId);
         }
 
     }
@@ -54,8 +54,10 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                String uid = featuredUsers.get(position).getUid();
-                navigateToCollage(uid);
+                User user = featuredUsers.get(position);
+                String uid = user.getUid();
+                String collageName = user.getCollages().get(0).getName();
+                navigateToCollage(uid, collageName);
             }
         });
     }
@@ -70,9 +72,15 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
         autoCompleteTextView.setText("");
     }
 
+    private void navigateToCollage(String uid, String name) {
+        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("uid", uid);
+        startActivity(intent);
+    }
 
     @Override
-    public void navigateToCollage(String uid) {
+    public void navigateToCollageList(String uid) {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         intent.putExtra("uid", uid);
         startActivity(intent);
@@ -104,6 +112,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
     public void onUserClick(String uuid) {
         clearSearchView();
         Intent intent = new Intent(this, CollageActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("uid", uuid);
         startActivity(intent);
     }

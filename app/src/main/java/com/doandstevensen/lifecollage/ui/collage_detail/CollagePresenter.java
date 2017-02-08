@@ -27,6 +27,8 @@ public class CollagePresenter implements CollageContract.Presenter {
     private Context mContext;
     private Realm mRealm;
     private Collage mCollage;
+    private String mUid;
+    private String mName;
 
     public CollagePresenter(CollageContract.MvpView view, Context context) {
         mView = view;
@@ -36,6 +38,9 @@ public class CollagePresenter implements CollageContract.Presenter {
 
     @Override
     public void loadCollage(String uid, String name) {
+        mUid = uid;
+        mName = name;
+
         User user = mRealm.where(User.class).equalTo("uid", uid).findFirst();
         mCollage =  mRealm.where(Collage.class).equalTo("userId", uid).equalTo("name", name).findFirst();
 

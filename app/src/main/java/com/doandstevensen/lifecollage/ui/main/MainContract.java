@@ -22,7 +22,7 @@ public interface MainContract {
     interface MvpView extends BaseMvpView {
         void setupGridViewAdapter(ArrayList<User> featuredUsers);
         void setupSearchAdapter(RealmResults<User> users);
-        void navigateToCollage(String uid);
+        void navigateToCollageList(String uid);
         void navigateToSignUp();
         void navigateToLogIn();
     }

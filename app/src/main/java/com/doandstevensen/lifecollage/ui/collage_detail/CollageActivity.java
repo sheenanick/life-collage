@@ -9,9 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
@@ -29,8 +27,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.RealmList;
 
-import static android.os.Environment.getExternalStoragePublicDirectory;
-
 public class CollageActivity extends BaseActivity implements CollageContract.MvpView {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -41,7 +37,6 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
 
     private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
-    private Intent mPictureIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
