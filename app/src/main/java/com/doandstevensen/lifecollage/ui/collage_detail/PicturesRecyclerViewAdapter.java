@@ -1,7 +1,9 @@
 package com.doandstevensen.lifecollage.ui.collage_detail;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +23,11 @@ import io.realm.RealmRecyclerViewAdapter;
 public class PicturesRecyclerViewAdapter extends
         RealmRecyclerViewAdapter<Picture, PicturesRecyclerViewAdapter.MyViewHolder> {
 
-    private final Context context;
+    private final Context mContext;
 
     public PicturesRecyclerViewAdapter(Context context, OrderedRealmCollection<Picture> data) {
         super(context, data, true);
-        this.context = context;
+        mContext = context;
     }
 
     @Override
@@ -38,8 +40,17 @@ public class PicturesRecyclerViewAdapter extends
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Picture photo = getData().get(position);
-        String url = photo.getPath();
-        Picasso.with(context).load(url).into(holder.imageView);
+        final String url = photo.getPath();
+
+        Picasso.Builder builder = new Picasso.Builder(mContext);
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                Log.d("Picasso", url);
+                exception.printStackTrace();
+            }
+        });
+        builder.build().load(url).into(holder.imageView);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
