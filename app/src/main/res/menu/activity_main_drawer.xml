@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_collage"
+            android:icon="@drawable/ic_photo_library_black_24dp"
+            android:title="@string/my_collage_text" />
+        <item
+            android:id="@+id/nav_pass"
+            android:icon="@drawable/ic_send_black_24dp"
+            android:title="@string/pass_text" />
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/account_text" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info_black_24dp"
+            android:title="@string/about_text" />
+        <item
+            android:id="@+id/nav_logout"
+            android:title="@string/logout_text" />
+    </group>
+</menu>
