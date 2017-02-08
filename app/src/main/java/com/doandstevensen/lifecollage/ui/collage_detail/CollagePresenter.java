@@ -27,8 +27,6 @@ public class CollagePresenter implements CollageContract.Presenter {
     private Context mContext;
     private Realm mRealm;
     private Collage mCollage;
-    private String mUid;
-    private String mName;
 
     public CollagePresenter(CollageContract.MvpView view, Context context) {
         mView = view;
@@ -38,27 +36,13 @@ public class CollagePresenter implements CollageContract.Presenter {
 
     @Override
     public void loadCollage(String uid, String name) {
-        mUid = uid;
-        mName = name;
-
         User user = mRealm.where(User.class).equalTo("uid", uid).findFirst();
         mCollage =  mRealm.where(Collage.class).equalTo("userId", uid).equalTo("name", name).findFirst();
 
         RealmList<Picture> pictures = mCollage.getPictures();
-        mView.setupRecyclerViewAdapter(pictures);
-
-        int emptyView;
-        if (pictures.size() == 0) {
-            emptyView = View.VISIBLE;
-        } else {
-            emptyView = View.GONE;
-        }
-
-        mView.setEmptyViewVisibility(emptyView);
-
+        boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
         String title = mCollage.getName();
         int visibility;
-        boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
 
         if (sameUser) {
             visibility = View.VISIBLE;
@@ -67,6 +51,11 @@ public class CollagePresenter implements CollageContract.Presenter {
             title = title + " (" + user.getUsername() + ")";
         }
 
+        if (pictures.size() != 0) {
+            mView.setEmptyViewVisibility(View.GONE);
+        }
+
+        mView.setupRecyclerViewAdapter(pictures);
         mView.setToolbarTitle(title);
         mView.setFabVisibility(visibility);
     }
@@ -87,6 +76,7 @@ public class CollagePresenter implements CollageContract.Presenter {
                 mCollage.addPicture(pic);
             }
         });
+
         mView.setEmptyViewVisibility(View.GONE);
     }
 
