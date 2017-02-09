@@ -1,11 +1,10 @@
 package com.doandstevensen.lifecollage.ui.signup;
 
 import android.content.Context;
-import android.widget.Toast;
 
-import com.doandstevensen.lifecollage.data.model.ApplicationUser;
+import com.doandstevensen.lifecollage.data.model.ApplicationToken;
+import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
-import com.doandstevensen.lifecollage.data.model.SignUpResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
@@ -35,7 +34,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     }
 
     @Override
-    public void signUp(String firstName, String lastName, String email, String username, String password) {
+    public void signUp(String firstName, String lastName, final String email, String username, final String password) {
         mView.displayLoadingAnimation();
         SignUpRequest request = new SignUpRequest(firstName, lastName, email, username, password);
         mSubscription = mDataManager.signUp(request)
@@ -47,7 +46,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                         mSubscription = null;
                     }
                 })
-                .subscribe(new Subscriber<SignUpResponse>() {
+                .subscribe(new Subscriber<LogInResponse>() {
                     @Override
                     public void onCompleted() {
 
@@ -55,23 +54,53 @@ public class SignUpPresenter implements SignUpContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                        mView.showSignUpError(e.getMessage());
+                        mView.hideLoadingAnimation();
+                    }
+
+                    @Override
+                    public void onNext(LogInResponse logInResponse) {
+                        logIn(email, password);
+                    }
+                });
+    }
+
+    public void logIn(String email, String password) {
+        mDataManager.logIn(email, password)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
+                .subscribe(new Subscriber<LogInResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
                         e.printStackTrace();
                         mView.hideLoadingAnimation();
                     }
 
                     @Override
-                    public void onNext(SignUpResponse signUpResponse) {
-                        Toast.makeText(mContext, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                    public void onNext(LogInResponse logInResponse) {
+                        storeData(logInResponse.getToken(), logInResponse.getId());
                         mView.hideLoadingAnimation();
-                        storeData(signUpResponse.getUser());
+                        mView.navigateToMain();
                     }
                 });
     }
 
-    public void storeData(ApplicationUser user) {
+    public void storeData(ApplicationToken token, int userId) {
         UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
-        helper.storeUserData(mContext, user);
+        helper.storeUserToken(mContext, token);
+        helper.storeUserData(mContext, userId);
     }
 
     @Override

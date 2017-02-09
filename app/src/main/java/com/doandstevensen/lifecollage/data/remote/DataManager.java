@@ -3,7 +3,7 @@ package com.doandstevensen.lifecollage.data.remote;
 import android.content.Context;
 
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
-import com.doandstevensen.lifecollage.data.model.SignUpResponse;
+import com.doandstevensen.lifecollage.data.model.LogInResponse;
 
 import rx.Observable;
 
@@ -21,7 +21,11 @@ public class DataManager {
         mContext = context;
     }
 
-    public Observable<SignUpResponse> signUp(SignUpRequest request) {
-        return mApiService.SignUp(request);
+    public Observable<LogInResponse> signUp(SignUpRequest request) {
+        return mApiService.signUp(request);
+    }
+
+    public Observable<LogInResponse> logIn(String email, String password) {
+        return mApiService.logIn(email, password);
     }
 }

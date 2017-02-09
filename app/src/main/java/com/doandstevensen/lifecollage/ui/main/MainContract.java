@@ -16,13 +16,14 @@ public interface MainContract {
     interface Presenter extends BasePresenter {
         void getGridViewUsers();
         void searchUsers();
+        void load();
 
     }
 
     interface MvpView extends BaseMvpView {
         void setupGridViewAdapter(ArrayList<User> featuredUsers);
         void setupSearchAdapter(RealmResults<User> users);
-        void navigateToCollageList(String uid);
+        void navigateToCollageList();
         void navigateToSignUp();
         void navigateToLogIn();
     }

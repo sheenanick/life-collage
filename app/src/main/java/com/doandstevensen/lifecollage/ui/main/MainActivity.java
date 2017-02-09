@@ -59,16 +59,19 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
 
         ButterKnife.bind(this);
 
-        mPresenter = new MainPresenter(this);
-        mPresenter.getGridViewUsers();
-        mPresenter.searchUsers();
+        mPresenter = new MainPresenter(this, this);
+        mPresenter.load();
+//        mPresenter.getGridViewUsers();
+//        mPresenter.searchUsers();
 
-        setupAutoCompleteTextViewListeners();
+//        setupAutoCompleteTextViewListeners();
 
-        String currentUserId = RealmUserManager.getCurrentUserId();
-        if (currentUserId != null) {
-            navigateToCollageList(currentUserId);
-        }
+//        String currentUserId = RealmUserManager.getCurrentUserId();
+//        if (currentUserId != null) {
+//            navigateToCollageList(currentUserId);
+//        }
+
+
     }
 
     public void setupGridViewAdapter(final ArrayList<User> featuredUsers) {
@@ -132,10 +135,9 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
     }
 
     @Override
-    public void navigateToCollageList(String uid) {
+    public void navigateToCollageList() {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("uid", uid);
         startActivity(intent);
     }
 
