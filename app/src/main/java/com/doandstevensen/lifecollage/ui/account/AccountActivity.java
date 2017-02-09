@@ -3,13 +3,12 @@ package com.doandstevensen.lifecollage.ui.account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
+import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 
 import butterknife.BindView;

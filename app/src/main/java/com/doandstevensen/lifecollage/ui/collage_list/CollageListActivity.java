@@ -1,14 +1,11 @@
-package com.doandstevensen.lifecollage.ui.collage;
+package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.FileProvider;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,23 +15,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 
-import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.Collage;
-import com.doandstevensen.lifecollage.data.model.Picture;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
+import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,10 +31,8 @@ import butterknife.OnClick;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-public class CollageActivity extends BaseActivity
-        implements CollageContract.MvpView ,NavigationView.OnNavigationItemSelectedListener {
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+public class CollageListActivity extends BaseActivity
+        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, NewCollageDialogFragment.NewCollageDialogListener{
     @BindView(R.id.autoCompleteTextView)
     AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.drawer_layout)
@@ -54,31 +41,30 @@ public class CollageActivity extends BaseActivity
     NavigationView navigationView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.titleTextView)
-    TextView titleTextView;
 
-    private CollagePresenter mPresenter;
-    private String mCurrentPhotoPath;
     private String mCurrentCollageId;
     private String mCurrentUser;
+    private CollageListPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_collage);
+        setContentView(R.layout.activity_collage_list);
+
         ButterKnife.bind(this);
 
+        mPresenter = new CollageListPresenter(this);
         mCurrentUser = RealmUserManager.getCurrentUserId();
-
-        initToolbar();
-        initDrawer();
-
-        mPresenter = new CollagePresenter(this, getBaseContext());
 
         String uid = getIntent().getStringExtra("uid");
         populateRecyclerView(uid);
+
+        initToolbar();
+        initDrawer();
 
         mPresenter.searchUsers();
     }
@@ -88,7 +74,7 @@ public class CollageActivity extends BaseActivity
     }
 
     public void setToolbarTitle(String title) {
-        titleTextView.setText(title);
+        toolbar.setTitle(title);
     }
 
     private void initDrawer() {
@@ -106,84 +92,73 @@ public class CollageActivity extends BaseActivity
         Menu drawerMenu = navigationView.getMenu();
         drawerMenu.findItem(R.id.nav_collage).setChecked(checked);
         drawerMenu.findItem(R.id.nav_account).setChecked(false);
-
     }
 
-    public void setFabVisibility(int visibility) {
-        fab.setVisibility(visibility);
-    }
-
-    public void populateRecyclerView(String uid) {
-        mCurrentCollageId = uid;
-        mPresenter.loadCollage(uid);
-    }
-
-    public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {
-        PicturesRecyclerViewAdapter recyclerViewAdapter = new PicturesRecyclerViewAdapter(this, pictures);
+    @Override
+    public void setupRecyclerViewAdapter(RealmList<Collage> collages) {
+        CollageListRecyclerViewAdapter recyclerViewAdapter = new CollageListRecyclerViewAdapter(this, collages);
+        recyclerViewAdapter.setClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setHasFixedSize(true);
     }
 
+    public void populateRecyclerView(String uid) {
+        mCurrentCollageId = uid;
+        mPresenter.loadCollageList(uid);
+    }
+
     public void setupSearchAdapter(RealmResults<User> users) {
         CollageSearchAdapter adapter = new CollageSearchAdapter(this, users);
         autoCompleteTextView.setAdapter(adapter);
+        adapter.setClickListener(this);
     }
 
-    public void clearSearchView() {
+    private void clearSearchView() {
         autoCompleteTextView.setText("");
     }
 
+    @Override
+    public void onSearchClick(String uid) {
+        clearSearchView();
+        populateRecyclerView(uid);
+    }
+
+    @Override
+    public void onCollageClick(String collageName) {
+        navigateToCollage(collageName);
+    }
+
+    @Override
+    public void navigateToCollage(String collageName) {
+        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        intent.putExtra("name", collageName);
+        intent.putExtra("uid", mCurrentCollageId);
+        startActivity(intent);
+    }
+
+    @Override
+    public void setFabVisibility(int visibility) {
+        fab.setVisibility(visibility);
+    }
+
     @OnClick(R.id.fab)
-    public void launchCamera() {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePicture.resolveActivity(CollageActivity.this.getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImagefile();
-            } catch (IOException exc) {
-                exc.printStackTrace();
-            }
-
-            if (photoFile != null) {
-                 Uri photoURI = FileProvider.getUriForFile(this,
-                                                        "com.doandstevensen.fileprovider",
-                                                        photoFile);
-                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePicture, Constants.REQUEST_IMAGE_CAPTURE);
-            }
-        }
+    public void addNewCollage() {
+        launchAlertDialog();
     }
 
-    private File createImagefile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        String imageFileName = "PNG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".png",
-                storageDir
-        );
-
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+    private void launchAlertDialog() {
+        NewCollageDialogFragment dialogFragment = new NewCollageDialogFragment();
+        dialogFragment.show(getSupportFragmentManager(), "newCollage");
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
-            File f = new File(mCurrentPhotoPath);
-            mPresenter.uploadFile(f);
-        }
+    public void onDialogPositiveClick(DialogFragment dialog, String name) {
+        mPresenter.createNewCollage(name);
     }
 
     @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+    public void onDialogNegativeClick(DialogFragment dialog) {
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -209,8 +184,17 @@ public class CollageActivity extends BaseActivity
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void navigateToAccount() {
-        Intent intent = new Intent(CollageActivity.this, AccountActivity.class);
+        Intent intent = new Intent(getBaseContext(), AccountActivity.class);
         startActivity(intent);
     }
 
@@ -222,6 +206,12 @@ public class CollageActivity extends BaseActivity
     }
 
     @Override
+    public void onRestart() {
+        setNavViewCheckedItem(mCurrentCollageId.equals(mCurrentUser));
+        super.onStart();
+    }
+
+    @Override
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
@@ -229,9 +219,4 @@ public class CollageActivity extends BaseActivity
         super.onDestroy();
     }
 
-    @Override
-    public void onStart() {
-        setNavViewCheckedItem(mCurrentCollageId.equals(mCurrentUser));
-        super.onStart();
-    }
 }
