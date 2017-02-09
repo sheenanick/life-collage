@@ -6,7 +6,7 @@ import android.widget.EditText;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
+import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
 
@@ -69,7 +69,7 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
 
     @Override
     public void navigateToMain(String uid) {
-        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         intent.putExtra("uid", uid);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

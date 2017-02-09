@@ -41,15 +41,17 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     }
 
     private void createUserObject(final SyncUser currentUser, final String username) {
+        final String uid = currentUser.getIdentity();
         mRealm = Realm.getDefaultInstance();
         mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm){
-                User user = realm.createObject(User.class, currentUser.getIdentity());
+                User user = realm.createObject(User.class, uid);
                 user.setUsername(username);
 
                 Collage collage = new Collage();
-                collage.setName("Test Collage");
+                collage.setName("My First Collage");
+                collage.setUid(uid);
 
                 Picture picture = new Picture("https://source.unsplash.com/random");
                 collage.addPicture(picture);
