@@ -57,16 +57,16 @@ public class CollageListActivity extends BaseActivity
 
         ButterKnife.bind(this);
 
-        mPresenter = new CollageListPresenter(this);
-        mCurrentUser = RealmUserManager.getCurrentUserId();
-
-        String uid = getIntent().getStringExtra("uid");
-        populateRecyclerView(uid);
+//        mPresenter = new CollageListPresenter(this);
+//        mCurrentUser = RealmUserManager.getCurrentUserId();
+//
+//        String uid = getIntent().getStringExtra("uid");
+//        populateRecyclerView(uid);
 
         initToolbar();
         initDrawer();
 
-        mPresenter.searchUsers();
+//        mPresenter.searchUsers();
     }
 
     private void initToolbar() {
@@ -78,14 +78,12 @@ public class CollageListActivity extends BaseActivity
     }
 
     private void initDrawer() {
-        if (mCurrentUser != null) {
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawerLayout.addDrawerListener(toggle);
-            toggle.syncState();
-            navigationView.setCheckedItem(R.id.nav_collage);
-            navigationView.setNavigationItemSelectedListener(this);
-        }
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setCheckedItem(R.id.nav_collage);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     public void setNavViewCheckedItem(boolean checked) {
@@ -205,11 +203,11 @@ public class CollageListActivity extends BaseActivity
         startActivity(intent);
     }
 
-    @Override
-    public void onRestart() {
-        setNavViewCheckedItem(mCurrentCollageId.equals(mCurrentUser));
-        super.onStart();
-    }
+//    @Override
+//    public void onRestart() {
+//        setNavViewCheckedItem(mCurrentCollageId.equals(mCurrentUser));
+//        super.onStart();
+//    }
 
     @Override
     public void onDestroy() {

@@ -16,8 +16,14 @@ import butterknife.OnClick;
 import static android.text.TextUtils.isEmpty;
 
 public class SignUpActivity extends BaseActivity implements SignUpContract.MvpView {
+    @BindView(R.id.firstName)
+    EditText firstNameView;
+    @BindView(R.id.lastName)
+    EditText lastNameView;
     @BindView(R.id.username)
     EditText usernameView;
+    @BindView(R.id.email)
+    EditText emailView;
     @BindView(R.id.password)
     EditText passwordView;
     @BindView(R.id.confirmPassword)
@@ -32,7 +38,7 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
 
         ButterKnife.bind(this);
 
-        mPresenter = new SignUpPresenter(this);
+        mPresenter = new SignUpPresenter(this, this);
     }
 
     @OnClick(R.id.signUp)
@@ -41,6 +47,9 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
         passwordView.setError(null);
         passwordConfirmationView.setError(null);
 
+        String firstName = firstNameView.getText().toString();
+        String lastName = lastNameView.getText().toString();
+        String email = emailView.getText().toString();
         String username = usernameView.getText().toString();
         String password = passwordView.getText().toString();
         String passwordConfirmation = passwordConfirmationView.getText().toString();
@@ -63,7 +72,7 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
             validated = false;
         }
         if (validated) {
-            mPresenter.signUp(username, password);
+            mPresenter.signUp(firstName, lastName, email, username, password);
         }
     }
 
@@ -72,9 +81,8 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
     }
 
     @Override
-    public void navigateToMain(String uid) {
+    public void navigateToMain() {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
-        intent.putExtra("uid", uid);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

@@ -1,8 +1,10 @@
 package com.doandstevensen.lifecollage.ui.main;
 
-import android.util.Log;
+import android.content.Context;
 
+import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
@@ -16,10 +18,12 @@ import io.realm.RealmResults;
 public class MainPresenter implements MainContract.Presenter {
     private Realm mRealm;
     private MainContract.MvpView mView;
+    private Context mContext;
 
-    public MainPresenter(MainContract.MvpView view) {
+    public MainPresenter(MainContract.MvpView view, Context context) {
         mView = view;
         mRealm = Realm.getDefaultInstance();
+        mContext = context;
     }
 
     @Override
@@ -31,7 +35,6 @@ public class MainPresenter implements MainContract.Presenter {
             size = 6;
         }
         for (int i = 0 ; i < size ; i++) {
-            Log.d("ADD USER", users.get(i).getUsername());
             gridUsers.add(users.get(i));
         }
         mView.setupGridViewAdapter(gridUsers);
@@ -41,6 +44,15 @@ public class MainPresenter implements MainContract.Presenter {
     public void searchUsers() {
         RealmResults<User> users = mRealm.where(User.class).findAll();
         mView.setupSearchAdapter(users);
+    }
+
+    @Override
+    public void load() {
+        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
+        ApplicationToken token = helper.getUserToken(mContext);
+        if (token != null && token.getAccessToken() != null) {
+            mView.navigateToCollageList();
+        }
     }
 
     @Override
