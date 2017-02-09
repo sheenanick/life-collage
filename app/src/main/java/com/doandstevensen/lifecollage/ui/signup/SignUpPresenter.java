@@ -1,70 +1,85 @@
 package com.doandstevensen.lifecollage.ui.signup;
 
-import com.doandstevensen.lifecollage.ThisApplication;
-import com.doandstevensen.lifecollage.data.model.Collage;
-import com.doandstevensen.lifecollage.data.model.Picture;
-import com.doandstevensen.lifecollage.data.model.User;
+import android.content.Context;
+import android.widget.Toast;
 
-import io.realm.ObjectServerError;
-import io.realm.Realm;
-import io.realm.SyncCredentials;
-import io.realm.SyncUser;
+import com.doandstevensen.lifecollage.data.model.ApplicationUser;
+import com.doandstevensen.lifecollage.data.model.SignUpRequest;
+import com.doandstevensen.lifecollage.data.model.SignUpResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
+import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
+
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Sheena on 2/2/17.
  */
 
 public class SignUpPresenter implements SignUpContract.Presenter {
-    private SignUpContract.MvpView mSignUpMvpView;
-    private Realm mRealm;
+    private SignUpContract.MvpView mView;
+    private Context mContext;
+    private DataManager mDataManager;
+    private Subscription mSubscription;
+    private LifeCollageApiService mService;
 
-    public SignUpPresenter(SignUpContract.MvpView view) {
-        mSignUpMvpView = view;
+    public SignUpPresenter(SignUpContract.MvpView view, Context context) {
+        mView = view;
+        mContext = context;
+        mService = LifeCollageApiService.ServiceCreator.newService();
+        mDataManager = new DataManager(mService, mContext);
     }
 
     @Override
-    public void signUp(final String username, String password) {
-        mSignUpMvpView.displayLoadingAnimation();
-        SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), ThisApplication.AUTH_URL, new SyncUser.Callback() {
-            @Override
-            public void onSuccess(SyncUser user) {
-                mSignUpMvpView.hideLoadingAnimation();
-                createUserObject(user, username);
-                mSignUpMvpView.navigateToMain(user.getIdentity());
-            }
-            @Override
-            public void onError(ObjectServerError error) {
-                mSignUpMvpView.hideLoadingAnimation();
-                mSignUpMvpView.showSignUpError("Username already exists");
-            }
-        });
+    public void signUp(String firstName, String lastName, String email, String username, String password) {
+        mView.displayLoadingAnimation();
+        SignUpRequest request = new SignUpRequest(firstName, lastName, email, username, password);
+        mSubscription = mDataManager.signUp(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
+                .subscribe(new Subscriber<SignUpResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                        mView.hideLoadingAnimation();
+                    }
+
+                    @Override
+                    public void onNext(SignUpResponse signUpResponse) {
+                        Toast.makeText(mContext, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                        mView.hideLoadingAnimation();
+                        storeData(signUpResponse.getUser());
+                    }
+                });
     }
 
-    private void createUserObject(final SyncUser currentUser, final String username) {
-        mRealm = Realm.getDefaultInstance();
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm){
-                User user = realm.createObject(User.class, currentUser.getIdentity());
-                user.setUsername(username);
-
-                Collage collage = new Collage();
-                collage.setName("Test Collage");
-
-                Picture picture = new Picture("https://source.unsplash.com/random");
-                collage.addPicture(picture);
-                collage.addPicture(picture);
-
-                user.addCollage(collage);
-            }
-        });
+    public void storeData(ApplicationUser user) {
+        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
+        helper.storeUserData(mContext, user);
     }
 
     @Override
     public void detach() {
-        mSignUpMvpView = null;
-        if (mRealm != null) {
-            mRealm.close();
-        }
+        mView = null;
+        mContext = null;
+        mService = null;
+        mDataManager = null;
+        mSubscription = null;
     }
 }

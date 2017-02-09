@@ -9,7 +9,7 @@ import com.doandstevensen.lifecollage.ui.base.BasePresenter;
 
 public interface SignUpContract {
     interface Presenter extends BasePresenter {
-        void signUp(String username, String password);
+        void signUp(String lastName, String firstName, String username, String email, String password);
     }
 
     interface MvpView extends BaseMvpView {

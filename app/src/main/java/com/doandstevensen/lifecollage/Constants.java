@@ -12,4 +12,8 @@ public class Constants {
 
     public static final int REQUEST_IMAGE_CAPTURE = 111;
 
+    public static final String PREFS_NAME = "USER_DATA";
+    public static final String USER_DATA = "user_data";
+    public static final String USER_TOKEN = "user_token";
+
 }
