@@ -1,0 +1,81 @@
+package com.doandstevensen.lifecollage.ui.collage_list;
+
+import android.view.View;
+
+import com.doandstevensen.lifecollage.data.model.Collage;
+import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.util.RealmUserManager;
+
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
+
+/**
+ * Created by Sheena on 2/7/17.
+ */
+
+public class CollageListPresenter implements CollageListContract.Presenter {
+    private CollageListContract.MvpView mView;
+    private Realm mRealm;
+    private User mUser;
+
+    public CollageListPresenter(CollageListContract.MvpView view) {
+        mView = view;
+        mRealm = Realm.getDefaultInstance();
+    }
+
+    @Override
+    public void searchUsers() {
+        RealmResults<User> users = mRealm.where(User.class).findAll();
+        mView.setupSearchAdapter(users);
+    }
+
+    @Override
+    public void loadCollageList(String uid) {
+        mUser = mRealm.where(User.class).equalTo("uid", uid).findFirst();
+        if (mUser != null && mUser.getCollages().size() != 0) {
+            RealmList<Collage> collages = mUser.getCollages();
+            mView.setupRecyclerViewAdapter(collages);
+
+            String title;
+            int visibility;
+            boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
+
+            if (sameUser) {
+                title = "My Collages";
+                visibility = View.VISIBLE;
+            } else {
+                title = mUser.getUsername() + "'s Collages";
+                visibility = View.GONE;
+            }
+
+            mView.setToolbarTitle(title);
+            mView.setFabVisibility(visibility);
+            mView.setNavViewCheckedItem(sameUser);
+        }
+    }
+
+    @Override
+    public void createNewCollage(final String name) {
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Collage collage = realm.createObject(Collage.class);
+                collage.setName(name);
+                collage.setUid(mUser.getUid());
+                mUser.getCollages().add(collage);
+            }
+        });
+        mView.navigateToCollage(name);
+    }
+
+    @Override
+    public void detach() {
+        mView = null;
+        mUser = null;
+        if (mRealm != null) {
+            mRealm.close();
+        }
+    }
+
+}

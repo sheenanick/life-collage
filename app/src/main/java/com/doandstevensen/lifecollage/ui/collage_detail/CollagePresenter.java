@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.collage;
+package com.doandstevensen.lifecollage.ui.collage_detail;
 
 import android.content.Context;
 import android.view.View;
@@ -7,6 +7,7 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.doandstevensen.lifecollage.Constants;
+import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.Picture;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.util.RealmUserManager;
@@ -16,7 +17,6 @@ import java.io.File;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by Sheena on 2/2/17.
@@ -26,7 +26,7 @@ public class CollagePresenter implements CollageContract.Presenter {
     private CollageContract.MvpView mView;
     private Context mContext;
     private Realm mRealm;
-    private User mUser;
+    private Collage mCollage;
 
     public CollagePresenter(CollageContract.MvpView view, Context context) {
         mView = view;
@@ -35,34 +35,29 @@ public class CollagePresenter implements CollageContract.Presenter {
     }
 
     @Override
-    public void loadCollage(String uid) {
-        mUser = mRealm.where(User.class).equalTo("uid", uid).findFirst();
-        if (mUser != null && mUser.getCollages().size() != 0) {
-            RealmList<Picture> pictures = mUser.getCollages().get(0).getPictures();
-            mView.setupRecyclerViewAdapter(pictures);
+    public void loadCollage(String uid, String name) {
+        User user = mRealm.where(User.class).equalTo("uid", uid).findFirst();
+        mCollage =  mRealm.where(Collage.class).equalTo("userId", uid).equalTo("name", name).findFirst();
 
-            String title;
-            int visibility;
-            boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
+        RealmList<Picture> pictures = mCollage.getPictures();
+        boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
+        String title = mCollage.getName();
+        int visibility;
 
-            if (sameUser) {
-                title = "My Collage";
-                visibility = View.VISIBLE;
-            } else {
-                title = mUser.getUsername() + "'s Collage";
-                visibility = View.GONE;
-            }
-
-            mView.setToolbarTitle(title);
-            mView.setNavViewCheckedItem(sameUser);
-            mView.setFabVisibility(visibility);
+        if (sameUser) {
+            visibility = View.VISIBLE;
+        } else {
+            visibility = View.GONE;
+            title = title + " (" + user.getUsername() + ")";
         }
-    }
 
-    @Override
-    public void searchUsers() {
-        RealmResults<User> users = mRealm.where(User.class).findAll();
-        mView.setupSearchAdapter(users);
+        if (pictures.size() != 0) {
+            mView.setEmptyViewVisibility(View.GONE);
+        }
+
+        mView.setupRecyclerViewAdapter(pictures);
+        mView.setToolbarTitle(title);
+        mView.setFabVisibility(visibility);
     }
 
     public void uploadFile(final File file) {
@@ -78,16 +73,17 @@ public class CollagePresenter implements CollageContract.Presenter {
             Picture pic = new Picture(picPath);
             @Override
             public void execute(Realm realm) {
-                mUser.getCollages().get(0).addPicture(pic);
+                mCollage.addPicture(pic);
             }
         });
+
+        mView.setEmptyViewVisibility(View.GONE);
     }
 
     @Override
     public void detach() {
         mView = null;
         mContext = null;
-        mUser = null;
         if (mRealm != null) {
             mRealm.close();
         }

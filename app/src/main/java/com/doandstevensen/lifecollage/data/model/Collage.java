@@ -10,6 +10,7 @@ import io.realm.RealmObject;
 public class Collage extends RealmObject {
     private String name;
     private RealmList<Picture> pictures = new RealmList<>();
+    private String userId;
 
     public String getName() {
         return name;
@@ -27,4 +28,11 @@ public class Collage extends RealmObject {
         pictures.add(picture);
     }
 
+    public String getUid() {
+        return userId;
+    }
+
+    public void setUid(String userId) {
+        this.userId = userId;
+    }
 }
