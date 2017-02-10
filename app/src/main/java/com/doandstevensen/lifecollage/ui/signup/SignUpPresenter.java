@@ -23,8 +23,9 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     private SignUpContract.MvpView mView;
     private Context mContext;
     private DataManager mDataManager;
-    private Subscription mSubscription;
     private LifeCollageApiService mService;
+    private Subscription mSubscription;
+    private Subscription mLoginSubscription;
 
     public SignUpPresenter(SignUpContract.MvpView view, Context context) {
         mView = view;
@@ -66,14 +67,14 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                 });
     }
 
-    public void logIn(String email, String password) {
-        mDataManager.logIn(email, password)
+    private void logIn(String email, String password) {
+        mLoginSubscription = mDataManager.logIn(email, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
-                        mSubscription = null;
+                        mLoginSubscription = null;
                     }
                 })
                 .subscribe(new Subscriber<LogInResponse>() {
@@ -97,7 +98,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                 });
     }
 
-    public void storeData(ApplicationToken token, int userId) {
+    private void storeData(ApplicationToken token, int userId) {
         UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
         helper.storeUserToken(mContext, token);
         helper.storeUserData(mContext, userId);
@@ -110,5 +111,6 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         mService = null;
         mDataManager = null;
         mSubscription = null;
+        mLoginSubscription = null;
     }
 }

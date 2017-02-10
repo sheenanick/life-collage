@@ -8,7 +8,6 @@ import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
-import com.doandstevensen.lifecollage.util.RealmUserManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,7 +16,7 @@ import butterknife.OnClick;
 import static android.text.TextUtils.isEmpty;
 
 public class LogInActivity extends BaseActivity implements LogInContract.MvpView {
-    @BindView(R.id.username) EditText usernameView;
+    @BindView(R.id.email) EditText emailView;
     @BindView(R.id.password) EditText passwordView;
 
     private LogInPresenter mPresenter;
@@ -29,26 +28,21 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
         ButterKnife.bind(this);
 
         mPresenter = new LogInPresenter(this, getBaseContext());
-
-        String uid = RealmUserManager.getCurrentUserId();
-        if (uid != null) {
-            navigateToMain(uid);
-        }
     }
 
     @OnClick(R.id.logIn)
     public void attemptLogIn() {
-        usernameView.setError(null);
+        emailView.setError(null);
         passwordView.setError(null);
 
-        final String username = usernameView.getText().toString().trim();
+        final String email = emailView.getText().toString().trim();
         final String password = passwordView.getText().toString().trim();
 
-        boolean validUsername = validateInput(usernameView, username);
+        boolean validEmail = validateInput(emailView, email);
         boolean validPassword = validateInput(passwordView, password);
 
-        if (validUsername && validPassword) {
-            mPresenter.logIn(username, password);
+        if (validEmail && validPassword) {
+            mPresenter.logIn(email, password);
         }
     }
 
@@ -68,9 +62,8 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
     }
 
     @Override
-    public void navigateToMain(String uid) {
+    public void navigateToMain() {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
-        intent.putExtra("uid", uid);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

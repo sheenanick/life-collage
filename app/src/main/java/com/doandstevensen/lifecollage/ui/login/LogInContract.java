@@ -13,6 +13,6 @@ public interface LogInContract {
     }
 
     interface MvpView extends BaseMvpView {
-        void navigateToMain(String uid);
+        void navigateToMain();
     }
 }
