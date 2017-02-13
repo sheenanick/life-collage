@@ -71,7 +71,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onNext(ArrayList<CollageResponse> collages) {
                         mView.hideLoadingAnimation();
-                        mView.setupRecyclerViewAdapter(collages);
+                        mView.updateRecyclerView(collages);
                         mCollages = collages;
                     }
                 });

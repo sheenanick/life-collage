@@ -60,6 +60,7 @@ public class CollageListActivity extends BaseActivity
 
         initToolbar();
         initDrawer();
+        initRecyclerViewAdapter();
 
         mPresenter = new CollageListPresenter(this, this);
         mPresenter.loadCollageList();
@@ -88,10 +89,8 @@ public class CollageListActivity extends BaseActivity
         drawerMenu.findItem(R.id.nav_account).setChecked(false);
     }
 
-    @Override
-    public void setupRecyclerViewAdapter(ArrayList<CollageResponse> collages) {
+    private void initRecyclerViewAdapter() {
         mAdapter = new CollageListRecyclerViewAdapter(this);
-        mAdapter.setCollages(collages);
         mAdapter.setClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);

@@ -62,7 +62,11 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
 
     @Override
     public int getItemCount() {
-        return mCollages.size();
+        if (mCollages == null) {
+            return 0;
+        } else {
+            return mCollages.size();
+        }
     }
 
     public void setClickListener(CollageListRecyclerViewAdapter.ClickListener clickListener) {

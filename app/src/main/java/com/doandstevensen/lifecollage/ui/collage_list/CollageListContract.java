@@ -22,7 +22,6 @@ public interface CollageListContract {
 
     interface MvpView extends BaseMvpView {
         void setNavViewCheckedItem(boolean sameUser);
-        void setupRecyclerViewAdapter(ArrayList<CollageResponse> collages);
         void updateRecyclerView(ArrayList<CollageResponse> collages);
         void setToolbarTitle(String title);
         void setupSearchAdapter(RealmResults<User> users);
