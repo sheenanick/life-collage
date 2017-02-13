@@ -13,6 +13,7 @@ public interface LogInContract {
     }
 
     interface MvpView extends BaseMvpView {
-        void navigateToMain();
+        void navigateToCollageList();
+        void showError();
     }
 }

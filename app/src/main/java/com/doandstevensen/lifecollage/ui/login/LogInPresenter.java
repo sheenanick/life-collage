@@ -55,13 +55,14 @@ public class LogInPresenter implements Presenter {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         mView.hideLoadingAnimation();
+                        mView.showError();
                     }
 
                     @Override
                     public void onNext(LogInResponse logInResponse) {
                         storeData(logInResponse.getToken(), logInResponse.getId());
                         mView.hideLoadingAnimation();
-                        mView.navigateToMain();
+                        mView.navigateToCollageList();
                     }
                 });
     }

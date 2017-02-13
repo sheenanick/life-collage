@@ -3,6 +3,7 @@ package com.doandstevensen.lifecollage.ui.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
@@ -62,10 +63,15 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
     }
 
     @Override
-    public void navigateToMain() {
+    public void navigateToCollageList() {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void showError() {
+        Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
