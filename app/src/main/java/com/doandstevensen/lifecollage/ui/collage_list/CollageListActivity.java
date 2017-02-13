@@ -18,12 +18,14 @@ import android.widget.AutoCompleteTextView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.Collage;
+import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
-import com.doandstevensen.lifecollage.util.RealmUserManager;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,16 +59,11 @@ public class CollageListActivity extends BaseActivity
 
         ButterKnife.bind(this);
 
-//        mPresenter = new CollageListPresenter(this);
-//        mCurrentUser = RealmUserManager.getCurrentUserId();
-//
-//        String uid = getIntent().getStringExtra("uid");
-//        populateRecyclerView(uid);
-
         initToolbar();
         initDrawer();
 
-//        mPresenter.searchUsers();
+        mPresenter = new CollageListPresenter(this, this);
+        mPresenter.loadCollageList();
     }
 
     private void initToolbar() {
@@ -93,8 +90,9 @@ public class CollageListActivity extends BaseActivity
     }
 
     @Override
-    public void setupRecyclerViewAdapter(RealmList<Collage> collages) {
-        CollageListRecyclerViewAdapter recyclerViewAdapter = new CollageListRecyclerViewAdapter(this, collages);
+    public void setupRecyclerViewAdapter(ArrayList<CollageResponse> collages) {
+        CollageListRecyclerViewAdapter recyclerViewAdapter = new CollageListRecyclerViewAdapter(this);
+        recyclerViewAdapter.setCollages(collages);
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -103,7 +101,7 @@ public class CollageListActivity extends BaseActivity
 
     public void populateRecyclerView(String uid) {
         mCurrentCollageId = uid;
-        mPresenter.loadCollageList(uid);
+        mPresenter.loadCollageList();
     }
 
     public void setupSearchAdapter(RealmResults<User> users) {
@@ -197,17 +195,10 @@ public class CollageListActivity extends BaseActivity
     }
 
     private void logout() {
-        RealmUserManager.logoutActiveUser();
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
-
-//    @Override
-//    public void onRestart() {
-//        setNavViewCheckedItem(mCurrentCollageId.equals(mCurrentUser));
-//        super.onStart();
-//    }
 
     @Override
     public void onDestroy() {
