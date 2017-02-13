@@ -1,6 +1,7 @@
 package com.doandstevensen.lifecollage.ui.signup;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
@@ -10,9 +11,7 @@ import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -24,8 +23,6 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
-    private Subscription mSubscription;
-    private Subscription mLoginSubscription;
 
     public SignUpPresenter(SignUpContract.MvpView view, Context context) {
         mView = view;
@@ -38,64 +35,52 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     public void signUp(String firstName, String lastName, final String email, String username, final String password) {
         mView.displayLoadingAnimation();
         SignUpRequest request = new SignUpRequest(firstName, lastName, email, username, password);
-        mSubscription = mDataManager.signUp(request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnUnsubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mSubscription = null;
-                    }
-                })
-                .subscribe(new Subscriber<LogInResponse>() {
-                    @Override
-                    public void onCompleted() {
+        mDataManager.signUp(request)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<LogInResponse>() {
+                @Override
+                public void onCompleted() {
 
-                    }
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mView.showSignUpError(e.getMessage());
-                        mView.hideLoadingAnimation();
-                    }
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    mView.hideLoadingAnimation();
+                }
 
-                    @Override
-                    public void onNext(LogInResponse logInResponse) {
-                        logIn(email, password);
-                    }
-                });
+                @Override
+                public void onNext(LogInResponse logInResponse) {
+                    logIn(email, password);
+                }
+            });
     }
 
     private void logIn(String email, String password) {
-        mLoginSubscription = mDataManager.logIn(email, password)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnUnsubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mLoginSubscription = null;
-                    }
-                })
-                .subscribe(new Subscriber<LogInResponse>() {
-                    @Override
-                    public void onCompleted() {
+        mDataManager.logIn(email, password)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<LogInResponse>() {
+                @Override
+                public void onCompleted() {
 
-                    }
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mView.hideLoadingAnimation();
-                    }
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                    mView.hideLoadingAnimation();
+                }
 
-                    @Override
-                    public void onNext(LogInResponse logInResponse) {
-                        storeData(logInResponse.getToken(), logInResponse.getId());
-                        mView.hideLoadingAnimation();
-                        mView.navigateToMain();
-                    }
-                });
+                @Override
+                public void onNext(LogInResponse logInResponse) {
+                    storeData(logInResponse.getToken(), logInResponse.getId());
+                    mView.hideLoadingAnimation();
+                    mView.navigateToCollageList();
+                }
+            });
     }
 
     private void storeData(ApplicationToken token, int userId) {
@@ -110,7 +95,5 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         mContext = null;
         mService = null;
         mDataManager = null;
-        mSubscription = null;
-        mLoginSubscription = null;
     }
 }
