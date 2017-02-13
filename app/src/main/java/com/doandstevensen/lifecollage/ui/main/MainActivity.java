@@ -3,19 +3,16 @@ package com.doandstevensen.lifecollage.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
@@ -25,14 +22,12 @@ import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.login.LogInActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
-import com.doandstevensen.lifecollage.util.RealmUserManager;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
 import io.realm.RealmResults;
 
 public class MainActivity extends BaseActivity implements MainContract.MvpView, MainSearchAdapter.ClickListener {
@@ -60,18 +55,6 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
         ButterKnife.bind(this);
 
         mPresenter = new MainPresenter(this, this);
-        mPresenter.load();
-//        mPresenter.getGridViewUsers();
-//        mPresenter.searchUsers();
-
-//        setupAutoCompleteTextViewListeners();
-
-//        String currentUserId = RealmUserManager.getCurrentUserId();
-//        if (currentUserId != null) {
-//            navigateToCollageList(currentUserId);
-//        }
-
-
     }
 
     public void setupGridViewAdapter(final ArrayList<User> featuredUsers) {
@@ -154,8 +137,6 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
         Intent intent = new Intent(getBaseContext(), LogInActivity.class);
         startActivity(intent);
     }
-
-
 
     @Override
     public void onDestroy() {
