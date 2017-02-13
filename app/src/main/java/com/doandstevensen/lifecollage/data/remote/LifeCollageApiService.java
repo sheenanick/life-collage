@@ -8,6 +8,7 @@ import com.doandstevensen.lifecollage.data.model.UserResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -61,6 +62,7 @@ public interface LifeCollageApiService {
     class ServiceCreator {
         public static LifeCollageApiService newService() {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            httpClient.readTimeout(30, TimeUnit.SECONDS);
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(ENDPOINT)
                     .addConverterFactory(GsonConverterFactory.create())

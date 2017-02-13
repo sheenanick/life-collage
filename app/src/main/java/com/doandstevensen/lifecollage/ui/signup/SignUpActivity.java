@@ -77,7 +77,12 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
     }
 
     public void showSignUpError(String error) {
-        usernameView.setError(error);
+        if (error.contains("username")) {
+            usernameView.setError("Username already exists");
+        }
+        if (error.contains("email")) {
+            emailView.setError("Email already exists");
+        }
     }
 
     @Override

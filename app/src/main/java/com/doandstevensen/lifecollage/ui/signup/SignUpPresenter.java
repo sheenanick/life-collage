@@ -1,15 +1,20 @@
 package com.doandstevensen.lifecollage.ui.signup;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
+import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
+import com.google.gson.Gson;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -36,7 +41,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         mView.displayLoadingAnimation();
         SignUpRequest request = new SignUpRequest(firstName, lastName, email, username, password);
         mDataManager.signUp(request)
-            .subscribeOn(Schedulers.newThread())
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Subscriber<LogInResponse>() {
                 @Override
@@ -47,8 +52,24 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                 @Override
                 public void onError(Throwable e) {
                     e.printStackTrace();
-                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                     mView.hideLoadingAnimation();
+
+                    if (e instanceof HttpException) {
+                        ResponseBody body = ((HttpException) e).response().errorBody();
+                        String error = null;
+                        try {
+                            error = body.string();
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+
+                        if (error != null) {
+                            Gson gson = new Gson();
+                            ServerResponse response = gson.fromJson(error, ServerResponse.class);
+                            String devMessage = response.getDevMessage();
+                            mView.showSignUpError(devMessage);
+                        }
+                    }
                 }
 
                 @Override
