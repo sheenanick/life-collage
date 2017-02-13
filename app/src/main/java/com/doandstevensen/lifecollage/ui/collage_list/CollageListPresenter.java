@@ -3,6 +3,7 @@ package com.doandstevensen.lifecollage.ui.collage_list;
 import android.content.Context;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
@@ -26,6 +27,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     private DataManager mDataManager;
     private Subscription mSubscription;
     private UserDataSharedPrefsHelper mSharedPrefsHelper;
+    private ArrayList<CollageResponse> mCollages = new ArrayList<>();
 
     public CollageListPresenter(CollageListContract.MvpView view, Context context) {
         mView = view;
@@ -45,7 +47,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     @Override
     public void loadCollageList() {
         mView.displayLoadingAnimation();
-        mSubscription = mDataManager.getCollages(true)
+        mSubscription = mDataManager.getCollages(false)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -70,13 +72,44 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     public void onNext(ArrayList<CollageResponse> collages) {
                         mView.hideLoadingAnimation();
                         mView.setupRecyclerViewAdapter(collages);
+                        mCollages = collages;
                     }
                 });
     }
 
     @Override
-    public void createNewCollage(final String name) {
+    public void createNewCollage(final String title) {
+        mView.displayLoadingAnimation();
+        NewCollageRequest request = new NewCollageRequest(title);
+        mSubscription = mDataManager.newCollage(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
+                .subscribe(new Subscriber<CollageResponse>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        mView.hideLoadingAnimation();
+                    }
+
+                    @Override
+                    public void onNext(CollageResponse collage) {
+                        mCollages.add(collage);
+                        mView.updateRecyclerView(mCollages);
+                        mView.navigateToCollage(collage.getCollageId(), collage.getTitle());
+                        mView.hideLoadingAnimation();
+                    }
+                });
     }
 
     @Override

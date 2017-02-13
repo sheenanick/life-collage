@@ -7,7 +7,7 @@ package com.doandstevensen.lifecollage.data.model;
 public class CollageResponse {
     private int id;
     private String title;
-    private int application_user_id;
+    private int userId;
     private String created;
 
     public int getCollageId() {
@@ -19,7 +19,7 @@ public class CollageResponse {
     }
 
     public int getUserId() {
-        return application_user_id;
+        return userId;
     }
 
     public String getCreated() {

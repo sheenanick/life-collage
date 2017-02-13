@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
+import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 
 import java.util.ArrayList;
@@ -42,5 +43,9 @@ public class DataManager {
 
     public Observable<CollageResponse> getCollageById(int collageId) {
         return mApiService.getCollageById(collageId);
+    }
+
+    public Observable<CollageResponse> newCollage(NewCollageRequest collageRequest) {
+        return mApiService.newCollage(collageRequest);
     }
 }

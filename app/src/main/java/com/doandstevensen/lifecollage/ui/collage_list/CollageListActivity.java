@@ -49,6 +49,7 @@ public class CollageListActivity extends BaseActivity
     private String mCurrentCollageId;
     private String mCurrentUser;
     private CollageListPresenter mPresenter;
+    private CollageListRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,12 +90,18 @@ public class CollageListActivity extends BaseActivity
 
     @Override
     public void setupRecyclerViewAdapter(ArrayList<CollageResponse> collages) {
-        CollageListRecyclerViewAdapter recyclerViewAdapter = new CollageListRecyclerViewAdapter(this);
-        recyclerViewAdapter.setCollages(collages);
-        recyclerViewAdapter.setClickListener(this);
+        mAdapter = new CollageListRecyclerViewAdapter(this);
+        mAdapter.setCollages(collages);
+        mAdapter.setClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
+    }
+
+    @Override
+    public void updateRecyclerView(ArrayList<CollageResponse> collages) {
+        mAdapter.setCollages(collages);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void populateRecyclerView(String uid) {
@@ -147,8 +154,8 @@ public class CollageListActivity extends BaseActivity
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String name) {
-        mPresenter.createNewCollage(name);
+    public void onDialogPositiveClick(DialogFragment dialog, String title) {
+        mPresenter.createNewCollage(title);
     }
 
     @Override
@@ -161,9 +168,7 @@ public class CollageListActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_collage) {
-            if (!mCurrentCollageId.equals(mCurrentUser)) {
-                populateRecyclerView(mCurrentUser);
-            }
+
         } else if (id == R.id.nav_pass) {
 
         } else if (id == R.id.nav_account) {
@@ -202,6 +207,9 @@ public class CollageListActivity extends BaseActivity
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
+        }
+        if (mAdapter != null) {
+            mAdapter = null;
         }
         super.onDestroy();
     }
