@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class CollageListActivity extends BaseActivity
@@ -121,15 +119,15 @@ public class CollageListActivity extends BaseActivity
     }
 
     @Override
-    public void onCollageClick(String collageName) {
-        navigateToCollage(collageName);
+    public void onCollageClick(int collageId, String collageTitle) {
+        navigateToCollage(collageId, collageTitle);
     }
 
     @Override
-    public void navigateToCollage(String collageName) {
+    public void navigateToCollage(int collageId, String collageTitle) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
-        intent.putExtra("name", collageName);
-        intent.putExtra("uid", mCurrentCollageId);
+        intent.putExtra("collageTitle", collageTitle);
+        intent.putExtra("collageId", collageId + "");
         startActivity(intent);
     }
 

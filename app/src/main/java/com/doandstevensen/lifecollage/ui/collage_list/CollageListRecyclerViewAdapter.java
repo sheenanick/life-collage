@@ -10,15 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
-import com.doandstevensen.lifecollage.data.model.Picture;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
 
 /**
  * Created by Sheena on 2/7/17.
@@ -46,24 +40,24 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        CollageResponse collage = mCollages.get(position);
+        final CollageResponse collage = mCollages.get(position);
 
         final String collageName = collage.getTitle();
         holder.textView.setText(collageName);
 
-        //TODO Load picture and set click listener
+        //TODO Load picture
 //        if (collage.getPictures().size() > 0) {
 //            Picture firstPicture = collage.getPictures().get(0);
 //            String url = firstPicture.getPath();
 //            Picasso.with(context).load(url).into(holder.imageView);
 //        }
 
-//        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mClickListener.onCollageClick(collageName);
-//            }
-//        });
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mClickListener.onCollageClick(collage.getCollageId(), collageName);
+            }
+        });
     }
 
     @Override
@@ -89,6 +83,6 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
     }
 
     public interface ClickListener {
-        void onCollageClick(String collageName);
+        void onCollageClick(int collageId, String collageTitle);
     }
 }

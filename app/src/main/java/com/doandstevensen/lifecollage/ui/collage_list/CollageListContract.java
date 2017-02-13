@@ -26,6 +26,6 @@ public interface CollageListContract {
         void setToolbarTitle(String title);
         void setupSearchAdapter(RealmResults<User> users);
         void setFabVisibility(int visibility);
-        void navigateToCollage(String collageName);
+        void navigateToCollage(int collageId, String collageTitle);
     }
 }

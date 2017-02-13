@@ -1,8 +1,6 @@
 package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
@@ -65,17 +63,11 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                         mView.hideLoadingAnimation();
                     }
 
                     @Override
                     public void onNext(ArrayList<CollageResponse> collages) {
-                        for (CollageResponse collage : collages) {
-                            Log.d("COLLAGES", collage.getTitle());
-                            Log.d("COLLAGES", collage.getCollageId() + "");
-                            Log.d("COLLAGES", collage.getUserId() + "");
-                        }
                         mView.hideLoadingAnimation();
                         mView.setupRecyclerViewAdapter(collages);
                     }
