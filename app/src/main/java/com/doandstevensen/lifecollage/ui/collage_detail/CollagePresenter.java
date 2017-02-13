@@ -7,16 +7,10 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.doandstevensen.lifecollage.Constants;
-import com.doandstevensen.lifecollage.data.model.Collage;
 import com.doandstevensen.lifecollage.data.model.Picture;
-import com.doandstevensen.lifecollage.data.model.User;
-import com.doandstevensen.lifecollage.util.RealmUserManager;
 import com.doandstevensen.lifecollage.util.S3Util;
 
 import java.io.File;
-
-import io.realm.Realm;
-import io.realm.RealmList;
 
 /**
  * Created by Sheena on 2/2/17.
@@ -25,39 +19,15 @@ import io.realm.RealmList;
 public class CollagePresenter implements CollageContract.Presenter {
     private CollageContract.MvpView mView;
     private Context mContext;
-    private Realm mRealm;
-    private Collage mCollage;
 
     public CollagePresenter(CollageContract.MvpView view, Context context) {
         mView = view;
         mContext = context;
-        mRealm = Realm.getDefaultInstance();
     }
 
     @Override
-    public void loadCollage(String uid, String name) {
-        User user = mRealm.where(User.class).equalTo("uid", uid).findFirst();
-        mCollage =  mRealm.where(Collage.class).equalTo("userId", uid).equalTo("name", name).findFirst();
-
-        RealmList<Picture> pictures = mCollage.getPictures();
-        boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
-        String title = mCollage.getName();
-        int visibility;
-
-        if (sameUser) {
-            visibility = View.VISIBLE;
-        } else {
-            visibility = View.GONE;
-            title = title + " (" + user.getUsername() + ")";
-        }
-
-        if (pictures.size() != 0) {
-            mView.setEmptyViewVisibility(View.GONE);
-        }
-
-        mView.setupRecyclerViewAdapter(pictures);
+    public void loadCollage(String collageId, String title) {
         mView.setToolbarTitle(title);
-        mView.setFabVisibility(visibility);
     }
 
     public void uploadFile(final File file) {
@@ -68,14 +38,8 @@ public class CollagePresenter implements CollageContract.Presenter {
                 file.getName(),
                 file);
 
-        mRealm.executeTransaction( new Realm.Transaction() {
-            String picPath = Constants.ROOT_URL + Constants.BUCKET_NAME + "/" + file.getName();
-            Picture pic = new Picture(picPath);
-            @Override
-            public void execute(Realm realm) {
-                mCollage.addPicture(pic);
-            }
-        });
+        String picPath = Constants.ROOT_URL + Constants.BUCKET_NAME + "/" + file.getName();
+        Picture pic = new Picture(picPath);
 
         mView.setEmptyViewVisibility(View.GONE);
     }
@@ -84,8 +48,5 @@ public class CollagePresenter implements CollageContract.Presenter {
     public void detach() {
         mView = null;
         mContext = null;
-        if (mRealm != null) {
-            mRealm.close();
-        }
     }
 }

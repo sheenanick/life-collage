@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -47,13 +48,17 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         mPresenter = new CollagePresenter(this, getBaseContext());
 
         Intent intent = getIntent();
-        String uid = intent.getStringExtra("uid");
-        String name = intent.getStringExtra("name");
-        populateRecyclerView(uid, name);
+        String collageId = intent.getStringExtra("collageId");
+        String collageTitle = intent.getStringExtra("collageTitle");
+
+        populateRecyclerView(collageId, collageTitle);
     }
 
     public void setToolbarTitle(String title) {
-        getSupportActionBar().setTitle(title);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
     }
 
     public void setFabVisibility(int visibility) {
@@ -65,8 +70,8 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         emptyView.setVisibility(visibility);
     }
 
-    public void populateRecyclerView(String uid, String title) {
-        mPresenter.loadCollage(uid, title);
+    public void populateRecyclerView(String collageId, String title) {
+        mPresenter.loadCollage(collageId, title);
     }
 
     public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {

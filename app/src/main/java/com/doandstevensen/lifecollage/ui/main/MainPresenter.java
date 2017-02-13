@@ -48,11 +48,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void load() {
-        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
-        ApplicationToken token = helper.getUserToken(mContext);
-        if (token != null && token.getAccessToken() != null) {
-            mView.navigateToCollageList();
-        }
+
     }
 
     @Override

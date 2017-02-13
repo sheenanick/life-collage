@@ -1,14 +1,19 @@
 package com.doandstevensen.lifecollage.ui.collage_list;
 
-import android.view.View;
+import android.content.Context;
 
-import com.doandstevensen.lifecollage.data.model.Collage;
-import com.doandstevensen.lifecollage.data.model.User;
-import com.doandstevensen.lifecollage.util.RealmUserManager;
+import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
+import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
-import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmResults;
+import java.util.ArrayList;
+
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Sheena on 2/7/17.
@@ -16,66 +21,71 @@ import io.realm.RealmResults;
 
 public class CollageListPresenter implements CollageListContract.Presenter {
     private CollageListContract.MvpView mView;
-    private Realm mRealm;
-    private User mUser;
+    private Context mContext;
+    private LifeCollageApiService mService;
+    private DataManager mDataManager;
+    private Subscription mSubscription;
+    private UserDataSharedPrefsHelper mSharedPrefsHelper;
 
-    public CollageListPresenter(CollageListContract.MvpView view) {
+    public CollageListPresenter(CollageListContract.MvpView view, Context context) {
         mView = view;
-        mRealm = Realm.getDefaultInstance();
+        mContext = context;
+
+        mSharedPrefsHelper = new UserDataSharedPrefsHelper();
+        String accessToken = mSharedPrefsHelper.getUserToken(context).getAccessToken();
+        mService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
+        mDataManager = new DataManager(mService, mContext);
     }
 
     @Override
     public void searchUsers() {
-        RealmResults<User> users = mRealm.where(User.class).findAll();
-        mView.setupSearchAdapter(users);
+
     }
 
     @Override
-    public void loadCollageList(String uid) {
-        mUser = mRealm.where(User.class).equalTo("uid", uid).findFirst();
-        if (mUser != null && mUser.getCollages().size() != 0) {
-            RealmList<Collage> collages = mUser.getCollages();
-            mView.setupRecyclerViewAdapter(collages);
+    public void loadCollageList() {
+        mView.displayLoadingAnimation();
+        mSubscription = mDataManager.getCollages(true)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
+                .subscribe(new Subscriber<ArrayList<CollageResponse>>() {
+                    @Override
+                    public void onCompleted() {
 
-            String title;
-            int visibility;
-            boolean sameUser = uid.equals(RealmUserManager.getCurrentUserId());
+                    }
 
-            if (sameUser) {
-                title = "My Collages";
-                visibility = View.VISIBLE;
-            } else {
-                title = mUser.getUsername() + "'s Collages";
-                visibility = View.GONE;
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        mView.hideLoadingAnimation();
+                    }
 
-            mView.setToolbarTitle(title);
-            mView.setFabVisibility(visibility);
-            mView.setNavViewCheckedItem(sameUser);
-        }
+                    @Override
+                    public void onNext(ArrayList<CollageResponse> collages) {
+                        mView.hideLoadingAnimation();
+                        mView.setupRecyclerViewAdapter(collages);
+                    }
+                });
     }
 
     @Override
     public void createNewCollage(final String name) {
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                Collage collage = realm.createObject(Collage.class);
-                collage.setName(name);
-                collage.setUid(mUser.getUid());
-                mUser.getCollages().add(collage);
-            }
-        });
-        mView.navigateToCollage(name);
+
     }
 
     @Override
     public void detach() {
         mView = null;
-        mUser = null;
-        if (mRealm != null) {
-            mRealm.close();
-        }
+        mContext = null;
+        mService = null;
+        mDataManager = null;
+        mSubscription = null;
     }
 
 }

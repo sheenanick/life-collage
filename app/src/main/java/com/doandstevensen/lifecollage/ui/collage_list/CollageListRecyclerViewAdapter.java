@@ -10,26 +10,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.Collage;
-import com.doandstevensen.lifecollage.data.model.Picture;
-import com.squareup.picasso.Picasso;
+import com.doandstevensen.lifecollage.data.model.CollageResponse;
 
-import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
+import java.util.ArrayList;
 
 /**
  * Created by Sheena on 2/7/17.
  */
 
-public class CollageListRecyclerViewAdapter extends
-        RealmRecyclerViewAdapter<Collage, CollageListRecyclerViewAdapter.MyViewHolder> {
-
-    private final Context context;
+public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<CollageListRecyclerViewAdapter.MyViewHolder> {
+    private final Context mContext;
+    private ArrayList<CollageResponse> mCollages;
     private CollageListRecyclerViewAdapter.ClickListener mClickListener;
 
-    public CollageListRecyclerViewAdapter(Context context, OrderedRealmCollection<Collage> data) {
-        super(context, data, true);
-        this.context = context;
+    public CollageListRecyclerViewAdapter(Context context) {
+        mContext = context;
+    }
+
+    public void setCollages(ArrayList<CollageResponse> data) {
+        mCollages = data;
     }
 
     @Override
@@ -41,23 +40,29 @@ public class CollageListRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Collage collage = getData().get(position);
+        final CollageResponse collage = mCollages.get(position);
 
-        final String collageName = collage.getName();
+        final String collageName = collage.getTitle();
         holder.textView.setText(collageName);
 
-        if (collage.getPictures().size() > 0) {
-            Picture firstPicture = collage.getPictures().get(0);
-            String url = firstPicture.getPath();
-            Picasso.with(context).load(url).into(holder.imageView);
-        }
+        //TODO Load picture
+//        if (collage.getPictures().size() > 0) {
+//            Picture firstPicture = collage.getPictures().get(0);
+//            String url = firstPicture.getPath();
+//            Picasso.with(context).load(url).into(holder.imageView);
+//        }
 
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClickListener.onCollageClick(collageName);
+                mClickListener.onCollageClick(collage.getCollageId(), collageName);
             }
         });
+    }
+
+    @Override
+    public int getItemCount() {
+        return mCollages.size();
     }
 
     public void setClickListener(CollageListRecyclerViewAdapter.ClickListener clickListener) {
@@ -78,6 +83,6 @@ public class CollageListRecyclerViewAdapter extends
     }
 
     public interface ClickListener {
-        void onCollageClick(String collageName);
+        void onCollageClick(int collageId, String collageTitle);
     }
 }
