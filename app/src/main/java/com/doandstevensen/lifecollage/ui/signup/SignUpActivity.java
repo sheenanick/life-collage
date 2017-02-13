@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.ui.signup;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.widget.EditText;
 
 import com.doandstevensen.lifecollage.R;
@@ -43,41 +44,56 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
 
     @OnClick(R.id.signUp)
     public void attemptSignUp() {
-        usernameView.setError(null);
-        passwordView.setError(null);
-        passwordConfirmationView.setError(null);
+        String firstName = firstNameView.getText().toString().trim();
+        String lastName = lastNameView.getText().toString().trim();
+        String email = emailView.getText().toString().trim();
+        String username = usernameView.getText().toString().trim();
+        String password = passwordView.getText().toString().trim();
+        String passwordConfirmation = passwordConfirmationView.getText().toString().trim();
 
-        String firstName = firstNameView.getText().toString();
-        String lastName = lastNameView.getText().toString();
-        String email = emailView.getText().toString();
-        String username = usernameView.getText().toString();
-        String password = passwordView.getText().toString();
-        String passwordConfirmation = passwordConfirmationView.getText().toString();
+        boolean firstNameNotEmpty = isInputEmpty(firstNameView, firstName);
+        boolean lastNameNotEmpty = isInputEmpty(lastNameView, lastName);
+        boolean validEmail = validateEmail(emailView, email);
+        boolean usernameNotEmpty = isInputEmpty(usernameView, username);
+        boolean passwordNotEmpty = isInputEmpty(passwordView, password);
+        boolean validPassword = validatePassword(passwordConfirmationView, password, passwordConfirmation);
 
-        boolean validated = true;
-        if (isEmpty(username)) {
-            usernameView.setError("This field is required");
-            validated = false;
-        }
-        if (isEmpty(password)) {
-            passwordView.setError("This field is required");
-            validated = false;
-        }
-        if (isEmpty(passwordConfirmation)) {
-            passwordConfirmationView.setError("This field is required");
-            validated = false;
-        }
-        if (!password.equals(passwordConfirmation)) {
-            passwordConfirmationView.setError("Passwords do not match");
-            validated = false;
-        }
-        if (validated) {
+        if (firstNameNotEmpty && lastNameNotEmpty && validEmail && usernameNotEmpty && passwordNotEmpty && validPassword) {
             mPresenter.signUp(firstName, lastName, email, username, password);
         }
     }
 
+    private boolean isInputEmpty(EditText view, String input) {
+        if (isEmpty(input)) {
+            view.setError("This field is required");
+        }
+        return !isEmpty(input);
+    }
+
+    private boolean validateEmail(EditText view, String email) {
+        if (isEmpty(email)) {
+            view.setError("This field is required");
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            view.setError("Please enter a valid email address");
+        }
+        return (!isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
+    }
+
+    private boolean validatePassword(EditText view, String password, String confirmation) {
+        boolean passwordsMatch = password.equals(confirmation);
+        if (!passwordsMatch) {
+            view.setError("Passwords do not match");
+        }
+        return passwordsMatch;
+    }
+
     public void showSignUpError(String error) {
-        usernameView.setError(error);
+        if (error.contains("username")) {
+            usernameView.setError("Username already exists");
+        }
+        if (error.contains("email")) {
+            emailView.setError("Email already exists");
+        }
     }
 
     @Override

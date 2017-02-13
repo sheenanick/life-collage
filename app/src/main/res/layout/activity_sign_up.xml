@@ -16,13 +16,13 @@
         android:id="@+id/firstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="textCapWords"
         android:hint="@string/firstName_hint"/>
     <EditText
         android:id="@+id/lastName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="textCapWords"
         android:hint="@string/lastName_hint"/>
     <EditText
         android:id="@+id/username"
@@ -34,7 +34,7 @@
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="textEmailAddress"
         android:hint="@string/email_hint"/>
     <EditText
         android:id="@+id/password"
