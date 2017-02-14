@@ -34,7 +34,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ui.collage_detail.CollageActivity" />
+            android:name=".ui.collage_detail.CollageActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.collage_list.CollageListActivity" />
+        </activity>
 
         <activity android:name=".ui.account.AccountActivity" />
 
