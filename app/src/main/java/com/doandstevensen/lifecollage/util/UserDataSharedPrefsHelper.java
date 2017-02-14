@@ -51,4 +51,9 @@ public class UserDataSharedPrefsHelper {
         return token;
     }
 
+    public void clearData(Context context) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        sharedPrefs.edit().clear().commit();
+    }
+
 }

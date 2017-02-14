@@ -24,6 +24,7 @@ import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
@@ -47,8 +48,6 @@ public class CollageListActivity extends BaseActivity
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
-    private String mCurrentCollageId;
-    private String mCurrentUser;
     private CollageListPresenter mPresenter;
     private CollageListRecyclerViewAdapter mAdapter;
 
@@ -105,7 +104,6 @@ public class CollageListActivity extends BaseActivity
     }
 
     public void populateRecyclerView(String uid) {
-        mCurrentCollageId = uid;
         mPresenter.loadCollageList();
     }
 
@@ -230,6 +228,9 @@ public class CollageListActivity extends BaseActivity
     }
 
     private void logout() {
+        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
+        helper.clearData(this);
+
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
