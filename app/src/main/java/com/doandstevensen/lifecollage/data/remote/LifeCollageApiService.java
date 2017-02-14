@@ -44,7 +44,7 @@ public interface LifeCollageApiService {
 
     @FormUrlEncoded
     @POST("/public/auth/refresh")
-    Observable<LogInResponse> refresh(@Field("refresh_token") String refreshToken);
+    Observable<LogInResponse> refresh(@Field("refresh_token") String refresh_token);
 
 
     //PRIVATE

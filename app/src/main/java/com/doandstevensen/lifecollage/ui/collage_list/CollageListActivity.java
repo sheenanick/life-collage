@@ -63,6 +63,7 @@ public class CollageListActivity extends BaseActivity
         initRecyclerViewAdapter();
 
         mPresenter = new CollageListPresenter(this, this);
+        mPresenter.setPrivateService();
         mPresenter.loadCollageList();
     }
 
@@ -227,7 +228,8 @@ public class CollageListActivity extends BaseActivity
         startActivity(intent);
     }
 
-    private void logout() {
+    @Override
+    public void logout() {
         UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
         helper.clearData(this);
 
