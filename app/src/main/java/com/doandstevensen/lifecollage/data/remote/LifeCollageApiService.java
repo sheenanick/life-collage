@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.data.remote;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
+import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
@@ -17,6 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -58,6 +60,9 @@ public interface LifeCollageApiService {
     @GET("private/collage/{collageId}")
     Observable<CollageResponse> getCollageById(@Path("collageId") int collageId);
 
+    @DELETE("private/collage/{collageId}")
+    Observable<ServerResponse> deleteCollageById(@Path("collageId") int collageId);
+
 
     class ServiceCreator {
         public static LifeCollageApiService newService() {
@@ -74,6 +79,7 @@ public interface LifeCollageApiService {
 
         public static LifeCollageApiService newPrivateService(final String accessToken) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            httpClient.readTimeout(30, TimeUnit.SECONDS);
             httpClient.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -91,6 +97,7 @@ public interface LifeCollageApiService {
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(ENDPOINT)
+                    .addConverterFactory(new NullOnEmptyConverterFactory())
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .client(httpClient.build())

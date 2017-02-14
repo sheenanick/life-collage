@@ -4,11 +4,13 @@ import android.content.Context;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
+import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import rx.Subscriber;
 import rx.Subscription;
@@ -107,6 +109,46 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                         mCollages.add(collage);
                         mView.updateRecyclerView(mCollages);
                         mView.navigateToCollage(collage.getCollageId(), collage.getTitle());
+                        mView.hideLoadingAnimation();
+                    }
+                });
+    }
+
+    @Override
+    public void deleteCollage(final int collageId) {
+        mView.displayLoadingAnimation();
+        mSubscription = mDataManager.deleteCollageById(collageId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
+                .subscribe(new Subscriber<ServerResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        mView.hideLoadingAnimation();
+                    }
+
+                    @Override
+                    public void onNext(ServerResponse response) {
+                        Iterator<CollageResponse> iterator = mCollages.iterator();
+                        while (iterator.hasNext()) {
+                            CollageResponse collage = iterator.next();
+                            if (collage.getCollageId() == collageId) {
+                                iterator.remove();
+                            }
+                        }
+                        mView.onDeleteSuccess();
+                        mView.updateRecyclerView(mCollages);
                         mView.hideLoadingAnimation();
                     }
                 });

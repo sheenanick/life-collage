@@ -18,4 +18,7 @@
     <string name="confirm_password_hint">Confirm Password</string>
     <string name="already_have_an_account_log_in">Already have an account? <u>Log In</u></string>
     <string name="account_text">Account</string>
+    <string name="collage_title_text">Collage Title</string>
+    <string name="edit_title">Edit</string>
+    <string name="delete_title">Delete</string>
 </resources>

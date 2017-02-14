@@ -5,6 +5,7 @@ import android.content.Context;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
+import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ public class DataManager {
 
     public Observable<CollageResponse> getCollageById(int collageId) {
         return mApiService.getCollageById(collageId);
+    }
+
+    public Observable<ServerResponse> deleteCollageById(int collageId) {
+        return mApiService.deleteCollageById(collageId);
     }
 
     public Observable<CollageResponse> newCollage(NewCollageRequest collageRequest) {

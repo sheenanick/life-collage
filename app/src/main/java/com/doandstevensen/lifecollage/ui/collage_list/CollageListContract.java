@@ -18,6 +18,7 @@ public interface CollageListContract {
         void searchUsers();
         void loadCollageList();
         void createNewCollage(String name);
+        void deleteCollage(int collageId);
     }
 
     interface MvpView extends BaseMvpView {
@@ -27,5 +28,6 @@ public interface CollageListContract {
         void setupSearchAdapter(RealmResults<User> users);
         void setFabVisibility(int visibility);
         void navigateToCollage(int collageId, String collageTitle);
+        void onDeleteSuccess();
     }
 }

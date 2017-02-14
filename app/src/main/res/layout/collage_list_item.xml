@@ -1,19 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayout"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/placeholderimage"/>
-    <TextView
-        android:id="@+id/collageTitleTextView"
+        android:src="@drawable/puppy"/>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="#B2FFFFFF" >
+
+        <TextView
+            android:id="@+id/collageTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:gravity="center_vertical"
+            android:text="@string/collage_title_text"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"/>
+
+        <ImageView
+            android:id="@+id/moreIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_more_vert_black_24dp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

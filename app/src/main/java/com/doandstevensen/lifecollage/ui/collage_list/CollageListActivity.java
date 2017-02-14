@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
@@ -32,7 +33,7 @@ import butterknife.OnClick;
 import io.realm.RealmResults;
 
 public class CollageListActivity extends BaseActivity
-        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, NewCollageDialogFragment.NewCollageDialogListener{
+        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener{
     @BindView(R.id.autoCompleteTextView)
     AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.drawer_layout)
@@ -138,6 +139,11 @@ public class CollageListActivity extends BaseActivity
     }
 
     @Override
+    public void onDeleteSuccess() {
+        Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void setFabVisibility(int visibility) {
         fab.setVisibility(visibility);
     }
@@ -159,6 +165,33 @@ public class CollageListActivity extends BaseActivity
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
+    }
+
+    @Override
+    public void onMenuClick(MenuItem item, int collageId) {
+        int id = item.getItemId();
+
+        if (id == R.id.edit) {
+            Toast.makeText(this, "Can't edit yet!", Toast.LENGTH_SHORT).show();
+        }
+        if (id == R.id.delete) {
+            launchDeleteAlertDialog(collageId);
+        }
+    }
+
+    private void launchDeleteAlertDialog(int collageId) {
+        DeleteCollageDialogFragment dialogFragment = new DeleteCollageDialogFragment();
+        dialogFragment.setCollageId(collageId);
+        dialogFragment.show(getSupportFragmentManager(), "deleteCollage");
+    }
+
+    @Override
+    public void onDeleteDialogPositiveClick(DialogFragment dialog, int collageId) {
+        mPresenter.deleteCollage(collageId);
+    }
+
+    @Override
+    public void onDeleteDialogNegativeClick(DialogFragment dialog) {
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -212,5 +245,4 @@ public class CollageListActivity extends BaseActivity
         }
         super.onDestroy();
     }
-
 }
