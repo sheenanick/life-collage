@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -67,7 +68,11 @@ public interface LifeCollageApiService {
     class ServiceCreator {
         public static LifeCollageApiService newService() {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClient.addInterceptor(logging);
             httpClient.readTimeout(30, TimeUnit.SECONDS);
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(ENDPOINT)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -79,6 +84,9 @@ public interface LifeCollageApiService {
 
         public static LifeCollageApiService newPrivateService(final String accessToken) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClient.addInterceptor(logging);
             httpClient.readTimeout(30, TimeUnit.SECONDS);
             httpClient.addInterceptor(new Interceptor() {
                 @Override

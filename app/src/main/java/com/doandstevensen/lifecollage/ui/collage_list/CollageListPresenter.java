@@ -73,7 +73,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("403")) {
+                        if (e.getMessage().contains("401")) {
                             if (handleRefreshToken()) {
                                 setPrivateService();
                                 loadCollageList();
@@ -115,7 +115,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("403")) {
+                        if (e.getMessage().contains("401")) {
                             if (handleRefreshToken()) {
                                 setPrivateService();
                                 createNewCollage(title);
@@ -157,7 +157,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("403")) {
+                        if (e.getMessage().contains("401")) {
                             if (handleRefreshToken()) {
                                 setPrivateService();
                                 deleteCollage(collageId);
