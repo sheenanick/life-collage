@@ -53,4 +53,8 @@ public class DataManager {
     public Observable<CollageResponse> newCollage(NewCollageRequest collageRequest) {
         return mApiService.newCollage(collageRequest);
     }
+
+    public Observable<ServerResponse> deleteUser() {
+        return mApiService.deleteUser();
+    }
 }

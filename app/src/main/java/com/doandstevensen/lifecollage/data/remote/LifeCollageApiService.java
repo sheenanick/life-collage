@@ -64,6 +64,9 @@ public interface LifeCollageApiService {
     @DELETE("private/collage/{collageId}")
     Observable<ServerResponse> deleteCollageById(@Path("collageId") int collageId);
 
+    @DELETE("private/user")
+    Observable<ServerResponse> deleteUser();
+
 
     class ServiceCreator {
         public static LifeCollageApiService newService() {

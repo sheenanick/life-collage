@@ -16,5 +16,6 @@ public interface AccountContract {
     interface MvpView extends BaseMvpView {
         void emailUpdated();
         void userDeleted();
+        void navigateToMain();
     }
 }

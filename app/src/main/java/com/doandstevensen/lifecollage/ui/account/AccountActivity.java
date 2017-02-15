@@ -2,20 +2,21 @@ package com.doandstevensen.lifecollage.ui.account;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AccountActivity extends BaseActivity implements AccountContract.MvpView {
+public class AccountActivity extends BaseActivity implements AccountContract.MvpView, DeleteAccountDialogFragment.DeleteAccountDialogListener {
     @BindView(R.id.emailEditText)
     EditText emailEditText;
 
@@ -30,6 +31,7 @@ public class AccountActivity extends BaseActivity implements AccountContract.Mvp
         initToolbar();
 
         mPresenter = new AccountPresenter(this, this);
+        mPresenter.setPrivateService();
     }
 
     private void initToolbar() {
@@ -52,20 +54,33 @@ public class AccountActivity extends BaseActivity implements AccountContract.Mvp
 
     @OnClick(R.id.deleteButton)
     public void deleteUser() {
+        launchDeleteAccountAlertDialog();
+    }
+
+    private void launchDeleteAccountAlertDialog() {
+        DeleteAccountDialogFragment dialogFragment = new DeleteAccountDialogFragment();
+        dialogFragment.show(getSupportFragmentManager(), "deleteAccount");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
         mPresenter.deleteUser();
     }
 
     @Override
+    public void onDialogNegativeClick(DialogFragment dialog) { }
+
+    @Override
     public void userDeleted() {
-        Toast.makeText(this, "User Deleted!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Your account has been deleted", Toast.LENGTH_LONG).show();
+        navigateToMain();
     }
 
-    private void navigateToCollage() {
-        Intent intent = new Intent(this, CollageActivity.class);
-        startActivity(intent);
-    }
+    @Override
+    public void navigateToMain() {
+        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
+        helper.clearData(getBaseContext());
 
-    private void navigateToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -73,8 +88,9 @@ public class AccountActivity extends BaseActivity implements AccountContract.Mvp
 
     @Override
     public void onDestroy() {
-        mPresenter.detach();
+        if (mPresenter != null) {
+            mPresenter.detach();
+        }
         super.onDestroy();
     }
-
 }
