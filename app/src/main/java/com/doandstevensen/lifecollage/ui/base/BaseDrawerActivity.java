@@ -14,6 +14,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.ui.about.AboutActivity;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 
@@ -81,7 +82,7 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
         } else if (id == R.id.nav_account) {
             navigateToAccount();
         } else if (id == R.id.nav_about) {
-
+            navigateToAbout();
         } else if (id == R.id.nav_logout) {
             logout();
         }
@@ -101,6 +102,11 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
 
     private void navigateToAccount() {
         Intent intent = new Intent(getBaseContext(), AccountActivity.class);
+        startActivity(intent);
+    }
+
+    private void navigateToAbout() {
+        Intent intent = new Intent(getBaseContext(), AboutActivity.class);
         startActivity(intent);
     }
 

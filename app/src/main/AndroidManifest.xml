@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.base.BaseActivity" />
-        <activity android:name=".ui.base.BaseDrawerActivity"></activity>
+        <activity android:name=".ui.base.BaseDrawerActivity" />
         <activity
             android:name=".ui.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -33,7 +33,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.collage_list.CollageListActivity" />
         </activity>
-        <activity android:name=".ui.account.AccountActivity" >
+        <activity android:name=".ui.account.AccountActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.collage_list.CollageListActivity" />
+        </activity>
+        <activity android:name=".ui.about.AboutActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.collage_list.CollageListActivity" />
