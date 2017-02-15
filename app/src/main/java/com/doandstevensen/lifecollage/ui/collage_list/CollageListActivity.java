@@ -136,9 +136,6 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void onDeleteDialogNegativeClick(DialogFragment dialog) { }
-
-    @Override
     public void onDeleteSuccess() {
         Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
     }

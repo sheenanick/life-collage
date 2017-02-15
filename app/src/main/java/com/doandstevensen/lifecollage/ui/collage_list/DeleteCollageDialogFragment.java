@@ -29,7 +29,7 @@ public class DeleteCollageDialogFragment extends DialogFragment {
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDeleteDialogNegativeClick(DeleteCollageDialogFragment.this);
+                        mListener.onDialogNegativeClick(DeleteCollageDialogFragment.this);
                     }
                 });
         return builder.create();
@@ -41,7 +41,7 @@ public class DeleteCollageDialogFragment extends DialogFragment {
 
     public interface DeleteCollageDialogListener {
         public void onDeleteDialogPositiveClick(DialogFragment dialog, int collageId);
-        public void onDeleteDialogNegativeClick(DialogFragment dialog);
+        public void onDialogNegativeClick(DialogFragment dialog);
     }
 
     DeleteCollageDialogFragment.DeleteCollageDialogListener mListener;
