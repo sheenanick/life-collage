@@ -2,100 +2,52 @@ package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AutoCompleteTextView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.User;
-import com.doandstevensen.lifecollage.ui.account.AccountActivity;
-import com.doandstevensen.lifecollage.ui.base.BaseActivity;
+import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
-import com.doandstevensen.lifecollage.ui.main.MainActivity;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.realm.RealmResults;
 
-public class CollageListActivity extends BaseActivity
-        implements CollageListContract.MvpView, NavigationView.OnNavigationItemSelectedListener, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener{
-    @BindView(R.id.autoCompleteTextView)
-    AutoCompleteTextView autoCompleteTextView;
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
-    @BindView(R.id.nav_view)
-    NavigationView navigationView;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
-
-    private String mCurrentCollageId;
-    private String mCurrentUser;
+public class CollageListActivity extends BaseDrawerActivity
+        implements CollageListContract.MvpView, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener {
+    private RecyclerView mRecyclerView;
+    private FloatingActionButton mFab;
     private CollageListPresenter mPresenter;
     private CollageListRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_collage_list);
+        getLayoutInflater().inflate(R.layout.activity_collage_list, mFrameLayout);
 
-        ButterKnife.bind(this);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(this);
 
-        initToolbar();
-        initDrawer();
         initRecyclerViewAdapter();
 
         mPresenter = new CollageListPresenter(this, this);
         mPresenter.loadCollageList();
     }
 
-    private void initToolbar() {
-        setSupportActionBar(toolbar);
-    }
-
-    public void setToolbarTitle(String title) {
-        toolbar.setTitle(title);
-    }
-
-    private void initDrawer() {
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setCheckedItem(R.id.nav_collage);
-        navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    public void setNavViewCheckedItem(boolean checked) {
-        Menu drawerMenu = navigationView.getMenu();
-        drawerMenu.findItem(R.id.nav_collage).setChecked(checked);
-        drawerMenu.findItem(R.id.nav_account).setChecked(false);
-    }
-
     private void initRecyclerViewAdapter() {
         mAdapter = new CollageListRecyclerViewAdapter(this);
         mAdapter.setClickListener(this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
     }
 
     @Override
@@ -105,18 +57,13 @@ public class CollageListActivity extends BaseActivity
     }
 
     public void populateRecyclerView(String uid) {
-        mCurrentCollageId = uid;
         mPresenter.loadCollageList();
     }
 
     public void setupSearchAdapter(RealmResults<User> users) {
         CollageSearchAdapter adapter = new CollageSearchAdapter(this, users);
-        autoCompleteTextView.setAdapter(adapter);
+        mAutoCompleteTextView.setAdapter(adapter);
         adapter.setClickListener(this);
-    }
-
-    private void clearSearchView() {
-        autoCompleteTextView.setText("");
     }
 
     @Override
@@ -139,21 +86,18 @@ public class CollageListActivity extends BaseActivity
     }
 
     @Override
-    public void onDeleteSuccess() {
-        Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
+    public void setFabVisibility(int visibility) {
+        mFab.setVisibility(visibility);
     }
 
     @Override
-    public void setFabVisibility(int visibility) {
-        fab.setVisibility(visibility);
+    public void onClick(View view) {
+        if (view == mFab) {
+            launchNewCollageAlertDialog();
+        }
     }
 
-    @OnClick(R.id.fab)
-    public void addNewCollage() {
-        launchAlertDialog();
-    }
-
-    private void launchAlertDialog() {
+    private void launchNewCollageAlertDialog() {
         NewCollageDialogFragment dialogFragment = new NewCollageDialogFragment();
         dialogFragment.show(getSupportFragmentManager(), "newCollage");
     }
@@ -194,54 +138,15 @@ public class CollageListActivity extends BaseActivity
     public void onDeleteDialogNegativeClick(DialogFragment dialog) {
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_collage) {
-
-        } else if (id == R.id.nav_pass) {
-
-        } else if (id == R.id.nav_account) {
-            navigateToAccount();
-        } else if (id == R.id.nav_about) {
-
-        } else if (id == R.id.nav_logout) {
-            logout();
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    private void navigateToAccount() {
-        Intent intent = new Intent(getBaseContext(), AccountActivity.class);
-        startActivity(intent);
-    }
-
-    private void logout() {
-        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+    public void onDeleteSuccess() {
+        Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
-        }
-        if (mAdapter != null) {
-            mAdapter = null;
         }
         super.onDestroy();
     }
