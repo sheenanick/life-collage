@@ -47,11 +47,6 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     }
 
     @Override
-    public void searchUsers() {
-
-    }
-
-    @Override
     public void loadCollageList() {
         mView.displayLoadingAnimation();
         mSubscription = mDataManager.getCollages(false)

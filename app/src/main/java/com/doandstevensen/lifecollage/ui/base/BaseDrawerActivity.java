@@ -1,5 +1,7 @@
 package com.doandstevensen.lifecollage.ui.base;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,10 +9,11 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 
 import com.doandstevensen.lifecollage.R;
@@ -23,8 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BaseDrawerActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener{
-    @BindView(R.id.autoCompleteTextView)
-    public AutoCompleteTextView mAutoCompleteTextView;
     @BindView(R.id.drawer_layout)
     public DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view)
@@ -50,10 +51,6 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
 
     public void setToolbarTitle(String title) {
         mToolbar.setTitle(title);
-    }
-
-    public void clearSearchView() {
-        mAutoCompleteTextView.setText("");
     }
 
     private void initDrawer() {
