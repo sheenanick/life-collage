@@ -44,7 +44,7 @@ public interface LifeCollageApiService {
     Observable<LogInResponse> logIn(@Field("email") String email, @Field("password") String password);
 
     @FormUrlEncoded
-    @POST("/public/auth/refresh")
+    @POST("public/auth/refresh")
     Observable<LogInResponse> refresh(@Field("refresh_token") String refresh_token);
 
 
