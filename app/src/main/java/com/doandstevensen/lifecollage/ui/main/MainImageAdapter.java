@@ -7,13 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.doandstevensen.lifecollage.data.model.Picture;
-import com.doandstevensen.lifecollage.data.model.User;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-
-import io.realm.RealmList;
 
 /**
  * Created by Sheena on 2/3/17.
@@ -21,15 +15,13 @@ import io.realm.RealmList;
 
 public class MainImageAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<User> mFeaturedUsers;
 
-    public MainImageAdapter(Context c, ArrayList<User> users) {
+    public MainImageAdapter(Context c) {
         mContext = c;
-        mFeaturedUsers = users;
     }
 
     public int getCount() {
-        return mFeaturedUsers.size();
+        return 6;
     }
 
     public Object getItem(int position) {
@@ -52,12 +44,7 @@ public class MainImageAdapter extends BaseAdapter {
             imageView = (ImageView) view;
         }
 
-        User user = mFeaturedUsers.get(position);
-        RealmList<Picture> pictures = user.getCollages().get(0).getPictures();
-        int last = pictures.size() - 1;
-        Picture picture = pictures.get(last);
-
-        Picasso.with(mContext).load(picture.getPath()).into(imageView);
+        Picasso.with(mContext).load("https://source.unsplash.com/random").into(imageView);
         return imageView;
     }
 }

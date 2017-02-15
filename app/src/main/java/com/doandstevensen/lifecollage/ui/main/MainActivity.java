@@ -1,48 +1,38 @@
 package com.doandstevensen.lifecollage.ui.main;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
+import android.support.v7.widget.SearchView;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
-import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.login.LogInActivity;
+import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.RealmResults;
 
-public class MainActivity extends BaseActivity implements MainContract.MvpView, MainSearchAdapter.ClickListener {
-    public static final String TAG = MainActivity.class.getSimpleName();
-    
+public class MainActivity extends BaseActivity implements MainContract.MvpView {
     @BindView(R.id.gridView)
     GridView gridView;
-    @BindView(R.id.autoCompleteTextView)
-    AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.linearLayout)
     LinearLayout linearLayout;
-
-    private InputMethodManager imm;
+    @BindView(R.id.searchView)
+    SearchView searchView;
+    public static final String TAG = MainActivity.class.getSimpleName();
     private MainPresenter mPresenter;
 
     @Override
@@ -57,69 +47,34 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
             navigateToCollageList();
         }
 
-        mPresenter = new MainPresenter(this, this);
+        initSearchView();
+        setupGridViewAdapter();
 
-        imm = (InputMethodManager) this
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        mPresenter = new MainPresenter(this, this);
     }
 
-    public void setupGridViewAdapter(final ArrayList<User> featuredUsers) {
-        gridView.setAdapter(new MainImageAdapter(this, featuredUsers));
+    private void initSearchView() {
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        ComponentName cn = new ComponentName(this, SearchResultsActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+        searchView.setIconifiedByDefault(false);
+    }
+
+    public void setupGridViewAdapter() {
+        MainImageAdapter adapter = new MainImageAdapter(this);
+        gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                User user = featuredUsers.get(position);
-                String uid = user.getUid();
-                String collageName = user.getCollages().get(0).getName();
-                navigateToCollage(uid, collageName);
+                //TODO navigate to collage activity on click
             }
         });
     }
 
-    public void setupSearchAdapter(RealmResults<User> users) {
-        MainSearchAdapter adapter = new MainSearchAdapter(this, users);
-        autoCompleteTextView.setAdapter(adapter);
-        adapter.setClickListener(this);
-    }
-
-    public void clearSearchView() {
-        autoCompleteTextView.setText("");
-        autoCompleteTextView.clearFocus();
-    }
-
-    //TODO set gridView to visible when edit text clears focus
-
-    public void setupAutoCompleteTextViewListeners() {
-        autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (imm.isAcceptingText()) {
-                    Log.d(TAG, "Software keyboard visible");
-                    gridView.setVisibility(View.GONE);
-                    linearLayout.setGravity(Gravity.NO_GRAVITY);
-                } else {
-                    Log.d(TAG, "Software keyboard not visible");
-                }
-            }
-        });
-
-        autoCompleteTextView.setOnEditorActionListener( new AutoCompleteTextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(i == EditorInfo.IME_ACTION_SEARCH) {
-                    Log.d(TAG, "SEARCHING FOR USERS");
-                    autoCompleteTextView.clearFocus();
-                }
-                return true;
-            }
-        });
-    }
-
-    private void navigateToCollage(String uid, String name) {
+    private void navigateToCollage(String collageId, String name) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.putExtra("name", name);
-        intent.putExtra("uid", uid);
+        intent.putExtra("collageId", collageId);
         startActivity(intent);
     }
 
@@ -152,11 +107,4 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
         super.onDestroy();
     }
 
-    @Override
-    public void onUserClick(String uuid) {
-        clearSearchView();
-        Intent intent = new Intent(this, CollageListActivity.class);
-        intent.putExtra("uid", uuid);
-        startActivity(intent);
-    }
 }
