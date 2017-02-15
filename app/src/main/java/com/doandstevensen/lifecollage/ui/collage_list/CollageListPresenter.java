@@ -5,7 +5,6 @@ import android.content.Context;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
-import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.TokenManager;
@@ -148,7 +147,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                         mSubscription = null;
                     }
                 })
-                .subscribe(new Subscriber<ServerResponse>() {
+                .subscribe(new Subscriber<CollageResponse>() {
                     @Override
                     public void onCompleted() {
 
@@ -169,11 +168,11 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     }
 
                     @Override
-                    public void onNext(ServerResponse response) {
+                    public void onNext(CollageResponse response) {
                         Iterator<CollageResponse> iterator = mCollages.iterator();
                         while (iterator.hasNext()) {
                             CollageResponse collage = iterator.next();
-                            if (collage.getCollageId() == collageId) {
+                            if (collage.getCollageId() == response.getCollageId()) {
                                 iterator.remove();
                             }
                         }

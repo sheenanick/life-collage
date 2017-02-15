@@ -46,7 +46,7 @@ public class DataManager {
         return mApiService.getCollageById(collageId);
     }
 
-    public Observable<ServerResponse> deleteCollageById(int collageId) {
+    public Observable<CollageResponse> deleteCollageById(int collageId) {
         return mApiService.deleteCollageById(collageId);
     }
 

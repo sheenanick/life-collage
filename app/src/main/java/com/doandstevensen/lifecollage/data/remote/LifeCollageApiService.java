@@ -62,7 +62,7 @@ public interface LifeCollageApiService {
     Observable<CollageResponse> getCollageById(@Path("collageId") int collageId);
 
     @DELETE("private/collage/{collageId}")
-    Observable<ServerResponse> deleteCollageById(@Path("collageId") int collageId);
+    Observable<CollageResponse> deleteCollageById(@Path("collageId") int collageId);
 
     @DELETE("private/user")
     Observable<ServerResponse> deleteUser();
@@ -108,7 +108,6 @@ public interface LifeCollageApiService {
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(ENDPOINT)
-                    .addConverterFactory(new NullOnEmptyConverterFactory())
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .client(httpClient.build())
