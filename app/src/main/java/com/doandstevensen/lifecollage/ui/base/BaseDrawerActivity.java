@@ -17,6 +17,7 @@ import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.about.AboutActivity;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,6 +112,9 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
     }
 
     public void logout() {
+        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
+        helper.clearData(getBaseContext());
+
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

@@ -16,12 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.login.LogInActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
@@ -39,22 +41,26 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
     AutoCompleteTextView autoCompleteTextView;
     @BindView(R.id.linearLayout)
     LinearLayout linearLayout;
-    InputMethodManager imm;
 
-
+    private InputMethodManager imm;
     private MainPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        UserDataSharedPrefsHelper sharedPrefsHelper = new UserDataSharedPrefsHelper();
+        ApplicationToken token = sharedPrefsHelper.getUserToken(this);
+        if (token.getAccessToken() != null) {
+            navigateToCollageList();
+        }
+
+        mPresenter = new MainPresenter(this, this);
 
         imm = (InputMethodManager) this
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        ButterKnife.bind(this);
-
-        mPresenter = new MainPresenter(this, this);
     }
 
     public void setupGridViewAdapter(final ArrayList<User> featuredUsers) {

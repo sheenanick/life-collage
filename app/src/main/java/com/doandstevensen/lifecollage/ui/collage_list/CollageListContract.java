@@ -29,5 +29,6 @@ public interface CollageListContract {
         void setFabVisibility(int visibility);
         void navigateToCollage(int collageId, String collageTitle);
         void onDeleteSuccess();
+        void logout();
     }
 }

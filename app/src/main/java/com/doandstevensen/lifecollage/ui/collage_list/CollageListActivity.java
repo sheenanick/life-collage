@@ -24,6 +24,7 @@ public class CollageListActivity extends BaseDrawerActivity
         implements CollageListContract.MvpView, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener {
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFab;
+
     private CollageListPresenter mPresenter;
     private CollageListRecyclerViewAdapter mAdapter;
 
@@ -39,6 +40,7 @@ public class CollageListActivity extends BaseDrawerActivity
         initRecyclerViewAdapter();
 
         mPresenter = new CollageListPresenter(this, this);
+        mPresenter.setPrivateService();
         mPresenter.loadCollageList();
     }
 
@@ -108,8 +110,7 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-    }
+    public void onDialogNegativeClick(DialogFragment dialog) { }
 
     @Override
     public void onMenuClick(MenuItem item, int collageId) {
@@ -135,8 +136,7 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void onDeleteDialogNegativeClick(DialogFragment dialog) {
-    }
+    public void onDeleteDialogNegativeClick(DialogFragment dialog) { }
 
     @Override
     public void onDeleteSuccess() {
