@@ -21,7 +21,6 @@ public interface CollageContract {
     interface MvpView extends BaseMvpView {
         void setupRecyclerViewAdapter(RealmList<Picture> pictures);
         void setToolbarTitle(String title);
-        void setFabVisibility(int visibility);
         void setEmptyViewVisibility(int visibility);
     }
 }

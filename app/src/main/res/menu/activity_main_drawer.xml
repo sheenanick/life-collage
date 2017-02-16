@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_photo_library_black_24dp"
             android:title="@string/my_collage_text" />
         <item
+            android:id="@+id/nav_search"
+            android:icon="@drawable/ic_search_black_24dp"
+            android:title="@string/search_text" />
+        <item
             android:id="@+id/nav_pass"
             android:icon="@drawable/ic_send_black_24dp"
             android:title="@string/pass_text" />

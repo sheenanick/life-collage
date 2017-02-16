@@ -16,27 +16,64 @@
         <activity android:name=".ui.base.BaseDrawerActivity" />
         <activity
             android:name=".ui.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".ui.search.SearchResultsActivity" />
         </activity>
         <activity android:name=".ui.signup.SignUpActivity" />
         <activity android:name=".ui.login.LogInActivity" />
         <activity
             android:name=".ui.collage_list.CollageListActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity android:name=".ui.collage_detail.CollageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.collage_list.CollageListActivity" />
         </activity>
-        <activity android:name=".ui.account.AccountActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ui.about.AboutActivity"
+        <activity
+            android:name=".ui.account.AccountActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.about.AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.search.SearchResultsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".ui.search_collage_list.SearchCollageListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.search.SearchResultsActivity" />
+        </activity>
+        <activity
+            android:name=".ui.search_collage_detail.SearchCollageDetailActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.search_collage_list.SearchCollageListActivity" />
+        </activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.doandstevensen.fileprovider"

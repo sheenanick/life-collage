@@ -27,6 +27,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -57,6 +58,10 @@ public interface LifeCollageApiService {
 
     @GET("public/collage/{collageId}")
     Observable<CollageResponse> getCollageById(@Path("collageId") int collageId);
+
+    //PUBLIC USER
+    @GET("public/user")
+    Observable<ArrayList<UserResponse>> getUsers(@Query("username") String username);
 
     //PRIVATE COLLAGE
     @POST("private/collage")

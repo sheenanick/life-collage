@@ -3,7 +3,6 @@ package com.doandstevensen.lifecollage.ui.account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +24,9 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_account, mFrameLayout);
 
-        initToolbar();
+        setActionBarTitle("Account Settings");
+        initDrawer();
+
         emailEditText = (EditText) findViewById(R.id.emailEditText);
         saveEmailButton = (Button) findViewById(R.id.saveEmailButton);
         deleteButton = (Button) findViewById(R.id.deleteButton);
@@ -37,20 +38,13 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
         saveEmailButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
 
-        setNavViewCheckedItem(R.id.nav_account);
+        setNavViewCheckedItem(R.id.nav_account, true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setNavViewCheckedItem(R.id.nav_account);
-    }
-
-    private void initToolbar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("Account Settings");
-        }
+        setNavViewCheckedItem(R.id.nav_account, true);
     }
 
     @Override

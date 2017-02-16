@@ -6,6 +6,7 @@ import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
+import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
@@ -97,17 +98,20 @@ public class SignUpPresenter implements SignUpContract.Presenter {
 
                 @Override
                 public void onNext(LogInResponse logInResponse) {
-                    storeData(logInResponse.getToken(), logInResponse.getId());
+                    storeData(logInResponse.getToken(), logInResponse.getId(), logInResponse.getUsername());
                     mView.hideLoadingAnimation();
                     mView.navigateToCollageList();
                 }
             });
     }
 
-    private void storeData(ApplicationToken token, int userId) {
+    private void storeData(ApplicationToken token, int userId, String username) {
         UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
+        User user = new User();
+        user.setUid(userId);
+        user.setUsername(username);
         helper.storeUserToken(mContext, token);
-        helper.storeUserData(mContext, userId);
+        helper.storeUserData(mContext, user);
     }
 
     @Override

@@ -1,11 +1,17 @@
 package com.doandstevensen.lifecollage.ui.collage_list;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -15,18 +21,19 @@ import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
+import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
-import io.realm.RealmResults;
-
 public class CollageListActivity extends BaseDrawerActivity
-        implements CollageListContract.MvpView, CollageSearchAdapter.ClickListener, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener {
+        implements CollageListContract.MvpView, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener {
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFab;
 
     private CollageListPresenter mPresenter;
     private CollageListRecyclerViewAdapter mAdapter;
+    private User mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +45,23 @@ public class CollageListActivity extends BaseDrawerActivity
         mFab.setOnClickListener(this);
 
         initRecyclerViewAdapter();
+        initDrawer();
 
         mPresenter = new CollageListPresenter(this, this);
         mPresenter.setPrivateService();
-        mPresenter.loadCollageList();
+
+        UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper();
+        mCurrentUser = sharedPrefs.getUserData(this);
+        int currentUserId = mCurrentUser.getUid();
+
+        mPresenter.loadCollageList(currentUserId);
+        setActionBarTitle("My Life Collages");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setNavViewCheckedItem(R.id.nav_collage);
+        setNavViewCheckedItem(R.id.nav_collage, true);
     }
 
     private void initRecyclerViewAdapter() {
@@ -64,22 +78,6 @@ public class CollageListActivity extends BaseDrawerActivity
         mAdapter.notifyDataSetChanged();
     }
 
-    public void populateRecyclerView(String uid) {
-        mPresenter.loadCollageList();
-    }
-
-    public void setupSearchAdapter(RealmResults<User> users) {
-        CollageSearchAdapter adapter = new CollageSearchAdapter(this, users);
-        mAutoCompleteTextView.setAdapter(adapter);
-        adapter.setClickListener(this);
-    }
-
-    @Override
-    public void onSearchClick(String uid) {
-        clearSearchView();
-        populateRecyclerView(uid);
-    }
-
     @Override
     public void onCollageClick(int collageId, String collageTitle) {
         navigateToCollage(collageId, collageTitle);
@@ -91,11 +89,6 @@ public class CollageListActivity extends BaseDrawerActivity
         intent.putExtra("collageTitle", collageTitle);
         intent.putExtra("collageId", collageId + "");
         startActivity(intent);
-    }
-
-    @Override
-    public void setFabVisibility(int visibility) {
-        mFab.setVisibility(visibility);
     }
 
     @Override
@@ -144,6 +137,20 @@ public class CollageListActivity extends BaseDrawerActivity
     @Override
     public void onDeleteSuccess() {
         Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_bar, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+
+        ComponentName cn = new ComponentName(this, SearchResultsActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+
+        return true;
     }
 
     @Override

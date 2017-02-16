@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,8 +30,6 @@ import io.realm.RealmList;
 public class CollageActivity extends BaseActivity implements CollageContract.MvpView {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
     @BindView(R.id.emptyView)
     TextView emptyView;
 
@@ -51,7 +48,7 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         String collageId = intent.getStringExtra("collageId");
         String collageTitle = intent.getStringExtra("collageTitle");
 
-        populateRecyclerView(collageId, collageTitle);
+        mPresenter.loadCollage(collageId, collageTitle);
     }
 
     public void setToolbarTitle(String title) {
@@ -61,17 +58,9 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         }
     }
 
-    public void setFabVisibility(int visibility) {
-        fab.setVisibility(visibility);
-    }
-
     @Override
     public void setEmptyViewVisibility(int visibility) {
         emptyView.setVisibility(visibility);
-    }
-
-    public void populateRecyclerView(String collageId, String title) {
-        mPresenter.loadCollage(collageId, title);
     }
 
     public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {

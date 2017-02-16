@@ -4,6 +4,8 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.doandstevensen.lifecollage.ui.main.MainActivity">
 
     <GridView
@@ -40,19 +42,10 @@
             android:textSize="18sp"
             android:text="lorem ipsum lorem ipsum lorem ipsum"/>
 
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="80dp"
-            android:layout_marginRight="80dp"
-            android:drawableLeft="@drawable/ic_search_black_24dp"
-            android:drawableStart="@drawable/ic_search_black_24dp"
-            android:hint="@string/search_for_users_hint"
-            android:inputType="text"
-            android:imeOptions="actionSearch"
-            android:maxLines="1"
-            android:textSize="18sp"/>
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
