@@ -19,7 +19,6 @@ import rx.Observable;
  */
 
 public class DataManager {
-
     private LifeCollageApiService mApiService;
     private Context mContext;
 
@@ -44,8 +43,20 @@ public class DataManager {
         return mApiService.getUser();
     }
 
-    public Observable<ArrayList<CollageResponse>> getCollages(boolean getAllUsers) {
-        return mApiService.getCollages(getAllUsers);
+    public Observable<ServerResponse> deleteUser() {
+        return mApiService.deleteUser();
+    }
+
+    public Observable<UserResponse> updateUser(UpdateUserRequest request) {
+        return mApiService.updateUser(request);
+    }
+
+    public Observable<ArrayList<CollageResponse>> getAllCollages() {
+        return mApiService.getAllCollages();
+    }
+
+    public Observable<ArrayList<CollageResponse>> getCollages(int userId) {
+        return mApiService.getCollages(userId);
     }
 
     public Observable<CollageResponse> getCollageById(int collageId) {
@@ -60,11 +71,4 @@ public class DataManager {
         return mApiService.newCollage(collageRequest);
     }
 
-    public Observable<ServerResponse> deleteUser() {
-        return mApiService.deleteUser();
-    }
-
-    public Observable<UserResponse> updateUser(UpdateUserRequest request) {
-        return mApiService.updateUser(request);
-    }
 }

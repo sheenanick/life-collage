@@ -1,10 +1,10 @@
 package com.doandstevensen.lifecollage.data.remote;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
-import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 
@@ -27,7 +27,6 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -37,7 +36,7 @@ import rx.Observable;
 public interface LifeCollageApiService {
     String ENDPOINT = "https://int-feb-17-api.developmentnow.net/api/";
 
-    //PUBLIC
+    //PUBLIC AUTH
     @POST("public/auth/register")
     Observable<LogInResponse> signUp(@Body SignUpRequest signUpRequest);
 
@@ -49,22 +48,26 @@ public interface LifeCollageApiService {
     @POST("public/auth/refresh")
     Observable<LogInResponse> refresh(@Field("refresh_token") String refresh_token);
 
+    //PUBLIC COLLAGE
+    @GET("public/collage/all")
+    Observable<ArrayList<CollageResponse>> getAllCollages();
 
-    //PRIVATE
-    @GET("private/user")
-    Observable<UserResponse> getUser();
+    @GET("public/collage/user/{userId}")
+    Observable<ArrayList<CollageResponse>> getCollages(@Path("userId") int userId);
 
+    @GET("public/collage/{collageId}")
+    Observable<CollageResponse> getCollageById(@Path("collageId") int collageId);
+
+    //PRIVATE COLLAGE
     @POST("private/collage")
     Observable<CollageResponse> newCollage(@Body NewCollageRequest newCollageRequest);
 
-    @GET("private/collage/user")
-    Observable<ArrayList<CollageResponse>> getCollages(@Query("all") boolean getAllUsers);
-
-    @GET("private/collage/{collageId}")
-    Observable<CollageResponse> getCollageById(@Path("collageId") int collageId);
-
     @DELETE("private/collage/{collageId}")
     Observable<CollageResponse> deleteCollageById(@Path("collageId") int collageId);
+
+    //PRIVATE USER
+    @GET("private/user")
+    Observable<UserResponse> getUser();
 
     @DELETE("private/user")
     Observable<ServerResponse> deleteUser();
