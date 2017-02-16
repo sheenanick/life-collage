@@ -5,6 +5,7 @@ import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
+import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -66,6 +68,9 @@ public interface LifeCollageApiService {
 
     @DELETE("private/user")
     Observable<ServerResponse> deleteUser();
+
+    @PUT("private/user")
+    Observable<UserResponse> updateUser(@Body UpdateUserRequest request);
 
 
     class ServiceCreator {

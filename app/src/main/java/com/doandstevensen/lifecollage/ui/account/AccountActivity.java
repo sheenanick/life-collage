@@ -32,6 +32,10 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
 
         mPresenter = new AccountPresenter(this, this);
         mPresenter.setPrivateService();
+        mPresenter.getUser();
+
+        saveEmailButton.setOnClickListener(this);
+        deleteButton.setOnClickListener(this);
 
         setNavViewCheckedItem(R.id.nav_account);
     }
@@ -58,6 +62,11 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
         if (view == deleteButton) {
             launchDeleteAccountAlertDialog();
         }
+    }
+
+    @Override
+    public void setEmail(String email) {
+        emailEditText.setText(email);
     }
 
     @Override
