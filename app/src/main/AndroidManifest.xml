@@ -33,17 +33,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.collage_list.CollageListActivity" />
         </activity>
-        <activity android:name=".ui.account.AccountActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.collage_list.CollageListActivity" />
-        </activity>
-        <activity android:name=".ui.about.AboutActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.collage_list.CollageListActivity" />
-        </activity>
-
+        <activity android:name=".ui.account.AccountActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ui.about.AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.doandstevensen.fileprovider"

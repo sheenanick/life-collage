@@ -7,6 +7,8 @@ import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
+import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
+import com.doandstevensen.lifecollage.data.model.UserResponse;
 
 import java.util.ArrayList;
 
@@ -38,6 +40,10 @@ public class DataManager {
         return mApiService.refresh(refreshToken);
     }
 
+    public Observable<UserResponse> getUser() {
+        return mApiService.getUser();
+    }
+
     public Observable<ArrayList<CollageResponse>> getCollages(boolean getAllUsers) {
         return mApiService.getCollages(getAllUsers);
     }
@@ -56,5 +62,9 @@ public class DataManager {
 
     public Observable<ServerResponse> deleteUser() {
         return mApiService.deleteUser();
+    }
+
+    public Observable<UserResponse> updateUser(UpdateUserRequest request) {
+        return mApiService.updateUser(request);
     }
 }
