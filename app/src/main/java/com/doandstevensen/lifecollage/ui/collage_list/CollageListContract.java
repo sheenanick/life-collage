@@ -18,7 +18,6 @@ public interface CollageListContract {
     }
 
     interface MvpView extends BaseMvpView {
-        void setNavViewCheckedItem(boolean sameUser);
         void updateRecyclerView(ArrayList<CollageResponse> collages);
         void setToolbarTitle(String title);
         void setFabVisibility(int visibility);

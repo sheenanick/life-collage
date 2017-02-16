@@ -22,7 +22,7 @@
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="user@gmail.com"/>
+        android:inputType="textEmailAddress"/>
     <Button
         android:id="@+id/saveEmailButton"
         android:layout_width="match_parent"

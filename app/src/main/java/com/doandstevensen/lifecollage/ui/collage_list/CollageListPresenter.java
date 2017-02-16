@@ -27,20 +27,24 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     private CollageListContract.MvpView mView;
     private Context mContext;
     private LifeCollageApiService mPrivateService;
+    private LifeCollageApiService mPublicService;
     private DataManager mDataManager;
+    private DataManager mPublicDataManager;
     private Subscription mSubscription;
     private ApplicationToken mToken;
     private ArrayList<CollageResponse> mCollages = new ArrayList<>();
-
+    private UserDataSharedPrefsHelper mSharedPrefHelper;
 
     public CollageListPresenter(CollageListContract.MvpView view, Context context) {
         mView = view;
         mContext = context;
+        mSharedPrefHelper = new UserDataSharedPrefsHelper();
+        mPublicService = LifeCollageApiService.ServiceCreator.newService();
+        mPublicDataManager = new DataManager(mPublicService, mContext);
     }
 
     public void setPrivateService() {
-        UserDataSharedPrefsHelper sharedPrefsHelper = new UserDataSharedPrefsHelper();
-        mToken = sharedPrefsHelper.getUserToken(mContext);
+        mToken = mSharedPrefHelper.getUserToken(mContext);
         String accessToken = mToken.getAccessToken();
         mPrivateService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
         mDataManager = new DataManager(mPrivateService, mContext);
@@ -49,7 +53,8 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     @Override
     public void loadCollageList() {
         mView.displayLoadingAnimation();
-        mSubscription = mDataManager.getCollages(false)
+        int userId = mSharedPrefHelper.getUserData(mContext);
+        mSubscription = mPublicDataManager.getCollages(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -67,14 +72,6 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
-                                loadCollageList();
-                            } else {
-                                mView.logout();
-                            }
-                        }
                         mView.hideLoadingAnimation();
                     }
 
@@ -189,7 +186,9 @@ public class CollageListPresenter implements CollageListContract.Presenter {
         mView = null;
         mContext = null;
         mPrivateService = null;
+        mPublicService = null;
         mDataManager = null;
+        mPublicDataManager = null;
         mSubscription = null;
     }
 

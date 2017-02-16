@@ -7,6 +7,8 @@ import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
+import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
+import com.doandstevensen.lifecollage.data.model.UserResponse;
 
 import java.util.ArrayList;
 
@@ -17,7 +19,6 @@ import rx.Observable;
  */
 
 public class DataManager {
-
     private LifeCollageApiService mApiService;
     private Context mContext;
 
@@ -38,8 +39,24 @@ public class DataManager {
         return mApiService.refresh(refreshToken);
     }
 
-    public Observable<ArrayList<CollageResponse>> getCollages(boolean getAllUsers) {
-        return mApiService.getCollages(getAllUsers);
+    public Observable<UserResponse> getUser() {
+        return mApiService.getUser();
+    }
+
+    public Observable<ServerResponse> deleteUser() {
+        return mApiService.deleteUser();
+    }
+
+    public Observable<UserResponse> updateUser(UpdateUserRequest request) {
+        return mApiService.updateUser(request);
+    }
+
+    public Observable<ArrayList<CollageResponse>> getAllCollages() {
+        return mApiService.getAllCollages();
+    }
+
+    public Observable<ArrayList<CollageResponse>> getCollages(int userId) {
+        return mApiService.getCollages(userId);
     }
 
     public Observable<CollageResponse> getCollageById(int collageId) {
@@ -54,7 +71,4 @@ public class DataManager {
         return mApiService.newCollage(collageRequest);
     }
 
-    public Observable<ServerResponse> deleteUser() {
-        return mApiService.deleteUser();
-    }
 }

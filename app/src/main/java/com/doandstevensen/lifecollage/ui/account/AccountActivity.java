@@ -4,34 +4,46 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.ui.base.BaseActivity;
+import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-public class AccountActivity extends BaseActivity implements AccountContract.MvpView, DeleteAccountDialogFragment.DeleteAccountDialogListener {
-    @BindView(R.id.emailEditText)
-    EditText emailEditText;
-
+public class AccountActivity extends BaseDrawerActivity implements AccountContract.MvpView, View.OnClickListener, DeleteAccountDialogFragment.DeleteAccountDialogListener {
+    private EditText emailEditText;
+    private Button saveEmailButton;
+    private Button deleteButton;
     private AccountPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account);
-        ButterKnife.bind(this);
+        getLayoutInflater().inflate(R.layout.activity_account, mFrameLayout);
 
         initToolbar();
+        emailEditText = (EditText) findViewById(R.id.emailEditText);
+        saveEmailButton = (Button) findViewById(R.id.saveEmailButton);
+        deleteButton = (Button) findViewById(R.id.deleteButton);
 
         mPresenter = new AccountPresenter(this, this);
         mPresenter.setPrivateService();
+        mPresenter.getUser();
+
+        saveEmailButton.setOnClickListener(this);
+        deleteButton.setOnClickListener(this);
+
+        setNavViewCheckedItem(R.id.nav_account);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setNavViewCheckedItem(R.id.nav_account);
     }
 
     private void initToolbar() {
@@ -41,20 +53,25 @@ public class AccountActivity extends BaseActivity implements AccountContract.Mvp
         }
     }
 
-    @OnClick(R.id.saveEmailButton)
-    public void updateEmail() {
-        String newEmail = emailEditText.getText().toString();
-        mPresenter.updateEmail(newEmail);
+    @Override
+    public void onClick(View view) {
+        if (view == saveEmailButton) {
+            String newEmail = emailEditText.getText().toString();
+            mPresenter.updateEmail(newEmail);
+        }
+        if (view == deleteButton) {
+            launchDeleteAccountAlertDialog();
+        }
+    }
+
+    @Override
+    public void setEmail(String email) {
+        emailEditText.setText(email);
     }
 
     @Override
     public void emailUpdated() {
         Toast.makeText(this, "Email Updated!", Toast.LENGTH_SHORT).show();
-    }
-
-    @OnClick(R.id.deleteButton)
-    public void deleteUser() {
-        launchDeleteAccountAlertDialog();
     }
 
     private void launchDeleteAccountAlertDialog() {

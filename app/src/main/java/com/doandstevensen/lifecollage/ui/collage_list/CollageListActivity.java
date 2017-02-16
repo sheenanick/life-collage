@@ -48,6 +48,12 @@ public class CollageListActivity extends BaseDrawerActivity
         mPresenter.loadCollageList();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setNavViewCheckedItem(R.id.nav_collage);
+    }
+
     private void initRecyclerViewAdapter() {
         mAdapter = new CollageListRecyclerViewAdapter(this);
         mAdapter.setClickListener(this);

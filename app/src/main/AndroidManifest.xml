@@ -40,16 +40,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.collage_list.CollageListActivity" />
         </activity>
-        <activity android:name=".ui.account.AccountActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.collage_list.CollageListActivity" />
-        </activity>
-        <activity android:name=".ui.about.AboutActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.collage_list.CollageListActivity" />
-        </activity>
         <activity android:name=".ui.search.SearchResultsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -57,6 +47,10 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        <activity android:name=".ui.account.AccountActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ui.about.AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
