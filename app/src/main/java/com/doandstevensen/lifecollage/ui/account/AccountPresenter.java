@@ -126,7 +126,7 @@ public class AccountPresenter implements AccountContract.Presenter {
     @Override
     public void updateEmail(String email) {
         mView.displayLoadingAnimation();
-        int uid = mHelper.getUserData(mContext);
+        int uid = mHelper.getUserData(mContext).getUid();
         UpdateUserRequest request = new UpdateUserRequest(email, uid);
         mSubscription = mDataManager.updateUser(request)
                 .subscribeOn(Schedulers.io())

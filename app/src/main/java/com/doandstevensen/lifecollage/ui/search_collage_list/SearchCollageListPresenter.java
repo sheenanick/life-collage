@@ -1,9 +1,8 @@
-package com.doandstevensen.lifecollage.ui.search;
+package com.doandstevensen.lifecollage.ui.search_collage_list;
 
 import android.content.Context;
-import android.view.View;
 
-import com.doandstevensen.lifecollage.data.model.UserResponse;
+import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 
@@ -16,25 +15,27 @@ import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Sheena on 2/15/17.
+ * Created by Sheena on 2/16/17.
  */
 
-public class SearchResultsPresenter implements SearchResultsContract.Presenter {
+public class SearchCollageListPresenter implements SearchCollageListContract.Presenter {
+    private SearchCollageListContract.MvpView mView;
     private Context mContext;
-    private SearchResultsContract.MvpView mView;
     private LifeCollageApiService mPublicService;
     private DataManager mPublicDataManager;
     private Subscription mSubscription;
 
-    public SearchResultsPresenter(Context context, SearchResultsContract.MvpView view) {
-        mContext = context;
+    public SearchCollageListPresenter(SearchCollageListContract.MvpView view, Context context) {
         mView = view;
-    }
-
-    public void search(String username) {
+        mContext = context;
         mPublicService = LifeCollageApiService.ServiceCreator.newService();
         mPublicDataManager = new DataManager(mPublicService, mContext);
-        mSubscription = mPublicDataManager.getUsers(username)
+    }
+
+    @Override
+    public void loadCollageList(int userId) {
+        mView.displayLoadingAnimation();
+        mSubscription = mPublicDataManager.getCollages(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -43,7 +44,7 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
                         mSubscription = null;
                     }
                 })
-                .subscribe(new Subscriber<ArrayList<UserResponse>>() {
+                .subscribe(new Subscriber<ArrayList<CollageResponse>>() {
                     @Override
                     public void onCompleted() {
 
@@ -56,21 +57,17 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
                     }
 
                     @Override
-                    public void onNext(ArrayList<UserResponse> users) {
+                    public void onNext(ArrayList<CollageResponse> collages) {
                         mView.hideLoadingAnimation();
-                        if (users.size() == 0) {
-                            mView.setEmptyViewVisibility(View.VISIBLE);
-                        } else {
-                            mView.updateRecyclerView(users);
-                        }
+                        mView.updateRecyclerView(collages);
                     }
                 });
     }
 
     @Override
     public void detach() {
-        mContext = null;
         mView = null;
+        mContext = null;
         mPublicService = null;
         mPublicDataManager = null;
         mSubscription = null;

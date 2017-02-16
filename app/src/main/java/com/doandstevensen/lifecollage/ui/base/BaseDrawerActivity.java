@@ -1,18 +1,15 @@
 package com.doandstevensen.lifecollage.ui.base;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -21,6 +18,7 @@ import com.doandstevensen.lifecollage.ui.about.AboutActivity;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
+import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import butterknife.BindView;
@@ -43,18 +41,20 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
         ButterKnife.bind(this);
 
         initToolbar();
-        initDrawer();
     }
 
     private void initToolbar() {
         setSupportActionBar(mToolbar);
     }
 
-    public void setToolbarTitle(String title) {
-        mToolbar.setTitle(title);
+    public void setActionBarTitle(String title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
     }
 
-    private void initDrawer() {
+    public void initDrawer() {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
@@ -63,9 +63,9 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void setNavViewCheckedItem(int item) {
+    public void setNavViewCheckedItem(int item, boolean isChecked) {
         Menu drawerMenu = mNavigationView.getMenu();
-        drawerMenu.findItem(item).setChecked(true);
+        drawerMenu.findItem(item).setChecked(isChecked);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -80,6 +80,8 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
 
         if (id == R.id.nav_collage) {
             navigateToCollageList();
+        } else if (id == R.id.nav_search) {
+            navigateToSearch();
         } else if (id == R.id.nav_pass) {
 
         } else if (id == R.id.nav_account) {
@@ -105,6 +107,11 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
 
     private void navigateToCollageList() {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
+        startActivity(intent);
+    }
+
+    private void navigateToSearch() {
+        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
         startActivity(intent);
     }
 

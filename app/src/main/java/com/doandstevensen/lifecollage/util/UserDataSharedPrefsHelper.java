@@ -2,9 +2,11 @@ package com.doandstevensen.lifecollage.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
+import com.doandstevensen.lifecollage.data.model.User;
 import com.google.gson.Gson;
 
 /**
@@ -17,19 +19,23 @@ public class UserDataSharedPrefsHelper {
         super();
     }
 
-    public void storeUserData(Context context, int userId) {
+    public void storeUserData(Context context, User user) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putInt(Constants.USER_DATA, userId).commit();
+        Gson gson = new Gson();
+        String jsonToken = gson.toJson(user);
+        editor.putString(Constants.USER_DATA, jsonToken).commit();
     }
 
-    public int getUserData(Context context) {
+    public User getUserData(Context context) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-        int userId = -1;
+        User user = new User();
         if (sharedPrefs.contains(Constants.USER_DATA)) {
-            userId = sharedPrefs.getInt(Constants.USER_DATA, -1);
+            String jsonToken = sharedPrefs.getString(Constants.USER_DATA, null);
+            Gson gson = new Gson();
+            user = gson.fromJson(jsonToken, User.class);
         }
-        return userId;
+        return user;
     }
 
     public void storeUserToken(Context context, ApplicationToken token) {

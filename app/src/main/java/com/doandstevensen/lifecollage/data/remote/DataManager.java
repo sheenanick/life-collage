@@ -43,6 +43,10 @@ public class DataManager {
         return mApiService.getUser();
     }
 
+    public Observable<ArrayList<UserResponse>> getUsers(String username) {
+        return mApiService.getUsers(username);
+    }
+
     public Observable<ServerResponse> deleteUser() {
         return mApiService.deleteUser();
     }

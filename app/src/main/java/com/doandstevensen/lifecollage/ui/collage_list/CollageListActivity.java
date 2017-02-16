@@ -18,9 +18,11 @@ import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
@@ -31,6 +33,7 @@ public class CollageListActivity extends BaseDrawerActivity
 
     private CollageListPresenter mPresenter;
     private CollageListRecyclerViewAdapter mAdapter;
+    private User mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +45,23 @@ public class CollageListActivity extends BaseDrawerActivity
         mFab.setOnClickListener(this);
 
         initRecyclerViewAdapter();
+        initDrawer();
 
         mPresenter = new CollageListPresenter(this, this);
         mPresenter.setPrivateService();
-        mPresenter.loadCollageList();
+
+        UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper();
+        mCurrentUser = sharedPrefs.getUserData(this);
+        int currentUserId = mCurrentUser.getUid();
+
+        mPresenter.loadCollageList(currentUserId);
+        setActionBarTitle("My Life Collages");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setNavViewCheckedItem(R.id.nav_collage);
+        setNavViewCheckedItem(R.id.nav_collage, true);
     }
 
     private void initRecyclerViewAdapter() {
@@ -68,10 +78,6 @@ public class CollageListActivity extends BaseDrawerActivity
         mAdapter.notifyDataSetChanged();
     }
 
-    public void populateRecyclerView(String uid) {
-        mPresenter.loadCollageList();
-    }
-
     @Override
     public void onCollageClick(int collageId, String collageTitle) {
         navigateToCollage(collageId, collageTitle);
@@ -83,11 +89,6 @@ public class CollageListActivity extends BaseDrawerActivity
         intent.putExtra("collageTitle", collageTitle);
         intent.putExtra("collageId", collageId + "");
         startActivity(intent);
-    }
-
-    @Override
-    public void setFabVisibility(int visibility) {
-        mFab.setVisibility(visibility);
     }
 
     @Override

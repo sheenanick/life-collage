@@ -1,10 +1,8 @@
-package com.doandstevensen.lifecollage.ui.collage_list;
+package com.doandstevensen.lifecollage.ui.search_collage_list;
 
 import android.content.Context;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,21 +10,19 @@ import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
-import com.doandstevensen.lifecollage.data.model.User;
 
 import java.util.ArrayList;
 
 /**
- * Created by Sheena on 2/7/17.
+ * Created by Sheena on 2/16/17.
  */
 
-public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<CollageListRecyclerViewAdapter.MyViewHolder> {
+public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchListRecyclerViewAdapter.MyViewHolder> {
     private final Context mContext;
     private ArrayList<CollageResponse> mCollages;
-    private CollageListRecyclerViewAdapter.ClickListener mClickListener;
-    private User mCurrentUser;
+    private SearchListRecyclerViewAdapter.ClickListener mClickListener;
 
-    public CollageListRecyclerViewAdapter(Context context) {
+    public SearchListRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
@@ -34,29 +30,19 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         mCollages = data;
     }
 
-    public void setCurrentUser(User user) {
-        mCurrentUser = user;
-    }
-
-    @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.collage_list_item, parent, false);
-        return new MyViewHolder(itemView);
+                .inflate(R.layout.search_collage_list_item, parent, false);
+        return new SearchListRecyclerViewAdapter.MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, int position) {
         final CollageResponse collage = mCollages.get(position);
         final String collageName = collage.getTitle();
         holder.textView.setText(collageName);
 
-        //TODO Load picture
-//        if (collage.getPictures().size() > 0) {
-//            Picture firstPicture = collage.getPictures().get(0);
-//            String url = firstPicture.getPath();
-//            Picasso.with(context).load(url).into(holder.imageView);
-//        }
+        //TODO Load Pictures
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,23 +57,6 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
                 mClickListener.onCollageClick(collage.getCollageId(), collageName);
             }
         });
-
-        holder.moreIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                PopupMenu popup = new PopupMenu(mContext, holder.moreIcon);
-                popup.getMenuInflater().inflate(R.menu.activity_collage_list_popup, popup.getMenu());
-
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        mClickListener.onMenuClick(item, collage.getCollageId());
-                        return true;
-                    }
-                });
-                popup.show();
-            }
-        });
     }
 
     @Override
@@ -99,25 +68,22 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         }
     }
 
-    public void setClickListener(CollageListRecyclerViewAdapter.ClickListener clickListener) {
+    public void setClickListener(SearchListRecyclerViewAdapter.ClickListener clickListener) {
         mClickListener = clickListener;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textView;
-        ImageView moreIcon;
 
         MyViewHolder(View view) {
             super(view);
             imageView = (ImageView) view.findViewById(R.id.imageView);
             textView = (TextView) view.findViewById(R.id.collageTitleTextView);
-            moreIcon = (ImageView) view.findViewById(R.id.moreIcon);
         }
     }
 
-    public interface ClickListener {
+    interface ClickListener {
         void onCollageClick(int collageId, String collageTitle);
-        void onMenuClick(MenuItem item, int collageId);
     }
 }

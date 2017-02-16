@@ -51,9 +51,8 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     }
 
     @Override
-    public void loadCollageList() {
+    public void loadCollageList(int userId) {
         mView.displayLoadingAnimation();
-        int userId = mSharedPrefHelper.getUserData(mContext);
         mSubscription = mPublicDataManager.getCollages(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
