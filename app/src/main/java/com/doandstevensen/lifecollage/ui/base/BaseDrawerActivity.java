@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.about.AboutActivity;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
+import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
@@ -65,19 +66,23 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void setNavViewCheckedItem(boolean checked) {
+    public void setNavViewCheckedItem(int item) {
         Menu drawerMenu = mNavigationView.getMenu();
-        drawerMenu.findItem(R.id.nav_collage).setChecked(checked);
-        drawerMenu.findItem(R.id.nav_account).setChecked(false);
+        drawerMenu.findItem(item).setChecked(true);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.isChecked()) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return false;
+        }
+
         int id = item.getItemId();
 
         if (id == R.id.nav_collage) {
-
+            navigateToCollageList();
         } else if (id == R.id.nav_pass) {
 
         } else if (id == R.id.nav_account) {
@@ -99,6 +104,11 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void navigateToCollageList() {
+        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
+        startActivity(intent);
     }
 
     private void navigateToAccount() {

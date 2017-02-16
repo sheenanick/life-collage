@@ -4,16 +4,24 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.ui.base.BaseActivity;
+import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends BaseDrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        getLayoutInflater().inflate(R.layout.activity_about, mFrameLayout);
 
         initToolbar();
+
+        setNavViewCheckedItem(R.id.nav_about);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setNavViewCheckedItem(R.id.nav_about);
     }
 
     private void initToolbar() {
