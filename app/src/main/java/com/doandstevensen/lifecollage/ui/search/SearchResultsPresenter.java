@@ -6,6 +6,7 @@ import android.view.View;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 
 import java.util.ArrayList;
 
@@ -19,14 +20,15 @@ import rx.schedulers.Schedulers;
  * Created by Sheena on 2/15/17.
  */
 
-public class SearchResultsPresenter implements SearchResultsContract.Presenter {
+public class SearchResultsPresenter extends BasePresenterClass implements SearchResultsContract.Presenter {
     private Context mContext;
     private SearchResultsContract.MvpView mView;
     private LifeCollageApiService mPublicService;
     private DataManager mPublicDataManager;
     private Subscription mSubscription;
 
-    public SearchResultsPresenter(Context context, SearchResultsContract.MvpView view) {
+    public SearchResultsPresenter(SearchResultsContract.MvpView view, Context context) {
+        super(view, context);
         mContext = context;
         mView = view;
         mPublicDataManager = new DataManager(mContext);

@@ -2,14 +2,12 @@ package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Context;
 
-import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.UpdateCollageRequest;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
-import com.doandstevensen.lifecollage.util.TokenManager;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,27 +22,18 @@ import rx.schedulers.Schedulers;
  * Created by Sheena on 2/7/17.
  */
 
-public class CollageListPresenter implements CollageListContract.Presenter {
+public class CollageListPresenter extends BasePresenterClass implements CollageListContract.Presenter {
     private CollageListContract.MvpView mView;
     private Context mContext;
-    private LifeCollageApiService mPrivateService;
     private DataManager mDataManager;
     private Subscription mSubscription;
-    private ApplicationToken mToken;
     private ArrayList<CollageResponse> mCollages = new ArrayList<>();
 
     public CollageListPresenter(CollageListContract.MvpView view, Context context) {
+        super(view, context);
         mView = view;
         mContext = context;
         mDataManager = new DataManager(mContext);
-        setPrivateService();
-    }
-
-    public void setPrivateService() {
-        mToken = mDataManager.getUserToken();
-        String accessToken = mToken.getAccessToken();
-        mPrivateService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
-        mDataManager.setApiService(mPrivateService);
     }
 
     @Override
@@ -88,7 +77,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     public void createNewCollage(final String title) {
         mView.displayLoadingAnimation();
         NewCollageRequest request = new NewCollageRequest(title);
-        mDataManager.setApiService(mPrivateService);
+        mDataManager.setApiService(privateService());
         mSubscription = mDataManager.newCollage(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -107,14 +96,12 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
+                        refresh(e, new Runnable() {
+                            @Override
+                            public void run() {
                                 createNewCollage(title);
-                            } else {
-                                mView.logout();
                             }
-                        }
+                        });
                         mView.hideLoadingAnimation();
                     }
 
@@ -131,7 +118,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     @Override
     public void deleteCollage(final int collageId) {
         mView.displayLoadingAnimation();
-        mDataManager.setApiService(mPrivateService);
+        mDataManager.setApiService(privateService());
         mSubscription = mDataManager.deleteCollageById(collageId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -150,14 +137,12 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
+                        refresh(e, new Runnable() {
+                            @Override
+                            public void run() {
                                 deleteCollage(collageId);
-                            } else {
-                                mView.logout();
                             }
-                        }
+                        });
                         mView.hideLoadingAnimation();
                     }
 
@@ -180,7 +165,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     @Override
     public void updateCollage(final int collageId, final String title) {
         mView.displayLoadingAnimation();
-        mDataManager.setApiService(mPrivateService);
+        mDataManager.setApiService(privateService());
         UpdateCollageRequest request = new UpdateCollageRequest(collageId, title);
         mSubscription = mDataManager.updateCollage(request)
                 .subscribeOn(Schedulers.io())
@@ -200,14 +185,12 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
+                        refresh(e, new Runnable() {
+                            @Override
+                            public void run() {
                                 updateCollage(collageId, title);
-                            } else {
-                                mView.logout();
                             }
-                        }
+                        });
                         mView.hideLoadingAnimation();
                     }
 
@@ -224,17 +207,10 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                 });
     }
 
-    private boolean handleRefreshToken() {
-        TokenManager tm = new TokenManager();
-        tm.getAccessTokenFromRefreshToken(mContext, mToken);
-        return tm.getRefreshComplete();
-    }
-
     @Override
     public void detach() {
         mView = null;
         mContext = null;
-        mPrivateService = null;
         mDataManager = null;
         mSubscription = null;
     }

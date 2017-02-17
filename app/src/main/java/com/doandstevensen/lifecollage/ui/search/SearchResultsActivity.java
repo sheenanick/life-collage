@@ -18,7 +18,6 @@ import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
-import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.search_collage_list.SearchCollageListActivity;
 
 import java.util.ArrayList;
@@ -123,11 +122,6 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
         Intent intent = new Intent(getBaseContext(), SearchCollageListActivity.class);
         intent.putExtra("userId", userId);
         intent.putExtra("username", username);
-        startActivity(intent);
-    }
-
-    private void navigateToCollageList() {
-        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         startActivity(intent);
     }
 

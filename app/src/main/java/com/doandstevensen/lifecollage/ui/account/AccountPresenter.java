@@ -8,6 +8,7 @@ import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 import com.doandstevensen.lifecollage.util.TokenManager;
 
 import rx.Subscriber;
@@ -20,7 +21,7 @@ import rx.schedulers.Schedulers;
  * Created by Sheena on 2/6/17.
  */
 
-public class AccountPresenter implements AccountContract.Presenter {
+public class AccountPresenter extends BasePresenterClass implements AccountContract.Presenter {
     private AccountContract.MvpView mView;
     private Context mContext;
     private LifeCollageApiService mService;
@@ -29,6 +30,7 @@ public class AccountPresenter implements AccountContract.Presenter {
     private ApplicationToken mToken;
 
     public AccountPresenter(AccountContract.MvpView view, Context context) {
+        super(view, context);
         mView = view;
         mContext = context;
         mDataManager = new DataManager(context);

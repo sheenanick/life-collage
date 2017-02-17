@@ -7,6 +7,7 @@ import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 import com.doandstevensen.lifecollage.ui.login.LogInContract.Presenter;
 
 import rx.Subscriber;

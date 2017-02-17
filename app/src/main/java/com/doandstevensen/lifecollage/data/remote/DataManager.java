@@ -32,7 +32,6 @@ public class DataManager {
 
     public void setApiService(LifeCollageApiService service) {
         mApiService = service;
-
     }
 
     public Observable<LogInResponse> signUp(SignUpRequest request) {

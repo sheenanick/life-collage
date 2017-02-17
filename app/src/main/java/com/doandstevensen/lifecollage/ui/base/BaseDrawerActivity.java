@@ -24,7 +24,7 @@ import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BaseDrawerActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class BaseDrawerActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, BaseDrawerMvpView{
     @BindView(R.id.drawer_layout)
     public DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view)
@@ -105,22 +105,22 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
         }
     }
 
-    private void navigateToCollageList() {
+    public void navigateToCollageList() {
         Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         startActivity(intent);
     }
 
-    private void navigateToSearch() {
+    public void navigateToSearch() {
         Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
         startActivity(intent);
     }
 
-    private void navigateToAccount() {
+    public void navigateToAccount() {
         Intent intent = new Intent(getBaseContext(), AccountActivity.class);
         startActivity(intent);
     }
 
-    private void navigateToAbout() {
+    public void navigateToAbout() {
         Intent intent = new Intent(getBaseContext(), AboutActivity.class);
         startActivity(intent);
     }
