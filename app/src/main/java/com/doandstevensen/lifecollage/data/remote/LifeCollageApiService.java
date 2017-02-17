@@ -38,7 +38,7 @@ import rx.Observable;
 public interface LifeCollageApiService {
     String ENDPOINT = "https://int-feb-17-api.developmentnow.net/api/";
 
-    //PUBLIC AUTH
+    //AUTH
     @POST("public/auth/register")
     Observable<LogInResponse> signUp(@Body SignUpRequest signUpRequest);
 
