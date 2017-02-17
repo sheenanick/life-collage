@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.data.remote;
 
 import android.content.Context;
 
+import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
@@ -9,7 +10,9 @@ import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 import com.doandstevensen.lifecollage.data.model.UpdateCollageRequest;
 import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
+import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
+import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
@@ -21,11 +24,15 @@ import rx.Observable;
 
 public class DataManager {
     private LifeCollageApiService mApiService;
-    private Context mContext;
+    private UserDataSharedPrefsHelper mHelper;
 
-    public DataManager(LifeCollageApiService service, Context context) {
+    public DataManager(Context context) {
+        mHelper = new UserDataSharedPrefsHelper(context);
+    }
+
+    public void setApiService(LifeCollageApiService service) {
         mApiService = service;
-        mContext = context;
+
     }
 
     public Observable<LogInResponse> signUp(SignUpRequest request) {
@@ -78,6 +85,26 @@ public class DataManager {
 
     public Observable<CollageResponse> deleteCollageById(int collageId) {
         return mApiService.deleteCollageById(collageId);
+    }
+
+    public void storeUserData(User user) {
+        mHelper.storeUserData(user);
+    }
+
+    public User getUserData() {
+        return mHelper.getUserData();
+    }
+
+    public void storeUserToken(ApplicationToken token) {
+        mHelper.storeUserToken(token);
+    }
+
+    public ApplicationToken getUserToken() {
+        return mHelper.getUserToken();
+    }
+
+    public void clearData() {
+        mHelper.clearData();
     }
 
 }

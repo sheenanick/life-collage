@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
@@ -41,8 +42,8 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        UserDataSharedPrefsHelper sharedPrefsHelper = new UserDataSharedPrefsHelper();
-        ApplicationToken token = sharedPrefsHelper.getUserToken(this);
+        DataManager dataManager = new DataManager(this);
+        ApplicationToken token = dataManager.getUserToken();
         if (token.getAccessToken() != null) {
             navigateToCollageList();
         }

@@ -29,11 +29,12 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
     public SearchResultsPresenter(Context context, SearchResultsContract.MvpView view) {
         mContext = context;
         mView = view;
+        mPublicDataManager = new DataManager(mContext);
+        mPublicService = LifeCollageApiService.ServiceCreator.newService();
+        mPublicDataManager.setApiService(mPublicService);
     }
 
     public void search(String username) {
-        mPublicService = LifeCollageApiService.ServiceCreator.newService();
-        mPublicDataManager = new DataManager(mPublicService, mContext);
         mSubscription = mPublicDataManager.getUsers(username)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

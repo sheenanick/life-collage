@@ -18,6 +18,6 @@ public interface AccountContract {
         void setEmail(String email);
         void emailUpdated();
         void userDeleted();
-        void navigateToMain();
+        void logout();
     }
 }

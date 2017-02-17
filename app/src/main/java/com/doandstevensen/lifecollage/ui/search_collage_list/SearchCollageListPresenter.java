@@ -21,21 +21,22 @@ import rx.schedulers.Schedulers;
 public class SearchCollageListPresenter implements SearchCollageListContract.Presenter {
     private SearchCollageListContract.MvpView mView;
     private Context mContext;
-    private LifeCollageApiService mPublicService;
-    private DataManager mPublicDataManager;
+    private LifeCollageApiService mService;
+    private DataManager mDataManager;
     private Subscription mSubscription;
 
     public SearchCollageListPresenter(SearchCollageListContract.MvpView view, Context context) {
         mView = view;
         mContext = context;
-        mPublicService = LifeCollageApiService.ServiceCreator.newService();
-        mPublicDataManager = new DataManager(mPublicService, mContext);
+        mService = LifeCollageApiService.ServiceCreator.newService();
+        mDataManager = new DataManager(mContext);
+        mDataManager.setApiService(mService);
     }
 
     @Override
     public void loadCollageList(int userId) {
         mView.displayLoadingAnimation();
-        mSubscription = mPublicDataManager.getCollages(userId)
+        mSubscription = mDataManager.getCollages(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -68,8 +69,8 @@ public class SearchCollageListPresenter implements SearchCollageListContract.Pre
     public void detach() {
         mView = null;
         mContext = null;
-        mPublicService = null;
-        mPublicDataManager = null;
+        mService = null;
+        mDataManager = null;
         mSubscription = null;
     }
 }

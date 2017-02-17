@@ -8,7 +8,6 @@ import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.ui.login.LogInContract.Presenter;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import rx.Subscriber;
 import rx.Subscription;
@@ -31,7 +30,8 @@ public class LogInPresenter implements Presenter {
         mView = view;
         mContext = context;
         mService = LifeCollageApiService.ServiceCreator.newService();
-        mDataManager = new DataManager(mService, mContext);
+        mDataManager = new DataManager(mContext);
+        mDataManager.setApiService(mService);
     }
 
     @Override
@@ -69,12 +69,11 @@ public class LogInPresenter implements Presenter {
     }
 
     private void storeData(ApplicationToken token, int userId, String username) {
-        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
         User user = new User();
         user.setUid(userId);
         user.setUsername(username);
-        helper.storeUserToken(mContext, token);
-        helper.storeUserData(mContext, user);
+        mDataManager.storeUserToken(token);
+        mDataManager.storeUserData(user);
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.doandstevensen.lifecollage.data.model.UserResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.util.TokenManager;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import rx.Subscriber;
 import rx.Subscription;
@@ -24,23 +23,23 @@ import rx.schedulers.Schedulers;
 public class AccountPresenter implements AccountContract.Presenter {
     private AccountContract.MvpView mView;
     private Context mContext;
-    private LifeCollageApiService mPrivateService;
+    private LifeCollageApiService mService;
     private DataManager mDataManager;
     private Subscription mSubscription;
     private ApplicationToken mToken;
-    private UserDataSharedPrefsHelper mHelper;
 
     public AccountPresenter(AccountContract.MvpView view, Context context) {
         mView = view;
         mContext = context;
-        mHelper = new UserDataSharedPrefsHelper();
+        mDataManager = new DataManager(context);
+        setPrivateService();
     }
 
     public void setPrivateService() {
-        mToken = mHelper.getUserToken(mContext);
+        mToken = mDataManager.getUserToken();
         String accessToken = mToken.getAccessToken();
-        mPrivateService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
-        mDataManager = new DataManager(mPrivateService, mContext);
+        mService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
+        mDataManager.setApiService(mService);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class AccountPresenter implements AccountContract.Presenter {
                                 setPrivateService();
                                 deleteUser();
                             } else {
-                                mView.navigateToMain();
+                                mView.logout();
                             }
                         }
                         mView.hideLoadingAnimation();
@@ -109,7 +108,7 @@ public class AccountPresenter implements AccountContract.Presenter {
                                 setPrivateService();
                                 deleteUser();
                             } else {
-                                mView.navigateToMain();
+                                mView.logout();
                             }
                         }
                         mView.hideLoadingAnimation();
@@ -126,7 +125,7 @@ public class AccountPresenter implements AccountContract.Presenter {
     @Override
     public void updateEmail(String email) {
         mView.displayLoadingAnimation();
-        int uid = mHelper.getUserData(mContext).getUid();
+        int uid = mDataManager.getUserData().getUid();
         UpdateUserRequest request = new UpdateUserRequest(email, uid);
         mSubscription = mDataManager.updateUser(request)
                 .subscribeOn(Schedulers.io())
@@ -151,7 +150,7 @@ public class AccountPresenter implements AccountContract.Presenter {
                                 setPrivateService();
                                 deleteUser();
                             } else {
-                                mView.navigateToMain();
+                                mView.logout();
                             }
                         }
                         mView.hideLoadingAnimation();
@@ -175,7 +174,7 @@ public class AccountPresenter implements AccountContract.Presenter {
     public void detach() {
         mView = null;
         mContext = null;
-        mPrivateService = null;
+        mService = null;
         mDataManager = null;
         mSubscription = null;
     }

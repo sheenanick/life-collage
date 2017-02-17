@@ -9,7 +9,6 @@ import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -34,7 +33,8 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         mView = view;
         mContext = context;
         mService = LifeCollageApiService.ServiceCreator.newService();
-        mDataManager = new DataManager(mService, mContext);
+        mDataManager = new DataManager(mContext);
+        mDataManager.setApiService(mService);
     }
 
     @Override
@@ -106,12 +106,11 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     }
 
     private void storeData(ApplicationToken token, int userId, String username) {
-        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
         User user = new User();
         user.setUid(userId);
         user.setUsername(username);
-        helper.storeUserToken(mContext, token);
-        helper.storeUserData(mContext, user);
+        mDataManager.storeUserToken(token);
+        mDataManager.storeUserData(user);
     }
 
     @Override

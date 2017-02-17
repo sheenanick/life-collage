@@ -47,10 +47,9 @@ public class CollageListActivity extends BaseDrawerActivity
         initDrawer();
 
         mPresenter = new CollageListPresenter(this, this);
-        mPresenter.setPrivateService();
 
-        UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper();
-        User currentUser = sharedPrefs.getUserData(this);
+        UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper(this);
+        User currentUser = sharedPrefs.getUserData();
         int currentUserId = currentUser.getUid();
 
         mPresenter.loadCollageList(currentUserId);

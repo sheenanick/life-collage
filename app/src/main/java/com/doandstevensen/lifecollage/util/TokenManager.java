@@ -20,7 +20,8 @@ public class TokenManager {
 
     public void getAccessTokenFromRefreshToken(final Context context, ApplicationToken token) {
         LifeCollageApiService publicService = LifeCollageApiService.ServiceCreator.newService();
-        DataManager dataManager = new DataManager(publicService, context);
+        final DataManager dataManager = new DataManager(context);
+        dataManager.setApiService(publicService);
 
         String refreshToken = token.getRefreshToken();
         dataManager.refresh(refreshToken)
@@ -40,8 +41,7 @@ public class TokenManager {
 
                 @Override
                 public void onNext(LogInResponse response) {
-                    UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
-                    helper.storeUserToken(context, response.getToken());
+                    dataManager.storeUserToken(response.getToken());
                     mRefreshComplete = true;
                 }
             });

@@ -1,6 +1,5 @@
 package com.doandstevensen.lifecollage.ui.account;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
@@ -10,8 +9,6 @@ import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
-import com.doandstevensen.lifecollage.ui.main.MainActivity;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 public class AccountActivity extends BaseDrawerActivity implements AccountContract.MvpView, View.OnClickListener, DeleteAccountDialogFragment.DeleteAccountDialogListener {
     private EditText emailEditText;
@@ -32,7 +29,6 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
         deleteButton = (Button) findViewById(R.id.deleteButton);
 
         mPresenter = new AccountPresenter(this, this);
-        mPresenter.setPrivateService();
         mPresenter.getUser();
 
         saveEmailButton.setOnClickListener(this);
@@ -84,17 +80,7 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
     @Override
     public void userDeleted() {
         Toast.makeText(this, "Your account has been deleted", Toast.LENGTH_LONG).show();
-        navigateToMain();
-    }
-
-    @Override
-    public void navigateToMain() {
-        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
-        helper.clearData(getBaseContext());
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        logout();
     }
 
     @Override

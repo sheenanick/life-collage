@@ -126,8 +126,8 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
     }
 
     public void logout() {
-        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
-        helper.clearData(getBaseContext());
+        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper(getBaseContext());
+        helper.clearData();
 
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

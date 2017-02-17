@@ -32,19 +32,19 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     private Subscription mSubscription;
     private ApplicationToken mToken;
     private ArrayList<CollageResponse> mCollages = new ArrayList<>();
-    private UserDataSharedPrefsHelper mSharedPrefHelper;
 
     public CollageListPresenter(CollageListContract.MvpView view, Context context) {
         mView = view;
         mContext = context;
-        mSharedPrefHelper = new UserDataSharedPrefsHelper();
+        mDataManager = new DataManager(mContext);
+        setPrivateService();
     }
 
     public void setPrivateService() {
-        mToken = mSharedPrefHelper.getUserToken(mContext);
+        mToken = mDataManager.getUserToken();
         String accessToken = mToken.getAccessToken();
         mPrivateService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
-        mDataManager = new DataManager(mPrivateService, mContext);
+        mDataManager.setApiService(mPrivateService);
     }
 
     @Override
@@ -52,9 +52,9 @@ public class CollageListPresenter implements CollageListContract.Presenter {
         mView.displayLoadingAnimation();
 
         LifeCollageApiService publicService = LifeCollageApiService.ServiceCreator.newService();
-        DataManager publicDataManager = new DataManager(publicService, mContext);
+        mDataManager.setApiService(publicService);
 
-        mSubscription = publicDataManager.getCollages(userId)
+        mSubscription = mDataManager.getCollages(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -88,6 +88,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     public void createNewCollage(final String title) {
         mView.displayLoadingAnimation();
         NewCollageRequest request = new NewCollageRequest(title);
+        mDataManager.setApiService(mPrivateService);
         mSubscription = mDataManager.newCollage(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -130,6 +131,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     @Override
     public void deleteCollage(final int collageId) {
         mView.displayLoadingAnimation();
+        mDataManager.setApiService(mPrivateService);
         mSubscription = mDataManager.deleteCollageById(collageId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -178,6 +180,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     @Override
     public void updateCollage(final int collageId, final String title) {
         mView.displayLoadingAnimation();
+        mDataManager.setApiService(mPrivateService);
         UpdateCollageRequest request = new UpdateCollageRequest(collageId, title);
         mSubscription = mDataManager.updateCollage(request)
                 .subscribeOn(Schedulers.io())
