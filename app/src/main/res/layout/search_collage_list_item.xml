@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/puppy"/>
+        android:src="@drawable/placeholderimage"/>
 
         <TextView
             android:id="@+id/collageTitleTextView"
