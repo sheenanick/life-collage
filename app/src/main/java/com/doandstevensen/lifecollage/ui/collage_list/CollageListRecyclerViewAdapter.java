@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
-import com.doandstevensen.lifecollage.data.model.User;
 
 import java.util.ArrayList;
 
@@ -24,7 +23,6 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
     private final Context mContext;
     private ArrayList<CollageResponse> mCollages;
     private CollageListRecyclerViewAdapter.ClickListener mClickListener;
-    private User mCurrentUser;
 
     public CollageListRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -32,10 +30,6 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
 
     public void setCollages(ArrayList<CollageResponse> data) {
         mCollages = data;
-    }
-
-    public void setCurrentUser(User user) {
-        mCurrentUser = user;
     }
 
     @Override
@@ -50,13 +44,6 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         final CollageResponse collage = mCollages.get(position);
         final String collageName = collage.getTitle();
         holder.textView.setText(collageName);
-
-        //TODO Load picture
-//        if (collage.getPictures().size() > 0) {
-//            Picture firstPicture = collage.getPictures().get(0);
-//            String url = firstPicture.getPath();
-//            Picasso.with(context).load(url).into(holder.imageView);
-//        }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +68,7 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        mClickListener.onMenuClick(item, collage.getCollageId());
+                        mClickListener.onMenuClick(item, collage.getCollageId(), collageName);
                         return true;
                     }
                 });
@@ -116,8 +103,8 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         }
     }
 
-    public interface ClickListener {
+    interface ClickListener {
         void onCollageClick(int collageId, String collageTitle);
-        void onMenuClick(MenuItem item, int collageId);
+        void onMenuClick(MenuItem item, int collageId, String collageName);
     }
 }

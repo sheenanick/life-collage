@@ -15,6 +15,7 @@ public interface CollageListContract {
         void loadCollageList(int userId);
         void createNewCollage(String name);
         void deleteCollage(int collageId);
+        void updateCollage(int collageId, String title);
     }
 
     interface MvpView extends BaseMvpView {

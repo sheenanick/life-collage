@@ -27,13 +27,12 @@ import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 import java.util.ArrayList;
 
 public class CollageListActivity extends BaseDrawerActivity
-        implements CollageListContract.MvpView, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener {
+        implements CollageListContract.MvpView, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener, UpdateCollageDialogFragment.UpdateCollageDialogListener {
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFab;
 
     private CollageListPresenter mPresenter;
     private CollageListRecyclerViewAdapter mAdapter;
-    private User mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +50,8 @@ public class CollageListActivity extends BaseDrawerActivity
         mPresenter.setPrivateService();
 
         UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper();
-        mCurrentUser = sharedPrefs.getUserData(this);
-        int currentUserId = mCurrentUser.getUid();
+        User currentUser = sharedPrefs.getUserData(this);
+        int currentUserId = currentUser.getUid();
 
         mPresenter.loadCollageList(currentUserId);
         setActionBarTitle("My Life Collages");
@@ -112,15 +111,26 @@ public class CollageListActivity extends BaseDrawerActivity
     public void onDialogNegativeClick(DialogFragment dialog) { }
 
     @Override
-    public void onMenuClick(MenuItem item, int collageId) {
+    public void onMenuClick(MenuItem item, int collageId, String collageName) {
         int id = item.getItemId();
 
         if (id == R.id.edit) {
-            Toast.makeText(this, "Can't edit yet!", Toast.LENGTH_SHORT).show();
+            launchUpdateAlertDialog(collageId, collageName);
         }
         if (id == R.id.delete) {
             launchDeleteAlertDialog(collageId);
         }
+    }
+
+    private void launchUpdateAlertDialog(int collageId, String collageName) {
+        UpdateCollageDialogFragment dialogFragment = new UpdateCollageDialogFragment();
+        dialogFragment.setCollage(collageId, collageName);
+        dialogFragment.show(getSupportFragmentManager(), "updateCollage");
+    }
+
+    @Override
+    public void onUpdateDialogPositiveClick(DialogFragment dialog, String collageName, int collageId) {
+        mPresenter.updateCollage(collageId, collageName);
     }
 
     private void launchDeleteAlertDialog(int collageId) {

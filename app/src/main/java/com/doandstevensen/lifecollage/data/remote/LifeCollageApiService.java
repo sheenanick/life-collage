@@ -5,6 +5,7 @@ import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
+import com.doandstevensen.lifecollage.data.model.UpdateCollageRequest;
 import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 
@@ -49,7 +50,8 @@ public interface LifeCollageApiService {
     @POST("public/auth/refresh")
     Observable<LogInResponse> refresh(@Field("refresh_token") String refresh_token);
 
-    //PUBLIC COLLAGE
+
+    //COLLAGE
     @GET("public/collage/all")
     Observable<ArrayList<CollageResponse>> getAllCollages();
 
@@ -59,18 +61,20 @@ public interface LifeCollageApiService {
     @GET("public/collage/{collageId}")
     Observable<CollageResponse> getCollageById(@Path("collageId") int collageId);
 
-    //PUBLIC USER
-    @GET("public/user")
-    Observable<ArrayList<UserResponse>> getUsers(@Query("username") String username);
-
-    //PRIVATE COLLAGE
     @POST("private/collage")
     Observable<CollageResponse> newCollage(@Body NewCollageRequest newCollageRequest);
+
+    @PUT("private/collage")
+    Observable<CollageResponse> updateCollage(@Body UpdateCollageRequest request);
 
     @DELETE("private/collage/{collageId}")
     Observable<CollageResponse> deleteCollageById(@Path("collageId") int collageId);
 
-    //PRIVATE USER
+
+    //USER
+    @GET("public/user")
+    Observable<ArrayList<UserResponse>> getUsers(@Query("username") String username);
+
     @GET("private/user")
     Observable<UserResponse> getUser();
 
