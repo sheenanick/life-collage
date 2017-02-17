@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -44,6 +45,9 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         final CollageResponse collage = mCollages.get(position);
         final String collageName = collage.getTitle();
         holder.textView.setText(collageName);
+
+        String url = "https://source.unsplash.com/random";
+        Picasso.with(mContext).load(url).into(holder.imageView);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
