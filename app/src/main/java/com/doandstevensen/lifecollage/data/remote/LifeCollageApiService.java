@@ -3,6 +3,8 @@ package com.doandstevensen.lifecollage.data.remote;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
+import com.doandstevensen.lifecollage.data.model.NewPictureRequest;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 import com.doandstevensen.lifecollage.data.model.UpdateCollageRequest;
@@ -51,6 +53,20 @@ public interface LifeCollageApiService {
     Observable<LogInResponse> refresh(@Field("refresh_token") String refresh_token);
 
 
+    //USER
+    @GET("public/user")
+    Observable<ArrayList<UserResponse>> getUsers(@Query("username") String username);
+
+    @GET("private/user")
+    Observable<UserResponse> getUser();
+
+    @DELETE("private/user")
+    Observable<ServerResponse> deleteUser();
+
+    @PUT("private/user")
+    Observable<UserResponse> updateUser(@Body UpdateUserRequest request);
+
+
     //COLLAGE
     @GET("public/collage/all")
     Observable<ArrayList<CollageResponse>> getAllCollages();
@@ -71,18 +87,15 @@ public interface LifeCollageApiService {
     Observable<CollageResponse> deleteCollageById(@Path("collageId") int collageId);
 
 
-    //USER
-    @GET("public/user")
-    Observable<ArrayList<UserResponse>> getUsers(@Query("username") String username);
+    //PICTURE
+    @GET("public/picture/all/collageId/{collageId}")
+    Observable<ArrayList<PictureResponse>> getAllPictures(@Path("collageId") int collageId);
 
-    @GET("private/user")
-    Observable<UserResponse> getUser();
+    @GET("public/picture/collageId/{collageId}")
+    Observable<PictureResponse> getLastPicture(@Path("collageId") int collageId);
 
-    @DELETE("private/user")
-    Observable<ServerResponse> deleteUser();
-
-    @PUT("private/user")
-    Observable<UserResponse> updateUser(@Body UpdateUserRequest request);
+    @POST("private/picture/collageId/{collageId}")
+    Observable<PictureResponse> postPicture(@Path("collageId") int collageId, @Body NewPictureRequest request);
 
 
     class ServiceCreator {
