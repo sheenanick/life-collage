@@ -5,6 +5,7 @@ import android.content.Context;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.model.UpdateCollageRequest;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
@@ -32,6 +33,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
     private Subscription mSubscription;
     private ApplicationToken mToken;
     private ArrayList<CollageResponse> mCollages = new ArrayList<>();
+    private ArrayList<PictureResponse> mPictures = new ArrayList<>();
     private UserDataSharedPrefsHelper mSharedPrefHelper;
 
     public CollageListPresenter(CollageListContract.MvpView view, Context context) {
@@ -78,10 +80,52 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onNext(ArrayList<CollageResponse> collages) {
                         mView.hideLoadingAnimation();
-                        mView.updateRecyclerView(collages);
                         mCollages = collages;
+                        for (CollageResponse collage : collages) {
+                            getPicture(collage.getCollageId());
+                        }
                     }
                 });
+    }
+
+    public void getPicture(int collageId) {
+        mView.displayLoadingAnimation();
+
+        LifeCollageApiService publicService = LifeCollageApiService.ServiceCreator.newService();
+        DataManager publicDataManager = new DataManager(publicService, mContext);
+
+        mSubscription = publicDataManager.getLastPicture(collageId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
+                .subscribe(new Subscriber<PictureResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideLoadingAnimation();
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(PictureResponse pictureResponse) {
+                        mView.hideLoadingAnimation();
+                        mPictures.add(pictureResponse);
+                        updateRecyclerView();
+                    }
+                });
+    }
+
+    private void updateRecyclerView() {
+        mView.updateRecyclerView(mCollages, mPictures);
     }
 
     @Override
@@ -120,7 +164,8 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                     @Override
                     public void onNext(CollageResponse collage) {
                         mCollages.add(collage);
-                        mView.updateRecyclerView(mCollages);
+                        mPictures.add(null);
+                        mView.updateRecyclerView(mCollages, mPictures);
                         mView.navigateToCollage(collage.getCollageId(), collage.getTitle());
                         mView.hideLoadingAnimation();
                     }
@@ -168,8 +213,15 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                                 iterator.remove();
                             }
                         }
+                        Iterator<PictureResponse> pictureIterator = mPictures.iterator();
+                        while (iterator.hasNext()) {
+                            PictureResponse picture = pictureIterator.next();
+                            if (picture.getCollageId() == response.getCollageId()) {
+                                iterator.remove();
+                            }
+                        }
                         mView.onDeleteSuccess();
-                        mView.updateRecyclerView(mCollages);
+                        mView.updateRecyclerView(mCollages, mPictures);
                         mView.hideLoadingAnimation();
                     }
                 });
@@ -215,7 +267,7 @@ public class CollageListPresenter implements CollageListContract.Presenter {
                                 mCollages.set(i, response);
                             }
                         }
-                        mView.updateRecyclerView(mCollages);
+                        mView.updateRecyclerView(mCollages, mPictures);
                         mView.hideLoadingAnimation();
                     }
                 });

@@ -42,7 +42,6 @@ public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRe
     public void onBindViewHolder(MyViewHolder holder, int position) {
         PictureResponse photo = mPictures.get(position);
         final String url = photo.getLocation();
-
         Picasso.Builder builder = new Picasso.Builder(mContext);
         builder.listener(new Picasso.Listener() {
             @Override

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
@@ -72,9 +73,8 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<CollageResponse> collages) {
-        mAdapter.setCollages(collages);
-        mAdapter.notifyDataSetChanged();
+    public void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
+        mAdapter.setData(collages, pictures);
     }
 
     @Override
