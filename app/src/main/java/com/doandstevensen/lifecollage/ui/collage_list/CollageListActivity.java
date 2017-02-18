@@ -43,11 +43,11 @@ public class CollageListActivity extends BaseDrawerActivity
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(this);
 
-        initRecyclerViewAdapter();
-        initDrawer();
-
         mPresenter = new CollageListPresenter(this, this);
         mPresenter.setPrivateService();
+
+        initRecyclerViewAdapter();
+        initDrawer();
 
         UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper();
         User currentUser = sharedPrefs.getUserData(this);
@@ -64,7 +64,7 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     private void initRecyclerViewAdapter() {
-        mAdapter = new CollageListRecyclerViewAdapter(this);
+        mAdapter = new CollageListRecyclerViewAdapter(this, mPresenter);
         mAdapter.setClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
@@ -86,7 +86,7 @@ public class CollageListActivity extends BaseDrawerActivity
     public void navigateToCollage(int collageId, String collageTitle) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.putExtra("collageTitle", collageTitle);
-        intent.putExtra("collageId", collageId + "");
+        intent.putExtra("collageId", collageId);
         startActivity(intent);
     }
 
