@@ -45,13 +45,6 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
         setSupportActionBar(mToolbar);
     }
 
-    public void setActionBarTitle(String title) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(title);
-        }
-    }
-
     public void initDrawer() {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
