@@ -17,6 +17,7 @@ import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Sheena on 2/7/17.
@@ -24,21 +25,25 @@ import java.util.ArrayList;
 
 public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<CollageListRecyclerViewAdapter.MyViewHolder> {
     private final Context mContext;
-    private CollageListPresenter mPresenter;
     private ArrayList<CollageResponse> mCollages;
     private ArrayList<PictureResponse> mPictures;
     private CollageListRecyclerViewAdapter.ClickListener mClickListener;
-    private boolean mLoad = true;
 
-    public CollageListRecyclerViewAdapter(Context context, CollageListPresenter presenter) {
+    public CollageListRecyclerViewAdapter(Context context) {
         mContext = context;
-        mPresenter = presenter;
     }
 
     public void setData(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
         mCollages = collages;
         mPictures = pictures;
-        notifyDataSetChanged();
+    }
+
+    public void setCollages(ArrayList<CollageResponse> collages) {
+        mCollages = collages;
+    }
+
+    public void setPictures(ArrayList<PictureResponse> pictures) {
+        mPictures = pictures;
     }
 
     @Override
@@ -53,7 +58,7 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         final CollageResponse collage = mCollages.get(position);
         final int collageId = collage.getCollageId();
         final String collageName = collage.getTitle();
-        
+
         holder.textView.setText(collageName);
 
         for (PictureResponse picture : mPictures) {
@@ -67,8 +72,7 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
                         }
                     });
                     builder.build().load(picture.getLocation()).into(holder.imageView);
-                } else {
-                    mLoad = false;
+                    break;
                 }
             }
         }
@@ -76,7 +80,7 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClickListener.onCollageClick(collageId, collageName, mLoad);
+                mClickListener.onCollageClick(collageId, collageName, true);
             }
         });
 
@@ -96,6 +100,18 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
                 popup.show();
             }
         });
+    }
+
+    @Override
+    public void onBindViewHolder(final MyViewHolder holder, int position, List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+        } else {
+            Object payload = payloads.get(0);
+            if (payload instanceof String) {
+                holder.textView.setText((String) payload);
+            }
+        }
     }
 
     @Override

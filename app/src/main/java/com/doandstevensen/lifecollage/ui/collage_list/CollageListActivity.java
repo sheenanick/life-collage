@@ -62,7 +62,7 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     private void initRecyclerViewAdapter() {
-        mAdapter = new CollageListRecyclerViewAdapter(this, mPresenter);
+        mAdapter = new CollageListRecyclerViewAdapter(this);
         mAdapter.setClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
@@ -72,7 +72,33 @@ public class CollageListActivity extends BaseDrawerActivity
     @Override
     public void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
         mAdapter.setData(collages, pictures);
+        mAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void insertCollage(ArrayList<CollageResponse> collages, int position) {
+        mAdapter.setCollages(collages);
+        mAdapter.notifyItemInserted(position);
+    }
+
+    @Override
+    public void insertPicture(ArrayList<PictureResponse> pictures, int position) {
+        mAdapter.setPictures(pictures);
+        mAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void deleteCollage(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures, int position) {
+        mAdapter.setData(collages, pictures);
+        mAdapter.notifyItemRemoved(position);
+        Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void updateCollageTitle(int position, Object payload) {
+        mAdapter.notifyItemChanged(position, payload);
+    }
+
 
     @Override
     public void onCollageClick(int collageId, String collageTitle, boolean load) {
@@ -140,11 +166,6 @@ public class CollageListActivity extends BaseDrawerActivity
     @Override
     public void onDeleteDialogPositiveClick(DialogFragment dialog, int collageId) {
         mPresenter.deleteCollage(collageId);
-    }
-
-    @Override
-    public void onDeleteSuccess() {
-        Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
     }
 
     @Override
