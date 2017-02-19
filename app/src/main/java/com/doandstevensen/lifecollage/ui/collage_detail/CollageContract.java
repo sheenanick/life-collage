@@ -13,13 +13,12 @@ import java.util.ArrayList;
 
 public interface CollageContract {
     interface Presenter extends BasePresenter {
-        void loadCollage(String title);
+        void loadCollage();
         void uploadFile(File file);
     }
 
     interface MvpView extends BaseMvpView {
         void setRecyclerViewPictures(ArrayList<PictureResponse> pictures);
-        void setToolbarTitle(String title);
         void setEmptyViewVisibility(int visibility);
         void logout();
     }

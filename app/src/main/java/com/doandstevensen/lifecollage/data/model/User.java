@@ -7,6 +7,15 @@ package com.doandstevensen.lifecollage.data.model;
 public class User {
     private int uid;
     private String username;
+    private String email;
+
+    public User() {}
+
+    public User(int uid, String username, String email) {
+        this.uid = uid;
+        this.username = username;
+        this.email = email;
+    }
 
     public void setUid(int uid) {
         this.uid = uid;
@@ -14,6 +23,10 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public int getUid() {
@@ -24,5 +37,7 @@ public class User {
         return username;
     }
 
-
+    public String getEmail() {
+        return email;
+    }
 }

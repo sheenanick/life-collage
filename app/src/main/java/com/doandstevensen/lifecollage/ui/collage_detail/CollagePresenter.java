@@ -7,14 +7,12 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.doandstevensen.lifecollage.Constants;
-import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.NewPictureRequest;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 import com.doandstevensen.lifecollage.util.S3Util;
-import com.doandstevensen.lifecollage.util.TokenManager;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,38 +27,30 @@ import rx.schedulers.Schedulers;
  * Created by Sheena on 2/2/17.
  */
 
-public class CollagePresenter implements CollageContract.Presenter {
+public class CollagePresenter extends BasePresenterClass implements CollageContract.Presenter {
     private CollageContract.MvpView mView;
     private Context mContext;
-    private LifeCollageApiService mPrivateService;
+    private LifeCollageApiService mPublicService;
     private DataManager mDataManager;
     private Subscription mSubscription;
-    private ApplicationToken mToken;
-    private UserDataSharedPrefsHelper mHelper;
     private int mCollageId;
     private ArrayList<PictureResponse> mPictures = new ArrayList<>();
 
-    public CollagePresenter(CollageContract.MvpView view, Context context, int collageId) {
+    public CollagePresenter(CollageContract.MvpView view, Context context, DataManager dataManager, int collageId) {
+        super(view, context, dataManager);
         mView = view;
         mContext = context;
-        mHelper = new UserDataSharedPrefsHelper();
         mCollageId = collageId;
-    }
-
-    public void setPrivateService() {
-        mToken = mHelper.getUserToken(mContext);
-        String accessToken = mToken.getAccessToken();
-        mPrivateService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
-        mDataManager = new DataManager(mPrivateService, mContext);
+        mDataManager = dataManager;
+        mPublicService = LifeCollageApiService.ServiceCreator.newService();
     }
 
     @Override
-    public void loadCollage(final String title) {
+    public void loadCollage() {
         mView.displayLoadingAnimation();
+        mDataManager.setApiService(mPublicService);
 
-        LifeCollageApiService service = LifeCollageApiService.ServiceCreator.newService();
-        DataManager dataManager = new DataManager(service, mContext);
-        mSubscription = dataManager.getAllPictures(mCollageId)
+        mSubscription = mDataManager.getAllPictures(mCollageId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -78,14 +68,6 @@ public class CollagePresenter implements CollageContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
-                                loadCollage(title);
-                            } else {
-                                mView.logout();
-                            }
-                        }
                         mView.hideLoadingAnimation();
                     }
 
@@ -95,12 +77,10 @@ public class CollagePresenter implements CollageContract.Presenter {
                         if (response.size() > 0) {
                             mView.setRecyclerViewPictures(response);
                             mPictures = response;
-                        } else {
-                            mView.setEmptyViewVisibility(View.VISIBLE);
+                            mView.setEmptyViewVisibility(View.GONE);
                         }
                     }
                 });
-        mView.setToolbarTitle(title);
     }
 
     public void uploadFile(final File file) {
@@ -113,12 +93,12 @@ public class CollagePresenter implements CollageContract.Presenter {
 
         String picPath = Constants.ROOT_URL + Constants.BUCKET_NAME + "/" + file.getName();
         addCollagePic(picPath);
-
     }
 
     private void addCollagePic(final String location) {
         mView.displayLoadingAnimation();
-        setPrivateService();
+        mDataManager.setApiService(privateService());
+
         NewPictureRequest request = new NewPictureRequest(location);
         mSubscription = mDataManager.postPicture(mCollageId, request)
                 .subscribeOn(Schedulers.io())
@@ -138,14 +118,12 @@ public class CollagePresenter implements CollageContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
+                        refresh(e, new Runnable() {
+                            @Override
+                            public void run() {
                                 addCollagePic(location);
-                            } else {
-                                mView.logout();
                             }
-                        }
+                        });
                         mView.hideLoadingAnimation();
                     }
 
@@ -159,15 +137,13 @@ public class CollagePresenter implements CollageContract.Presenter {
                 });
     }
 
-    private boolean handleRefreshToken() {
-        TokenManager tm = new TokenManager();
-        tm.getAccessTokenFromRefreshToken(mContext, mToken);
-        return tm.getRefreshComplete();
-    }
-
     @Override
     public void detach() {
         mView = null;
         mContext = null;
+        mDataManager = null;
+        mPublicService = null;
+        mSubscription = null;
+        mPictures = null;
     }
 }

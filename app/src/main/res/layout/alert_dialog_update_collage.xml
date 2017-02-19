@@ -12,7 +12,7 @@
         android:paddingLeft="24dp"
         android:paddingTop="24dp"
         android:paddingBottom="20dp"
-        android:text="Update Collage"/>
+        android:text="Update Collage Title"/>
     <EditText
         android:id="@+id/collageName"
         android:inputType="textCapWords"

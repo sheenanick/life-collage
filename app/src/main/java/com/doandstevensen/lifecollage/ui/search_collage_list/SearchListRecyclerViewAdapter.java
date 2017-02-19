@@ -1,6 +1,7 @@
 package com.doandstevensen.lifecollage.ui.search_collage_list;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -20,14 +23,20 @@ import java.util.ArrayList;
 public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchListRecyclerViewAdapter.MyViewHolder> {
     private final Context mContext;
     private ArrayList<CollageResponse> mCollages;
+    private ArrayList<PictureResponse> mPictures = new ArrayList<>();
     private SearchListRecyclerViewAdapter.ClickListener mClickListener;
 
     public SearchListRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setCollages(ArrayList<CollageResponse> data) {
-        mCollages = data;
+    public void setData(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
+        mCollages = collages;
+        mPictures = pictures;
+    }
+
+    public void setPictures(ArrayList<PictureResponse> pictures) {
+        mPictures = pictures;
     }
 
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -40,21 +49,30 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final CollageResponse collage = mCollages.get(position);
         final String collageName = collage.getTitle();
+        final int collageId = collage.getCollageId();
+
         holder.textView.setText(collageName);
 
-        //TODO Load Pictures
+        for (PictureResponse picture : mPictures) {
+            if (picture != null) {
+                if (picture.getCollageId() == collageId) {
+                    Picasso.Builder builder = new Picasso.Builder(mContext);
+                    builder.listener(new Picasso.Listener() {
+                        @Override
+                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    });
+                    builder.build().load(picture.getLocation()).into(holder.imageView);
+                    break;
+                }
+            }
+        }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClickListener.onCollageClick(collage.getCollageId(), collageName);
-            }
-        });
-
-        holder.textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mClickListener.onCollageClick(collage.getCollageId(), collageName);
+                mClickListener.onCollageClick(collageId, collageName);
             }
         });
     }

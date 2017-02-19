@@ -2,6 +2,8 @@ package com.doandstevensen.lifecollage.ui.main;
 
 import android.content.Context;
 
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
+
 /**
  * Created by Sheena on 2/3/17.
  */

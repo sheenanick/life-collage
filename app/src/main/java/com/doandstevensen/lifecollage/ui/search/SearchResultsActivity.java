@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -17,10 +16,9 @@ import android.widget.TextView;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
-import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.search_collage_list.SearchCollageListActivity;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
@@ -44,8 +42,8 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
         initRecyclerView();
         setActionBarTitle("Search");
 
-        UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper();
-        mCurrentUser = sharedPrefs.getUserData(this);
+        DataManager dataManager = new DataManager(this);
+        mCurrentUser = dataManager.getUserData();
 
         if (mCurrentUser.getUsername() != null) {
             initDrawer();
@@ -124,11 +122,6 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
         Intent intent = new Intent(getBaseContext(), SearchCollageListActivity.class);
         intent.putExtra("userId", userId);
         intent.putExtra("username", username);
-        startActivity(intent);
-    }
-
-    private void navigateToCollageList() {
-        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
         startActivity(intent);
     }
 

@@ -23,18 +23,20 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
     private Context mContext;
     private SearchResultsContract.MvpView mView;
     private LifeCollageApiService mPublicService;
-    private DataManager mPublicDataManager;
+    private DataManager mDataManager;
     private Subscription mSubscription;
 
-    public SearchResultsPresenter(Context context, SearchResultsContract.MvpView view) {
-        mContext = context;
+    public SearchResultsPresenter(SearchResultsContract.MvpView view, Context context) {
         mView = view;
+        mContext = context;
+        mDataManager = new DataManager(mContext);
+        mPublicService = LifeCollageApiService.ServiceCreator.newService();
+        mDataManager.setApiService(mPublicService);
     }
 
     public void search(String username) {
-        mPublicService = LifeCollageApiService.ServiceCreator.newService();
-        mPublicDataManager = new DataManager(mPublicService, mContext);
-        mSubscription = mPublicDataManager.getUsers(username)
+        mView.displayLoadingAnimation();
+        mSubscription = mDataManager.getUsers(username)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -69,10 +71,10 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
 
     @Override
     public void detach() {
-        mContext = null;
         mView = null;
+        mContext = null;
         mPublicService = null;
-        mPublicDataManager = null;
+        mDataManager = null;
         mSubscription = null;
     }
 }

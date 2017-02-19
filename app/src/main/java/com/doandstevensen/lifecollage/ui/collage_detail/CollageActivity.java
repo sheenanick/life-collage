@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -14,9 +13,8 @@ import android.widget.TextView;
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.main.MainActivity;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,17 +46,15 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         Intent intent = getIntent();
         int collageId = intent.getIntExtra("collageId", -1);
         String collageTitle = intent.getStringExtra("collageTitle");
+        boolean load = intent.getBooleanExtra("load", true);
 
         initRecyclerViewAdapter();
+        setActionBarTitle(collageTitle);
 
-        mPresenter = new CollagePresenter(this, getBaseContext(), collageId);
-        mPresenter.loadCollage(collageTitle);
-    }
-
-    public void setToolbarTitle(String title) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(title);
+        DataManager dataManager = new DataManager(this);
+        mPresenter = new CollagePresenter(this, getBaseContext(), dataManager, collageId);
+        if (load) {
+            mPresenter.loadCollage();
         }
     }
 
@@ -128,15 +124,5 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
             mPresenter.detach();
         }
         super.onDestroy();
-    }
-
-    @Override
-    public void logout() {
-        UserDataSharedPrefsHelper helper = new UserDataSharedPrefsHelper();
-        helper.clearData(getBaseContext());
-
-        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 }

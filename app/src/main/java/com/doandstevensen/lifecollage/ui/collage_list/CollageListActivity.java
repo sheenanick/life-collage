@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -19,16 +18,16 @@ import android.widget.Toast;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
-import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
+import com.doandstevensen.lifecollage.util.DialogBuilder;
 
 import java.util.ArrayList;
 
 public class CollageListActivity extends BaseDrawerActivity
-        implements CollageListContract.MvpView, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener, UpdateCollageDialogFragment.UpdateCollageDialogListener {
+        implements CollageListContract.MvpView, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, DialogBuilder.DialogClickListener {
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFab;
 
@@ -44,15 +43,13 @@ public class CollageListActivity extends BaseDrawerActivity
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(this);
 
-        mPresenter = new CollageListPresenter(this, this);
-        mPresenter.setPrivateService();
+        DataManager dataManager = new DataManager(this);
+        int currentUserId  = dataManager.getUserData().getUid();
+
+        mPresenter = new CollageListPresenter(this, this, dataManager);
 
         initRecyclerViewAdapter();
         initDrawer();
-
-        UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper();
-        User currentUser = sharedPrefs.getUserData(this);
-        int currentUserId = currentUser.getUid();
 
         mPresenter.loadCollageList(currentUserId);
         setActionBarTitle("My Life Collages");
@@ -65,7 +62,7 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     private void initRecyclerViewAdapter() {
-        mAdapter = new CollageListRecyclerViewAdapter(this, mPresenter);
+        mAdapter = new CollageListRecyclerViewAdapter(this);
         mAdapter.setClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
@@ -75,79 +72,84 @@ public class CollageListActivity extends BaseDrawerActivity
     @Override
     public void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
         mAdapter.setData(collages, pictures);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onCollageClick(int collageId, String collageTitle) {
-        navigateToCollage(collageId, collageTitle);
+    public void insertCollage(ArrayList<CollageResponse> collages, int position) {
+        mAdapter.setCollages(collages);
+        mAdapter.notifyItemInserted(position);
     }
 
     @Override
-    public void navigateToCollage(int collageId, String collageTitle) {
+    public void insertPicture(ArrayList<PictureResponse> pictures, int position) {
+        mAdapter.setPictures(pictures);
+        mAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void deleteCollage(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures, int position) {
+        mAdapter.setData(collages, pictures);
+        mAdapter.notifyItemRemoved(position);
+        Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void updateCollageTitle(int position, Object payload) {
+        mAdapter.notifyItemChanged(position, payload);
+    }
+
+
+    @Override
+    public void onCollageClick(int collageId, String collageTitle, boolean load) {
+        navigateToCollage(collageId, collageTitle, load);
+    }
+
+    @Override
+    public void navigateToCollage(int collageId, String collageTitle, boolean load) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.putExtra("collageTitle", collageTitle);
         intent.putExtra("collageId", collageId);
+        intent.putExtra("load", load);
         startActivity(intent);
     }
 
     @Override
     public void onClick(View view) {
         if (view == mFab) {
-            launchNewCollageAlertDialog();
+            DialogBuilder.NewCollageDialogFragment(this, this).show();
         }
     }
 
-    private void launchNewCollageAlertDialog() {
-        NewCollageDialogFragment dialogFragment = new NewCollageDialogFragment();
-        dialogFragment.show(getSupportFragmentManager(), "newCollage");
-    }
-
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String title) {
-        mPresenter.createNewCollage(title);
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) { }
-
-    @Override
-    public void onMenuClick(MenuItem item, int collageId, String collageName) {
+    public void onMenuClick(MenuItem item, int collageId, String collageTitle) {
         int id = item.getItemId();
 
         if (id == R.id.edit) {
-            launchUpdateAlertDialog(collageId, collageName);
+            DialogBuilder.UpdateCollageDialogFragment(this, this, collageTitle, collageId).show();
         }
         if (id == R.id.delete) {
-            launchDeleteAlertDialog(collageId);
+            DialogBuilder.DeleteCollageDialogFragment(this, this, collageId).show();
         }
     }
 
-    private void launchUpdateAlertDialog(int collageId, String collageName) {
-        UpdateCollageDialogFragment dialogFragment = new UpdateCollageDialogFragment();
-        dialogFragment.setCollage(collageId, collageName);
-        dialogFragment.show(getSupportFragmentManager(), "updateCollage");
-    }
-
     @Override
-    public void onUpdateDialogPositiveClick(DialogFragment dialog, String collageName, int collageId) {
-        mPresenter.updateCollage(collageId, collageName);
-    }
-
-    private void launchDeleteAlertDialog(int collageId) {
-        DeleteCollageDialogFragment dialogFragment = new DeleteCollageDialogFragment();
-        dialogFragment.setCollageId(collageId);
-        dialogFragment.show(getSupportFragmentManager(), "deleteCollage");
-    }
-
-    @Override
-    public void onDeleteDialogPositiveClick(DialogFragment dialog, int collageId) {
+    public void onDeleteCollagePositiveClick(int collageId) {
         mPresenter.deleteCollage(collageId);
     }
 
     @Override
-    public void onDeleteSuccess() {
-        Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
+    public void onNewCollagePositiveClick(String title) {
+        mPresenter.createNewCollage(title);
     }
+
+    @Override
+    public void onUpdateCollagePositiveClick(String title, int collageId) {
+        mPresenter.updateCollage(collageId, title);
+    }
+
+    @Override
+    public void onDialogNegativeClick() { }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
