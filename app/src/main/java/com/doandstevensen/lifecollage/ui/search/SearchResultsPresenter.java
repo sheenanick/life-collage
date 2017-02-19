@@ -35,6 +35,7 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
     }
 
     public void search(String username) {
+        mView.displayLoadingAnimation();
         mSubscription = mDataManager.getUsers(username)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
