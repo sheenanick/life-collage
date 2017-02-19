@@ -45,7 +45,6 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
         mPublicService = LifeCollageApiService.ServiceCreator.newService();
     }
 
-
     @Override
     public void loadCollage(final String title) {
         mView.displayLoadingAnimation();
@@ -83,7 +82,7 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
                         }
                     }
                 });
-        mView.setToolbarTitle(title);
+        mView.setActionBarTitle(title);
     }
 
     public void uploadFile(final File file) {

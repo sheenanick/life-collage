@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -53,13 +52,6 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         DataManager dataManager = new DataManager(this);
         mPresenter = new CollagePresenter(this, getBaseContext(), dataManager, collageId);
         mPresenter.loadCollage(collageTitle);
-    }
-
-    public void setToolbarTitle(String title) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(title);
-        }
     }
 
     @Override
