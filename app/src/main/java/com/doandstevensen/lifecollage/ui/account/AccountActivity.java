@@ -1,7 +1,6 @@
 package com.doandstevensen.lifecollage.ui.account;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,8 +9,9 @@ import android.widget.Toast;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
+import com.doandstevensen.lifecollage.util.DialogBuilder;
 
-public class AccountActivity extends BaseDrawerActivity implements AccountContract.MvpView, View.OnClickListener, DeleteAccountDialogFragment.DeleteAccountDialogListener {
+public class AccountActivity extends BaseDrawerActivity implements AccountContract.MvpView, View.OnClickListener, DialogBuilder.AccountDialogListener {
     private EditText emailEditText;
     private Button saveEmailButton;
     private Button deleteButton;
@@ -52,9 +52,17 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
             mPresenter.updateEmail(newEmail);
         }
         if (view == deleteButton) {
-            launchDeleteAccountAlertDialog();
+            DialogBuilder.DeleteAccountDialogFragment(this, this).show();
         }
     }
+
+    @Override
+    public void onDialogPositiveClick() {
+        mPresenter.deleteUser();
+    }
+
+    @Override
+    public void onDialogNegativeClick() { }
 
     @Override
     public void setEmail(String email) {
@@ -65,19 +73,6 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
     public void emailUpdated() {
         Toast.makeText(this, "Email Updated!", Toast.LENGTH_SHORT).show();
     }
-
-    private void launchDeleteAccountAlertDialog() {
-        DeleteAccountDialogFragment dialogFragment = new DeleteAccountDialogFragment();
-        dialogFragment.show(getSupportFragmentManager(), "deleteAccount");
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        mPresenter.deleteUser();
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) { }
 
     @Override
     public void userDeleted() {

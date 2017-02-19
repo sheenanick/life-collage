@@ -23,11 +23,12 @@ import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
+import com.doandstevensen.lifecollage.util.DialogBuilder;
 
 import java.util.ArrayList;
 
 public class CollageListActivity extends BaseDrawerActivity
-        implements CollageListContract.MvpView, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, NewCollageDialogFragment.NewCollageDialogListener, DeleteCollageDialogFragment.DeleteCollageDialogListener, UpdateCollageDialogFragment.UpdateCollageDialogListener {
+        implements CollageListContract.MvpView, CollageListRecyclerViewAdapter.ClickListener, View.OnClickListener, DialogBuilder.DialogClickListener {
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFab;
 
@@ -117,56 +118,39 @@ public class CollageListActivity extends BaseDrawerActivity
     @Override
     public void onClick(View view) {
         if (view == mFab) {
-            launchNewCollageAlertDialog();
+            DialogBuilder.NewCollageDialogFragment(this, this).show();
         }
     }
 
-    private void launchNewCollageAlertDialog() {
-        NewCollageDialogFragment dialogFragment = new NewCollageDialogFragment();
-        dialogFragment.show(getSupportFragmentManager(), "newCollage");
+    @Override
+    public void onMenuClick(MenuItem item, int collageId, String collageTitle) {
+        int id = item.getItemId();
+
+        if (id == R.id.edit) {
+            DialogBuilder.UpdateCollageDialogFragment(this, this, collageTitle, collageId).show();
+        }
+        if (id == R.id.delete) {
+            DialogBuilder.DeleteCollageDialogFragment(this, this, collageId).show();
+        }
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String title) {
+    public void onDeleteCollagePositiveClick(int collageId) {
+        mPresenter.deleteCollage(collageId);
+    }
+
+    @Override
+    public void onNewCollagePositiveClick(String title) {
         mPresenter.createNewCollage(title);
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) { }
-
-    @Override
-    public void onMenuClick(MenuItem item, int collageId, String collageName) {
-        int id = item.getItemId();
-
-        if (id == R.id.edit) {
-            launchUpdateAlertDialog(collageId, collageName);
-        }
-        if (id == R.id.delete) {
-            launchDeleteAlertDialog(collageId);
-        }
-    }
-
-    private void launchUpdateAlertDialog(int collageId, String collageName) {
-        UpdateCollageDialogFragment dialogFragment = new UpdateCollageDialogFragment();
-        dialogFragment.setCollage(collageId, collageName);
-        dialogFragment.show(getSupportFragmentManager(), "updateCollage");
+    public void onUpdateCollagePositiveClick(String title, int collageId) {
+        mPresenter.updateCollage(collageId, title);
     }
 
     @Override
-    public void onUpdateDialogPositiveClick(DialogFragment dialog, String collageName, int collageId) {
-        mPresenter.updateCollage(collageId, collageName);
-    }
-
-    private void launchDeleteAlertDialog(int collageId) {
-        DeleteCollageDialogFragment dialogFragment = new DeleteCollageDialogFragment();
-        dialogFragment.setCollageId(collageId);
-        dialogFragment.show(getSupportFragmentManager(), "deleteCollage");
-    }
-
-    @Override
-    public void onDeleteDialogPositiveClick(DialogFragment dialog, int collageId) {
-        mPresenter.deleteCollage(collageId);
-    }
+    public void onDialogNegativeClick() { }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
