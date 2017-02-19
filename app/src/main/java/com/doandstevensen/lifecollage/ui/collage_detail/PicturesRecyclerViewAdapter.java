@@ -3,33 +3,32 @@ package com.doandstevensen.lifecollage.ui.collage_detail;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.Picture;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.squareup.picasso.Picasso;
 
-import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
+import java.util.ArrayList;
 
 /**
  * Created by Sheena on 1/31/17.
  */
 
-public class PicturesRecyclerViewAdapter extends
-        RealmRecyclerViewAdapter<Picture, PicturesRecyclerViewAdapter.MyViewHolder> {
+public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRecyclerViewAdapter.MyViewHolder> {
 
     private final Context mContext;
-    private OrderedRealmCollection<Picture> mPictures;
+    private ArrayList<PictureResponse> mPictures = new ArrayList<>();
 
-    public PicturesRecyclerViewAdapter(Context context, OrderedRealmCollection<Picture> data) {
-        super(context, data, true);
+    public PicturesRecyclerViewAdapter(Context context) {
         mContext = context;
-        mPictures = data;
+    }
+
+    public void setPictures(ArrayList<PictureResponse> pictures) {
+        mPictures = pictures;
     }
 
     @Override
@@ -41,18 +40,25 @@ public class PicturesRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Picture photo = mPictures.get(position);
-        final String url = photo.getPath();
-
+        PictureResponse photo = mPictures.get(position);
+        final String url = photo.getLocation();
         Picasso.Builder builder = new Picasso.Builder(mContext);
         builder.listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                Log.d("Picasso", url);
                 exception.printStackTrace();
             }
         });
         builder.build().load(url).into(holder.imageView);
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mPictures != null) {
+            return mPictures.size();
+        } else {
+            return 0;
+        }
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

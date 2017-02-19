@@ -1,8 +1,8 @@
 package com.doandstevensen.lifecollage.ui.collage_list;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerMvpView;
-import com.doandstevensen.lifecollage.ui.base.BaseMvpView;
 import com.doandstevensen.lifecollage.ui.base.BasePresenter;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public interface CollageListContract {
     }
 
     interface MvpView extends BaseDrawerMvpView {
-        void updateRecyclerView(ArrayList<CollageResponse> collages);
+        void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures);
         void navigateToCollage(int collageId, String collageTitle);
         void onDeleteSuccess();
     }

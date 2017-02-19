@@ -6,7 +6,6 @@ import android.view.View;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
-import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 
 import java.util.ArrayList;
 
@@ -20,24 +19,23 @@ import rx.schedulers.Schedulers;
  * Created by Sheena on 2/15/17.
  */
 
-public class SearchResultsPresenter extends BasePresenterClass implements SearchResultsContract.Presenter {
+public class SearchResultsPresenter implements SearchResultsContract.Presenter {
     private Context mContext;
     private SearchResultsContract.MvpView mView;
     private LifeCollageApiService mPublicService;
-    private DataManager mPublicDataManager;
+    private DataManager mDataManager;
     private Subscription mSubscription;
 
     public SearchResultsPresenter(SearchResultsContract.MvpView view, Context context) {
-        super(view, context);
-        mContext = context;
         mView = view;
-        mPublicDataManager = new DataManager(mContext);
+        mContext = context;
+        mDataManager = new DataManager(mContext);
         mPublicService = LifeCollageApiService.ServiceCreator.newService();
-        mPublicDataManager.setApiService(mPublicService);
+        mDataManager.setApiService(mPublicService);
     }
 
     public void search(String username) {
-        mSubscription = mPublicDataManager.getUsers(username)
+        mSubscription = mDataManager.getUsers(username)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -72,10 +70,10 @@ public class SearchResultsPresenter extends BasePresenterClass implements Search
 
     @Override
     public void detach() {
-        mContext = null;
         mView = null;
+        mContext = null;
         mPublicService = null;
-        mPublicDataManager = null;
+        mDataManager = null;
         mSubscription = null;
     }
 }

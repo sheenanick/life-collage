@@ -16,7 +16,9 @@ import java.io.IOException;
 import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -28,6 +30,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
+    private Subscription mSubscription;
 
     public SignUpPresenter(SignUpContract.MvpView view, Context context) {
         mView = view;
@@ -41,9 +44,15 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     public void signUp(String firstName, String lastName, final String email, String username, final String password) {
         mView.displayLoadingAnimation();
         SignUpRequest request = new SignUpRequest(firstName, lastName, email, username, password);
-        mDataManager.signUp(request)
+        mSubscription = mDataManager.signUp(request)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnUnsubscribe(new Action0() {
+                @Override
+                public void call() {
+                    mSubscription = null;
+                }
+            })
             .subscribe(new Subscriber<LogInResponse>() {
                 @Override
                 public void onCompleted() {
@@ -81,9 +90,15 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     }
 
     private void logIn(String email, String password) {
-        mDataManager.logIn(email, password)
+        mSubscription = mDataManager.logIn(email, password)
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnUnsubscribe(new Action0() {
+                @Override
+                public void call() {
+                    mSubscription = null;
+                }
+            })
             .subscribe(new Subscriber<LogInResponse>() {
                 @Override
                 public void onCompleted() {
@@ -119,5 +134,6 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         mContext = null;
         mService = null;
         mDataManager = null;
+        mSubscription = null;
     }
 }

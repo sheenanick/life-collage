@@ -2,14 +2,11 @@ package com.doandstevensen.lifecollage.ui.account;
 
 import android.content.Context;
 
-import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.UpdateUserRequest;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
-import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
-import com.doandstevensen.lifecollage.util.TokenManager;
 
 import rx.Subscriber;
 import rx.Subscription;
@@ -23,30 +20,20 @@ import rx.schedulers.Schedulers;
 
 public class AccountPresenter extends BasePresenterClass implements AccountContract.Presenter {
     private AccountContract.MvpView mView;
-    private Context mContext;
-    private LifeCollageApiService mService;
     private DataManager mDataManager;
     private Subscription mSubscription;
-    private ApplicationToken mToken;
 
-    public AccountPresenter(AccountContract.MvpView view, Context context) {
-        super(view, context);
+    public AccountPresenter(AccountContract.MvpView view, Context context, DataManager dataManager) {
+        super(view, context, dataManager);
         mView = view;
-        mContext = context;
-        mDataManager = new DataManager(context);
-        setPrivateService();
-    }
-
-    public void setPrivateService() {
-        mToken = mDataManager.getUserToken();
-        String accessToken = mToken.getAccessToken();
-        mService = LifeCollageApiService.ServiceCreator.newPrivateService(accessToken);
-        mDataManager.setApiService(mService);
+        mDataManager = dataManager;
     }
 
     @Override
     public void getUser() {
         mView.displayLoadingAnimation();
+        mDataManager.setApiService(privateService());
+
         mSubscription = mDataManager.getUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -65,14 +52,12 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
-                                deleteUser();
-                            } else {
-                                mView.logout();
+                        refresh(e, new Runnable() {
+                            @Override
+                            public void run() {
+                                getUser();
                             }
-                        }
+                        });
                         mView.hideLoadingAnimation();
                     }
 
@@ -87,6 +72,8 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
     @Override
     public void deleteUser() {
         mView.displayLoadingAnimation();
+        mDataManager.setApiService(privateService());
+
         mSubscription = mDataManager.deleteUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -105,14 +92,12 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
+                        refresh(e, new Runnable() {
+                            @Override
+                            public void run() {
                                 deleteUser();
-                            } else {
-                                mView.logout();
                             }
-                        }
+                        });
                         mView.hideLoadingAnimation();
                     }
 
@@ -125,8 +110,10 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
     }
 
     @Override
-    public void updateEmail(String email) {
+    public void updateEmail(final String email) {
         mView.displayLoadingAnimation();
+        mDataManager.setApiService(privateService());
+
         int uid = mDataManager.getUserData().getUid();
         UpdateUserRequest request = new UpdateUserRequest(email, uid);
         mSubscription = mDataManager.updateUser(request)
@@ -147,14 +134,12 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (e.getMessage().contains("401")) {
-                            if (handleRefreshToken()) {
-                                setPrivateService();
-                                deleteUser();
-                            } else {
-                                mView.logout();
+                        refresh(e, new Runnable() {
+                            @Override
+                            public void run() {
+                                updateEmail(email);
                             }
-                        }
+                        });
                         mView.hideLoadingAnimation();
                     }
 
@@ -166,17 +151,9 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
                 });
     }
 
-    private boolean handleRefreshToken() {
-        TokenManager tm = new TokenManager();
-        tm.getAccessTokenFromRefreshToken(mContext, mToken);
-        return tm.getRefreshComplete();
-    }
-
     @Override
     public void detach() {
         mView = null;
-        mContext = null;
-        mService = null;
         mDataManager = null;
         mSubscription = null;
     }

@@ -13,19 +13,20 @@ import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.Picture;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.RealmList;
 
 public class CollageActivity extends BaseActivity implements CollageContract.MvpView {
     @BindView(R.id.recyclerView)
@@ -35,6 +36,7 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
 
     private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
+    private PicturesRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +44,15 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         setContentView(R.layout.activity_collage);
         ButterKnife.bind(this);
 
-        mPresenter = new CollagePresenter(this, getBaseContext());
-
         Intent intent = getIntent();
-        String collageId = intent.getStringExtra("collageId");
+        int collageId = intent.getIntExtra("collageId", -1);
         String collageTitle = intent.getStringExtra("collageTitle");
 
-        mPresenter.loadCollage(collageId, collageTitle);
+        initRecyclerViewAdapter();
+
+        DataManager dataManager = new DataManager(this);
+        mPresenter = new CollagePresenter(this, getBaseContext(), dataManager, collageId);
+        mPresenter.loadCollage(collageTitle);
     }
 
     public void setToolbarTitle(String title) {
@@ -63,11 +67,16 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         emptyView.setVisibility(visibility);
     }
 
-    public void setupRecyclerViewAdapter(RealmList<Picture> pictures) {
-        PicturesRecyclerViewAdapter recyclerViewAdapter = new PicturesRecyclerViewAdapter(this, pictures);
+    public void initRecyclerViewAdapter() {
+        mAdapter = new PicturesRecyclerViewAdapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
+    }
+
+    public void setRecyclerViewPictures(ArrayList<PictureResponse> pictures) {
+        mAdapter.setPictures(pictures);
+        mAdapter.notifyDataSetChanged();
     }
 
     @OnClick(R.id.fab)
@@ -114,11 +123,16 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
         }
         super.onDestroy();
     }
-
 }

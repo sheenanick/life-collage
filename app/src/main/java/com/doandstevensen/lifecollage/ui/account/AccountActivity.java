@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 
 public class AccountActivity extends BaseDrawerActivity implements AccountContract.MvpView, View.OnClickListener, DeleteAccountDialogFragment.DeleteAccountDialogListener {
@@ -28,7 +29,8 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
         saveEmailButton = (Button) findViewById(R.id.saveEmailButton);
         deleteButton = (Button) findViewById(R.id.deleteButton);
 
-        mPresenter = new AccountPresenter(this, this);
+        DataManager dataManager = new DataManager(this);
+        mPresenter = new AccountPresenter(this, this, dataManager);
         mPresenter.getUser();
 
         saveEmailButton.setOnClickListener(this);

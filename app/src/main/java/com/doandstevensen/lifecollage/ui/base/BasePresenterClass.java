@@ -17,15 +17,15 @@ import rx.schedulers.Schedulers;
 
 public class BasePresenterClass {
     private boolean mRefreshComplete;
-    private BaseDrawerMvpView mView;
+    private BaseMvpView mView;
     private Context mContext;
-    private ApplicationToken mToken;
     private DataManager mDataManager;
+    private ApplicationToken mToken;
 
-    public BasePresenterClass(BaseDrawerMvpView view, Context context) {
+    public BasePresenterClass(BaseMvpView view, Context context, DataManager dataManager) {
         mView = view;
         mContext = context;
-        mDataManager = new DataManager(context);
+        mDataManager = dataManager;
     }
 
     public LifeCollageApiService privateService() {
@@ -44,7 +44,7 @@ public class BasePresenterClass {
         }
     }
 
-    public boolean getAccessTokenFromRefreshToken(final Context context, ApplicationToken token) {
+    private boolean getAccessTokenFromRefreshToken(final Context context, ApplicationToken token) {
         LifeCollageApiService publicService = LifeCollageApiService.ServiceCreator.newService();
         final DataManager dataManager = new DataManager(context);
         dataManager.setApiService(publicService);

@@ -6,6 +6,8 @@ import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
+import com.doandstevensen.lifecollage.data.model.NewPictureRequest;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
 import com.doandstevensen.lifecollage.data.model.UpdateCollageRequest;
@@ -104,6 +106,18 @@ public class DataManager {
 
     public void clearData() {
         mHelper.clearData();
+    }
+
+    public Observable<ArrayList<PictureResponse>> getAllPictures(int collageId) {
+        return mApiService.getAllPictures(collageId);
+    }
+
+    public Observable<PictureResponse> getLastPicture(int collageId) {
+        return mApiService.getLastPicture(collageId);
+    }
+
+    public Observable<PictureResponse> postPicture(int collageId, NewPictureRequest request) {
+        return mApiService.postPicture(collageId, request);
     }
 
 }

@@ -7,5 +7,5 @@ package com.doandstevensen.lifecollage.ui.base;
 public interface BaseMvpView {
     boolean displayLoadingAnimation();
     void hideLoadingAnimation();
-    void hideKeyboard();
+    void logout();
 }

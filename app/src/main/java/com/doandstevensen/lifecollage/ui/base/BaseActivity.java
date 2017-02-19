@@ -1,11 +1,12 @@
 package com.doandstevensen.lifecollage.ui.base;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.support.v7.app.AppCompatActivity;
+
+import com.doandstevensen.lifecollage.data.remote.DataManager;
+import com.doandstevensen.lifecollage.ui.main.MainActivity;
 
 public class BaseActivity extends AppCompatActivity implements BaseMvpView{
     private ProgressDialog mProgressDialog;
@@ -31,11 +32,12 @@ public class BaseActivity extends AppCompatActivity implements BaseMvpView{
     }
 
     @Override
-    public void hideKeyboard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+    public void logout() {
+        DataManager dataManager = new DataManager(getBaseContext());
+        dataManager.clearData();
+
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

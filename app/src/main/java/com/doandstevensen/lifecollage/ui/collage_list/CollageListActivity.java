@@ -18,11 +18,11 @@ import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
-import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import java.util.ArrayList;
 
@@ -43,14 +43,13 @@ public class CollageListActivity extends BaseDrawerActivity
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(this);
 
+        DataManager dataManager = new DataManager(this);
+        int currentUserId  = dataManager.getUserData().getUid();
+
+        mPresenter = new CollageListPresenter(this, this, dataManager);
+
         initRecyclerViewAdapter();
         initDrawer();
-
-        mPresenter = new CollageListPresenter(this, this);
-
-        UserDataSharedPrefsHelper sharedPrefs = new UserDataSharedPrefsHelper(this);
-        User currentUser = sharedPrefs.getUserData();
-        int currentUserId = currentUser.getUid();
 
         mPresenter.loadCollageList(currentUserId);
         setActionBarTitle("My Life Collages");
@@ -63,7 +62,7 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     private void initRecyclerViewAdapter() {
-        mAdapter = new CollageListRecyclerViewAdapter(this);
+        mAdapter = new CollageListRecyclerViewAdapter(this, mPresenter);
         mAdapter.setClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
@@ -71,9 +70,8 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<CollageResponse> collages) {
-        mAdapter.setCollages(collages);
-        mAdapter.notifyDataSetChanged();
+    public void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
+        mAdapter.setData(collages, pictures);
     }
 
     @Override
@@ -85,7 +83,7 @@ public class CollageListActivity extends BaseDrawerActivity
     public void navigateToCollage(int collageId, String collageTitle) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.putExtra("collageTitle", collageTitle);
-        intent.putExtra("collageId", collageId + "");
+        intent.putExtra("collageId", collageId);
         startActivity(intent);
     }
 
