@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.search_collage_detail.SearchCollageDetailActivity;
 
@@ -21,7 +22,6 @@ public class SearchCollageListActivity extends BaseActivity implements SearchCol
     RecyclerView mRecyclerView;
     private SearchCollageListPresenter mPresenter;
     private SearchListRecyclerViewAdapter mAdapter;
-    private int mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +34,10 @@ public class SearchCollageListActivity extends BaseActivity implements SearchCol
 
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
-        mUserId = intent.getIntExtra("userId", -1);
+        int userId = intent.getIntExtra("userId", -1);
 
         setToolbarTitle(username + "'s Collages");
-        mPresenter.loadCollageList(mUserId);
+        mPresenter.loadCollageList(userId);
     }
 
     private void setToolbarTitle(String title) {
@@ -56,21 +56,26 @@ public class SearchCollageListActivity extends BaseActivity implements SearchCol
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<CollageResponse> collages) {
-        mAdapter.setCollages(collages);
+    public void onCollageClick(int collageId, String collageTitle) {
+        navigateToSearchCollage(collageId, collageTitle);
+    }
+
+    @Override
+    public void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
+        mAdapter.setData(collages, pictures);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onCollageClick(int collageId, String collageTitle) {
-        navigateToSearchCollage(collageId, collageTitle);
+    public void insertPicture(ArrayList<PictureResponse> pictures, int position) {
+
     }
 
     @Override
     public void navigateToSearchCollage(int collageId, String collageTitle) {
         Intent intent = new Intent(getBaseContext(), SearchCollageDetailActivity.class);
         intent.putExtra("collageTitle", collageTitle);
-        intent.putExtra("collageId", collageId + "");
+        intent.putExtra("collageId", collageId);
         startActivity(intent);
     }
 
