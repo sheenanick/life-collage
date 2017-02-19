@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
+import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 
@@ -72,5 +73,12 @@ public class BasePresenterClass {
                     }
                 });
         return mRefreshComplete;
+    }
+
+    public void storeData(LogInResponse response) {
+        ApplicationToken token = response.getToken();
+        User user = new User(response.getId(), response.getUsername(), response.getEmail());
+        mDataManager.storeUserToken(token);
+        mDataManager.storeUserData(user);
     }
 }

@@ -2,13 +2,12 @@ package com.doandstevensen.lifecollage.ui.signup;
 
 import android.content.Context;
 
-import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.ServerResponse;
 import com.doandstevensen.lifecollage.data.model.SignUpRequest;
-import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -25,18 +24,17 @@ import rx.schedulers.Schedulers;
  * Created by Sheena on 2/2/17.
  */
 
-public class SignUpPresenter implements SignUpContract.Presenter {
+public class SignUpPresenter extends BasePresenterClass implements SignUpContract.Presenter {
     private SignUpContract.MvpView mView;
-    private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
     private Subscription mSubscription;
 
-    public SignUpPresenter(SignUpContract.MvpView view, Context context) {
+    public SignUpPresenter(SignUpContract.MvpView view, Context context, DataManager dataManager) {
+        super(view, context, dataManager);
         mView = view;
-        mContext = context;
         mService = LifeCollageApiService.ServiceCreator.newService();
-        mDataManager = new DataManager(mContext);
+        mDataManager = dataManager;
         mDataManager.setApiService(mService);
     }
 
@@ -113,25 +111,16 @@ public class SignUpPresenter implements SignUpContract.Presenter {
 
                 @Override
                 public void onNext(LogInResponse logInResponse) {
-                    storeData(logInResponse.getToken(), logInResponse.getId(), logInResponse.getUsername());
+                    storeData(logInResponse);
                     mView.hideLoadingAnimation();
                     mView.navigateToCollageList();
                 }
             });
     }
 
-    private void storeData(ApplicationToken token, int userId, String username) {
-        User user = new User();
-        user.setUid(userId);
-        user.setUsername(username);
-        mDataManager.storeUserToken(token);
-        mDataManager.storeUserData(user);
-    }
-
     @Override
     public void detach() {
         mView = null;
-        mContext = null;
         mService = null;
         mDataManager = null;
         mSubscription = null;

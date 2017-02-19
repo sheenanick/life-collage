@@ -30,46 +30,6 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
     }
 
     @Override
-    public void getUser() {
-        mView.displayLoadingAnimation();
-        mDataManager.setApiService(privateService());
-
-        mSubscription = mDataManager.getUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnUnsubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mSubscription = null;
-                    }
-                })
-                .subscribe(new Subscriber<UserResponse>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        refresh(e, new Runnable() {
-                            @Override
-                            public void run() {
-                                getUser();
-                            }
-                        });
-                        mView.hideLoadingAnimation();
-                    }
-
-                    @Override
-                    public void onNext(UserResponse response) {
-                        mView.hideLoadingAnimation();
-                        mView.setEmail(response.getEmail());
-                    }
-                });
-    }
-
-    @Override
     public void deleteUser() {
         mView.displayLoadingAnimation();
         mDataManager.setApiService(privateService());

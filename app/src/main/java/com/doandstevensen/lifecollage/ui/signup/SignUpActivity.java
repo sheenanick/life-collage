@@ -6,9 +6,10 @@ import android.util.Patterns;
 import android.widget.EditText;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
-import com.doandstevensen.lifecollage.ui.login.LogInActivity;
+import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,7 +40,7 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
 
         ButterKnife.bind(this);
 
-        mPresenter = new SignUpPresenter(this, this);
+        mPresenter = new SignUpPresenter(this, this, new DataManager(this));
     }
 
     @OnClick(R.id.signUp)
@@ -55,11 +56,20 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
         boolean lastNameNotEmpty = isInputEmpty(lastNameView, lastName);
         boolean validEmail = validateEmail(emailView, email);
         boolean usernameNotEmpty = isInputEmpty(usernameView, username);
-        boolean passwordNotEmpty = isInputEmpty(passwordView, password);
+        boolean passwordLength = checkPasswordLength(passwordView, password);
         boolean validPassword = validatePassword(passwordConfirmationView, password, passwordConfirmation);
 
-        if (firstNameNotEmpty && lastNameNotEmpty && validEmail && usernameNotEmpty && passwordNotEmpty && validPassword) {
+        if (firstNameNotEmpty && lastNameNotEmpty && validEmail && usernameNotEmpty && passwordLength && validPassword) {
             mPresenter.signUp(firstName, lastName, email, username, password);
+        }
+    }
+
+    private boolean checkPasswordLength(EditText passwordView, String password) {
+        if (isEmpty(password) || password.length() < 6) {
+            passwordView.setError("Password must be at least 6 characters long");
+            return false;
+        } else {
+            return true;
         }
     }
 

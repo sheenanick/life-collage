@@ -46,7 +46,7 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
     }
 
     @Override
-    public void loadCollage(final String title) {
+    public void loadCollage() {
         mView.displayLoadingAnimation();
         mDataManager.setApiService(mPublicService);
 
@@ -77,12 +77,10 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
                         if (response.size() > 0) {
                             mView.setRecyclerViewPictures(response);
                             mPictures = response;
-                        } else {
-                            mView.setEmptyViewVisibility(View.VISIBLE);
+                            mView.setEmptyViewVisibility(View.GONE);
                         }
                     }
                 });
-        mView.setActionBarTitle(title);
     }
 
     public void uploadFile(final File file) {

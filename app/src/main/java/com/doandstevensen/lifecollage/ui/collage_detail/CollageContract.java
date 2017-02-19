@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public interface CollageContract {
     interface Presenter extends BasePresenter {
-        void loadCollage(String title);
+        void loadCollage();
         void uploadFile(File file);
     }
 

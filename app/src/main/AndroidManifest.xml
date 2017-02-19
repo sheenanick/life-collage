@@ -29,7 +29,7 @@
                 android:value=".ui.search.SearchResultsActivity" />
         </activity>
         <activity android:name=".ui.signup.SignUpActivity" />
-        <activity android:name=".ui.login.LogInActivity" />
+        <activity android:name=".ui.signin.LogInActivity" />
         <activity
             android:name=".ui.collage_list.CollageListActivity"
             android:theme="@style/AppTheme.NoActionBar">

@@ -46,12 +46,16 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         Intent intent = getIntent();
         int collageId = intent.getIntExtra("collageId", -1);
         String collageTitle = intent.getStringExtra("collageTitle");
+        boolean load = intent.getBooleanExtra("load", true);
 
         initRecyclerViewAdapter();
+        setActionBarTitle(collageTitle);
 
         DataManager dataManager = new DataManager(this);
         mPresenter = new CollagePresenter(this, getBaseContext(), dataManager, collageId);
-        mPresenter.loadCollage(collageTitle);
+        if (load) {
+            mPresenter.loadCollage();
+        }
     }
 
     @Override
@@ -112,12 +116,6 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
             File f = new File(mCurrentPhotoPath);
             mPresenter.uploadFile(f);
         }
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     @Override

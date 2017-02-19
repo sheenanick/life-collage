@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.login;
+package com.doandstevensen.lifecollage.ui.signin;
 
 import com.doandstevensen.lifecollage.ui.base.BaseMvpView;
 import com.doandstevensen.lifecollage.ui.base.BasePresenter;

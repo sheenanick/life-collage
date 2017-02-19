@@ -21,7 +21,7 @@ public interface CollageListContract {
 
     interface MvpView extends BaseDrawerMvpView {
         void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures);
-        void navigateToCollage(int collageId, String collageTitle);
+        void navigateToCollage(int collageId, String collageTitle, boolean load);
         void onDeleteSuccess();
     }
 }

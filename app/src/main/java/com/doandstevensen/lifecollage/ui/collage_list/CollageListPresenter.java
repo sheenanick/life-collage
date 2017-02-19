@@ -146,7 +146,7 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                         mView.hideLoadingAnimation();
                         mCollages.add(collage);
                         mView.updateRecyclerView(mCollages, mPictures);
-                        mView.navigateToCollage(collage.getCollageId(), collage.getTitle());
+                        mView.navigateToCollage(collage.getCollageId(), collage.getTitle(), false);
                     }
                 });
     }

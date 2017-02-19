@@ -1,4 +1,4 @@
-package com.doandstevensen.lifecollage.ui.login;
+package com.doandstevensen.lifecollage.ui.signin;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
@@ -28,7 +29,7 @@ public class LogInActivity extends BaseActivity implements LogInContract.MvpView
         setContentView(R.layout.activity_log_in);
         ButterKnife.bind(this);
 
-        mPresenter = new LogInPresenter(this, getBaseContext());
+        mPresenter = new LogInPresenter(this, getBaseContext(), new DataManager(this));
     }
 
     @OnClick(R.id.logIn)

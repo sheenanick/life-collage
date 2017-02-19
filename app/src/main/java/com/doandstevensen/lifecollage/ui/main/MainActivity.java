@@ -17,10 +17,9 @@ import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
-import com.doandstevensen.lifecollage.ui.login.LogInActivity;
+import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
-import com.doandstevensen.lifecollage.util.UserDataSharedPrefsHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

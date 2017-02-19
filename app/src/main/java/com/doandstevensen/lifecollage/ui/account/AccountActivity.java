@@ -31,8 +31,8 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
 
         DataManager dataManager = new DataManager(this);
         mPresenter = new AccountPresenter(this, this, dataManager);
-        mPresenter.getUser();
 
+        setEmail(dataManager.getUserData().getEmail());
         saveEmailButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
 

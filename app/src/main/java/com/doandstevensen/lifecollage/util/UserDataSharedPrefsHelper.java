@@ -2,7 +2,6 @@ package com.doandstevensen.lifecollage.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
@@ -17,7 +16,6 @@ public class UserDataSharedPrefsHelper {
     private Context mContext;
 
     public UserDataSharedPrefsHelper(Context context) {
-        super();
         mContext = context;
     }
 

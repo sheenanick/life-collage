@@ -28,6 +28,7 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
     private ArrayList<CollageResponse> mCollages;
     private ArrayList<PictureResponse> mPictures;
     private CollageListRecyclerViewAdapter.ClickListener mClickListener;
+    private boolean mLoad = true;
 
     public CollageListRecyclerViewAdapter(Context context, CollageListPresenter presenter) {
         mContext = context;
@@ -66,6 +67,8 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
                         }
                     });
                     builder.build().load(picture.getLocation()).into(holder.imageView);
+                } else {
+                    mLoad = false;
                 }
             }
         }
@@ -73,16 +76,16 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClickListener.onCollageClick(collageId, collageName);
+                mClickListener.onCollageClick(collageId, collageName, mLoad);
             }
         });
 
-        holder.textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mClickListener.onCollageClick(collageId, collageName);
-            }
-        });
+//        holder.textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mClickListener.onCollageClick(collageId, collageName, mLoad);
+//            }
+//        });
 
         holder.moreIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +132,7 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
     }
 
     interface ClickListener {
-        void onCollageClick(int collageId, String collageTitle);
+        void onCollageClick(int collageId, String collageTitle, boolean load);
         void onMenuClick(MenuItem item, int collageId, String collageName);
     }
 }

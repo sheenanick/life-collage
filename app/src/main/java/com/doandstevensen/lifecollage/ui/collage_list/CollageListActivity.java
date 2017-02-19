@@ -75,15 +75,16 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void onCollageClick(int collageId, String collageTitle) {
-        navigateToCollage(collageId, collageTitle);
+    public void onCollageClick(int collageId, String collageTitle, boolean load) {
+        navigateToCollage(collageId, collageTitle, load);
     }
 
     @Override
-    public void navigateToCollage(int collageId, String collageTitle) {
+    public void navigateToCollage(int collageId, String collageTitle, boolean load) {
         Intent intent = new Intent(getBaseContext(), CollageActivity.class);
         intent.putExtra("collageTitle", collageTitle);
         intent.putExtra("collageId", collageId);
+        intent.putExtra("load", load);
         startActivity(intent);
     }
 
