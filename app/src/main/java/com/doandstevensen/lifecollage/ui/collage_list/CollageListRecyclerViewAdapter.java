@@ -80,13 +80,6 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
             }
         });
 
-//        holder.textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mClickListener.onCollageClick(collageId, collageName, mLoad);
-//            }
-//        });
-
         holder.moreIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
