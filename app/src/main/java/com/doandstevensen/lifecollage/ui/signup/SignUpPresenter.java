@@ -82,37 +82,8 @@ public class SignUpPresenter extends BasePresenterClass implements SignUpContrac
 
                 @Override
                 public void onNext(LogInResponse logInResponse) {
-                    logIn(email, password);
-                }
-            });
-    }
-
-    private void logIn(String email, String password) {
-        mSubscription = mDataManager.logIn(email, password)
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnUnsubscribe(new Action0() {
-                @Override
-                public void call() {
-                    mSubscription = null;
-                }
-            })
-            .subscribe(new Subscriber<LogInResponse>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    e.printStackTrace();
                     mView.hideLoadingAnimation();
-                }
-
-                @Override
-                public void onNext(LogInResponse logInResponse) {
                     storeData(logInResponse);
-                    mView.hideLoadingAnimation();
                     mView.navigateToCollageList();
                 }
             });
