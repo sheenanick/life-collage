@@ -73,8 +73,6 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
             navigateToCollageList();
         } else if (id == R.id.nav_search) {
             navigateToSearch();
-        } else if (id == R.id.nav_pass) {
-
         } else if (id == R.id.nav_account) {
             navigateToAccount();
         } else if (id == R.id.nav_about) {
