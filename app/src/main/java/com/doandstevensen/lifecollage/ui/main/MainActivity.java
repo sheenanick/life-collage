@@ -4,27 +4,27 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.featured_collage.FeaturedCollageActivity;
-import com.doandstevensen.lifecollage.ui.search_collage_detail.SearchCollageDetailActivity;
-import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
+import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -34,8 +34,10 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity implements MainContract.MvpView {
     @BindView(R.id.gridView)
     GridView gridView;
-    @BindView(R.id.linearLayout)
-    LinearLayout linearLayout;
+//    @BindView(R.id.linearLayout)
+//    LinearLayout linearLayout;
+    @BindView(R.id.appName)
+    TextView appName;
     @BindView(R.id.searchView)
     SearchView searchView;
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -55,6 +57,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
             navigateToCollageList();
         }
 
+        setFont(appName);
         initSearchView();
         setupGridViewAdapter();
 

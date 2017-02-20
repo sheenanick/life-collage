@@ -16,4 +16,6 @@ public class Constants {
     public static final String USER_DATA = "user_data";
     public static final String USER_TOKEN = "user_token";
 
+    public static final String FONT = "fonts/abeezee.ttf";
+
 }

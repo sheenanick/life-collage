@@ -3,10 +3,13 @@ package com.doandstevensen.lifecollage.ui.base;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
+import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.main.MainActivity;
 
@@ -40,6 +43,12 @@ public class BaseActivity extends AppCompatActivity implements BaseMvpView{
         if (actionBar != null) {
             actionBar.setTitle(title);
         }
+    }
+
+    @Override
+    public void setFont(TextView view) {
+        Typeface font = Typeface.createFromAsset(getAssets(), Constants.FONT);
+        view.setTypeface(font);
     }
 
     @Override
