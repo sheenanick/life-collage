@@ -1,7 +1,6 @@
 package com.doandstevensen.lifecollage.ui.main;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -57,7 +56,6 @@ public class MainImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) view;
         }
-        Log.d("LOCATIONadapter", picture.getLocation());
         Picasso.with(mContext).load(picture.getLocation()).into(imageView);
         return imageView;
     }

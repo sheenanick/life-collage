@@ -18,6 +18,8 @@ import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
+import com.doandstevensen.lifecollage.ui.featured_collage.FeaturedCollageActivity;
+import com.doandstevensen.lifecollage.ui.search_collage_detail.SearchCollageDetailActivity;
 import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
@@ -40,7 +42,6 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
     private MainPresenter mPresenter;
     private MainImageAdapter mAdapter;
     private ArrayList<PictureResponse> mPictures;
-    private String[] mCollageTitles = {"My Dog Collage", "Winter Wonderland", "Food Collage", "Travel Collage", "Pretty Flowers", "Good Times"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +74,9 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         gridView.setAdapter(mAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                int collageId = mPictures.get(position).getCollageId();
-                String title = mCollageTitles[position];
+                PictureResponse picture = mPictures.get(position);
+                int collageId = picture.getCollageId();
+                String title = picture.getCollageTitle();
                 navigateToCollage(collageId, title);
             }
         });
@@ -87,8 +89,11 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void navigateToCollage(int collageId, String name) {
-
+    private void navigateToCollage(int collageId, String title) {
+        Intent intent = new Intent(MainActivity.this, FeaturedCollageActivity.class);
+        intent.putExtra("collageTitle", title);
+        intent.putExtra("collageId", collageId);
+        startActivity(intent);
     }
 
     @Override

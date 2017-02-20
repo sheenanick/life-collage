@@ -1,6 +1,7 @@
-package com.doandstevensen.lifecollage.ui.main;
+package com.doandstevensen.lifecollage.ui.featured_collage;
 
 import android.content.Context;
+import android.view.View;
 
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
@@ -15,35 +16,27 @@ import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Sheena on 2/3/17.
+ * Created by Sheena on 2/19/17.
  */
 
-public class MainPresenter implements MainContract.Presenter {
-    private MainContract.MvpView mView;
-    private Subscription mSubscription;
+public class FeaturedCollagePresenter implements FeaturedCollageContract.Presenter {
+    private FeaturedCollageContract.MvpView mView;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
-    private ArrayList<PictureResponse> mPictures = new ArrayList<>();
-    private String[] mCollageTitles = {"My Dog Collage", "Winter Wonderland", "Food Collage", "Travel Collage", "Pretty Flowers", "Good Times"};
+    private Subscription mSubscription;
 
-    public MainPresenter(MainContract.MvpView view, Context context) {
+    public FeaturedCollagePresenter(FeaturedCollageContract.MvpView view, Context context) {
         mView = view;
         mDataManager = new DataManager(context);
         mService = LifeCollageApiService.ServiceCreator.newService();
-        mDataManager.setApiService(mService);
     }
 
     @Override
-    public void getGridViewUsers() {
-       for (int i = 0; i < 6; i++) {
-           getPicture(i);
-       }
-    }
-
-    public void getPicture(final int position) {
+    public void loadCollage(int collageId) {
         mView.displayLoadingAnimation();
-        int collageId = position + 91;
-        mSubscription = mDataManager.getLastPicture(collageId)
+        mDataManager.setApiService(mService);
+
+        mSubscription = mDataManager.getAllPictures(collageId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(new Action0() {
@@ -52,7 +45,7 @@ public class MainPresenter implements MainContract.Presenter {
                         mSubscription = null;
                     }
                 })
-                .subscribe(new Subscriber<PictureResponse>() {
+                .subscribe(new Subscriber<ArrayList<PictureResponse>>() {
                     @Override
                     public void onCompleted() {
 
@@ -60,18 +53,15 @@ public class MainPresenter implements MainContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.hideLoadingAnimation();
                         e.printStackTrace();
+                        mView.hideLoadingAnimation();
                     }
 
                     @Override
-                    public void onNext(PictureResponse pictureResponse) {
+                    public void onNext(ArrayList<PictureResponse> response) {
                         mView.hideLoadingAnimation();
-                        pictureResponse.setTitle(mCollageTitles[position]);
-                        mPictures.add(pictureResponse);
-                        if (position == 5) {
-                            mView.updateGridView(mPictures);
-                        }
+                        mView.setRecyclerViewPictures(response);
+                        mView.setEmptyViewVisibility(View.GONE);
                     }
                 });
     }
@@ -81,6 +71,6 @@ public class MainPresenter implements MainContract.Presenter {
         mView = null;
         mDataManager = null;
         mService = null;
-        mSubscription = null;
+        mService = null;
     }
 }

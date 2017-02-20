@@ -8,6 +8,7 @@ public class PictureResponse {
     private int id;
     private int collageId;
     private String location;
+    private String collageTitle;
 
     public int getId() {
         return id;
@@ -19,5 +20,13 @@ public class PictureResponse {
 
     public String getLocation() {
         return location;
+    }
+
+    public String getCollageTitle() {
+        return collageTitle;
+    }
+
+    public void setTitle(String collageTitle) {
+        this.collageTitle = collageTitle;
     }
 }
