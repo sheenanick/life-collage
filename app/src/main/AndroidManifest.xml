@@ -54,6 +54,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.main.MainActivity" />
@@ -61,14 +62,12 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity
-            android:name=".ui.search_collage_list.SearchCollageListActivity" >
+        <activity android:name=".ui.search_collage_list.SearchCollageListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.search.SearchResultsActivity" />
         </activity>
-        <activity
-            android:name=".ui.search_collage_detail.SearchCollageDetailActivity" >
+        <activity android:name=".ui.search_collage_detail.SearchCollageDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.search_collage_list.SearchCollageListActivity" />
@@ -88,6 +87,7 @@
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
 
+        <activity android:name=".ui.featured_collage.FeaturedCollageActivity"></activity>
     </application>
 
 </manifest>

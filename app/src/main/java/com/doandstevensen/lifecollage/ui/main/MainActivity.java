@@ -13,13 +13,19 @@ import android.widget.LinearLayout;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
+import com.doandstevensen.lifecollage.ui.featured_collage.FeaturedCollageActivity;
+import com.doandstevensen.lifecollage.ui.search_collage_detail.SearchCollageDetailActivity;
 import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +40,8 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
     SearchView searchView;
     public static final String TAG = MainActivity.class.getSimpleName();
     private MainPresenter mPresenter;
+    private MainImageAdapter mAdapter;
+    private ArrayList<PictureResponse> mPictures;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         setupGridViewAdapter();
 
         mPresenter = new MainPresenter(this, this);
+        mPresenter.getGridViewUsers();
     }
 
     private void initSearchView() {
@@ -61,19 +70,28 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
     }
 
     public void setupGridViewAdapter() {
-        MainImageAdapter adapter = new MainImageAdapter(this);
-        gridView.setAdapter(adapter);
+        mAdapter = new MainImageAdapter(this);
+        gridView.setAdapter(mAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                //TODO navigate to collage activity on click
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                PictureResponse picture = mPictures.get(position);
+                int collageId = picture.getCollageId();
+                String title = picture.getCollageTitle();
+                navigateToCollage(collageId, title);
             }
         });
     }
 
-    private void navigateToCollage(String collageId, String name) {
-        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
-        intent.putExtra("name", name);
+    @Override
+    public void updateGridView(ArrayList<PictureResponse> pictures) {
+        mPictures = pictures;
+        mAdapter.setPictures(pictures);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void navigateToCollage(int collageId, String title) {
+        Intent intent = new Intent(MainActivity.this, FeaturedCollageActivity.class);
+        intent.putExtra("collageTitle", title);
         intent.putExtra("collageId", collageId);
         startActivity(intent);
     }

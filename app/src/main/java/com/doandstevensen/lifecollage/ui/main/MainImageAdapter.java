@@ -7,7 +7,10 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by Sheena on 2/3/17.
@@ -15,25 +18,35 @@ import com.squareup.picasso.Picasso;
 
 public class MainImageAdapter extends BaseAdapter {
     private Context mContext;
+    private ArrayList<PictureResponse> mPictures;
 
     public MainImageAdapter(Context c) {
         mContext = c;
     }
 
+    public void setPictures(ArrayList<PictureResponse> pictures) {
+        mPictures = pictures;
+    }
+
     public int getCount() {
-        return 6;
+        if (mPictures != null) {
+            return mPictures.size();
+        } else {
+            return 0;
+        }
     }
 
     public Object getItem(int position) {
-        return null;
+        return mPictures.get(position);
     }
 
     public long getItemId(int position) {
-        return 0;
+        return mPictures.get(position).getId();
     }
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
+        PictureResponse picture = mPictures.get(position);
         ImageView imageView;
         Integer height = viewGroup.getWidth() / 3;
         if (view == null) {
@@ -43,8 +56,7 @@ public class MainImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) view;
         }
-
-        Picasso.with(mContext).load("https://source.unsplash.com/random").into(imageView);
+        Picasso.with(mContext).load(picture.getLocation()).into(imageView);
         return imageView;
     }
 }
