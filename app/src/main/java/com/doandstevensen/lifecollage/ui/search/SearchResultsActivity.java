@@ -126,6 +126,12 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
