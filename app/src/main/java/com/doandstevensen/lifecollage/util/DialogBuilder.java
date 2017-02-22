@@ -24,9 +24,9 @@ public class DialogBuilder {
         View view = inflater.inflate(R.layout.alert_dialog_delete, null);
 
         TextView title = (TextView) view.findViewById(R.id.title);
-        title.setText("Delete Collage");
+        title.setText(R.string.delete_collage_title);
         TextView message = (TextView) view.findViewById(R.id.message);
-        message.setText("Are you sure you would like to delete this collage?");
+        message.setText(R.string.delete_collage_message);
 
         builder.setView(view)
                 .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
@@ -48,7 +48,7 @@ public class DialogBuilder {
         View view = inflater.inflate(R.layout.alert_dialog_edit, null);
 
         TextView title = (TextView) view.findViewById(R.id.title);
-        title.setText("New Collage");
+        title.setText(R.string.new_collage_title);
 
         builder.setView(view)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -73,7 +73,7 @@ public class DialogBuilder {
         View view = inflater.inflate(R.layout.alert_dialog_edit, null);
 
         TextView dialogTitle = (TextView) view.findViewById(R.id.title);
-        dialogTitle.setText("Edit Collage Title");
+        dialogTitle.setText(R.string.edit_collage_title);
         mEditText = (EditText) view.findViewById(R.id.collageName);
         mEditText.setText(collageTitle);
 
@@ -98,9 +98,9 @@ public class DialogBuilder {
         View view = inflater.inflate(R.layout.alert_dialog_delete, null);
 
         TextView title = (TextView) view.findViewById(R.id.title);
-        title.setText("Delete Account");
+        title.setText(R.string.delete_account);
         TextView message = (TextView) view.findViewById(R.id.message);
-        message.setText("Are you sure you would like to delete your account?");
+        message.setText(R.string.delete_account_message);
 
         builder.setView(view)
                 .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {

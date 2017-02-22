@@ -21,7 +21,7 @@
         android:visibility="gone"
         android:gravity="center"
         android:textSize="20sp"
-        android:text="Take a picture to add to your collage by tapping the camera icon below!" />
+        android:text="@string/take_picture_message" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
