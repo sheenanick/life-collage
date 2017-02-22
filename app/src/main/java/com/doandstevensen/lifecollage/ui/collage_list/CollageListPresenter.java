@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Context;
 
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
@@ -24,23 +25,26 @@ import rx.schedulers.Schedulers;
 
 public class CollageListPresenter extends BasePresenterClass implements CollageListContract.Presenter {
     private CollageListContract.MvpView mView;
+    private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mPublicService;
     private Subscription mSubscription;
-    private ArrayList<CollageResponse> mCollages = new ArrayList<>();
-    private ArrayList<PictureResponse> mPictures = new ArrayList<>();
+    private ArrayList<CollageListResponse> mCollages = new ArrayList<>();
 
 
-    public CollageListPresenter(CollageListContract.MvpView view, Context context, DataManager dataManager) {
-        super(view, context, dataManager);
+    public CollageListPresenter(CollageListContract.MvpView view, Context context) {
+        super(view, context);
         mView = view;
-        mDataManager = dataManager;
+        mContext = context;
+        mDataManager = new DataManager(context);
         mPublicService = LifeCollageApiService.ServiceCreator.newService();
     }
 
     @Override
-    public void loadCollageList(int userId) {
+    public void loadCollageList() {
         mView.displayLoadingAnimation();
+
+        int userId = mDataManager.getUserData().getUid();
         mDataManager.setApiService(mPublicService);
 
         mSubscription = mDataManager.getCollages(userId)
@@ -52,7 +56,7 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                         mSubscription = null;
                     }
                 })
-                .subscribe(new Subscriber<ArrayList<CollageResponse>>() {
+                .subscribe(new Subscriber<ArrayList<CollageListResponse>>() {
                     @Override
                     public void onCompleted() {
 
@@ -65,55 +69,53 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                     }
 
                     @Override
-                    public void onNext(ArrayList<CollageResponse> collages) {
+                    public void onNext(ArrayList<CollageListResponse> collages) {
                         mView.hideLoadingAnimation();
                         mCollages = collages;
-                        for (int i = 0; i < mCollages.size(); i++) {
-                            getPicture(i);
-                        }
+                        mView.updateRecyclerView(collages);
                     }
                 });
     }
 
-    public void getPicture(final int position) {
-        if (position == 0) {
-            mView.displayLoadingAnimation();
-        }
-        int collageId = mCollages.get(position).getCollageId();
-
-        mSubscription = mDataManager.getLastPicture(collageId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnUnsubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mSubscription = null;
-                    }
-                })
-                .subscribe(new Subscriber<PictureResponse>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mView.hideLoadingAnimation();
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(PictureResponse pictureResponse) {
-                        mView.hideLoadingAnimation();
-                        mPictures.add(pictureResponse);
-                        if (position == 0) {
-                            mView.updateRecyclerView(mCollages, mPictures);
-                        } else {
-                            mView.insertPicture(mPictures, position);
-                        }
-                    }
-                });
-    }
+//    public void getPicture(final int position) {
+//        if (position == 0) {
+//            mView.displayLoadingAnimation();
+//        }
+//        int collageId = mCollages.get(position).getCollageId();
+//
+//        mSubscription = mDataManager.getLastPicture(collageId)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnUnsubscribe(new Action0() {
+//                    @Override
+//                    public void call() {
+//                        mSubscription = null;
+//                    }
+//                })
+//                .subscribe(new Subscriber<PictureResponse>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        mView.hideLoadingAnimation();
+//                        e.printStackTrace();
+//                    }
+//
+//                    @Override
+//                    public void onNext(PictureResponse pictureResponse) {
+//                        mView.hideLoadingAnimation();
+//                        mPictures.add(pictureResponse);
+//                        if (position == 0) {
+//                            mView.updateRecyclerView(mCollages, mPictures);
+//                        } else {
+//                            mView.insertPicture(mPictures, position);
+//                        }
+//                    }
+//                });
+//    }
 
     @Override
     public void createNewCollage(final String title) {
@@ -149,11 +151,12 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                     }
 
                     @Override
-                    public void onNext(CollageResponse collage) {
+                    public void onNext(CollageResponse response) {
                         mView.hideLoadingAnimation();
+                        CollageListResponse collage = new CollageListResponse(response, new PictureResponse());
                         mCollages.add(collage);
                         mView.insertCollage(mCollages, mCollages.size() - 1);
-                        mView.navigateToCollage(collage.getCollageId(), collage.getTitle(), false);
+                        mView.navigateToCollage(response.getCollageId(), response.getTitle(), false);
                     }
                 });
     }
@@ -193,17 +196,10 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                     @Override
                     public void onNext(CollageResponse response) {
                         mView.hideLoadingAnimation();
-
-                        for (int i = 0; i < mPictures.size(); i++) {
-                            if (mPictures.get(i).getCollageId() == response.getCollageId()) {
-                                mPictures.remove(i);
-                                break;
-                            }
-                        }
                         for (int i = 0; i < mCollages.size(); i++) {
-                            if (mCollages.get(i).getCollageId() == response.getCollageId()) {
+                            if (mCollages.get(i).getCollage().getCollageId() == response.getCollageId()) {
                                 mCollages.remove(i);
-                                mView.deleteCollage(mCollages, mPictures, i);
+                                mView.deleteCollage(mCollages, i);
                                 break;
                             }
                         }
@@ -249,8 +245,8 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                     public void onNext(CollageResponse response) {
                         mView.hideLoadingAnimation();
                         for (int i = 0; i < mCollages.size(); i++) {
-                            if (mCollages.get(i).getCollageId() == response.getCollageId()){
-                                mCollages.set(i, response);
+                            if (mCollages.get(i).getCollage().getCollageId() == response.getCollageId()){
+                                mCollages.get(i).setCollage(response);
                                 mView.updateCollageTitle(i, title);
                                 break;
                             }
@@ -261,7 +257,9 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
 
     @Override
     public void detach() {
+        detachBase();
         mView = null;
+        mContext = null;
         mDataManager = null;
         mPublicService = null;
         mSubscription = null;

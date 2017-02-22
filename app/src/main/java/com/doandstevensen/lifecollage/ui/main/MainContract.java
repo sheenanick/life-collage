@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public interface MainContract {
     interface Presenter extends BasePresenter {
-        void getGridViewUsers();
+        void checkIfLoggedIn();
     }
 
     interface MvpView extends BaseMvpView {

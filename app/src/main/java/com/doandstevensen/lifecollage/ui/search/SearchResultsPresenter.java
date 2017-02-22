@@ -3,6 +3,7 @@ package com.doandstevensen.lifecollage.ui.search;
 import android.content.Context;
 import android.view.View;
 
+import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
@@ -20,10 +21,10 @@ import rx.schedulers.Schedulers;
  */
 
 public class SearchResultsPresenter implements SearchResultsContract.Presenter {
-    private Context mContext;
     private SearchResultsContract.MvpView mView;
-    private LifeCollageApiService mPublicService;
+    private Context mContext;
     private DataManager mDataManager;
+    private LifeCollageApiService mPublicService;
     private Subscription mSubscription;
 
     public SearchResultsPresenter(SearchResultsContract.MvpView view, Context context) {
@@ -32,6 +33,12 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
         mDataManager = new DataManager(mContext);
         mPublicService = LifeCollageApiService.ServiceCreator.newService();
         mDataManager.setApiService(mPublicService);
+    }
+
+    @Override
+    public void getCurrentUser() {
+        User currentUser = mDataManager.getUserData();
+        mView.setupNav(currentUser);
     }
 
     public void search(String username) {
@@ -73,8 +80,8 @@ public class SearchResultsPresenter implements SearchResultsContract.Presenter {
     public void detach() {
         mView = null;
         mContext = null;
-        mPublicService = null;
         mDataManager = null;
+        mPublicService = null;
         mSubscription = null;
     }
 }

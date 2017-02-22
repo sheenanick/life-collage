@@ -94,22 +94,22 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
     }
 
     public void navigateToCollageList() {
-        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, CollageListActivity.class);
         startActivity(intent);
     }
 
     public void navigateToSearch() {
-        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, SearchResultsActivity.class);
         startActivity(intent);
     }
 
     public void navigateToAccount() {
-        Intent intent = new Intent(getBaseContext(), AccountActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, AccountActivity.class);
         startActivity(intent);
     }
 
     public void navigateToAbout() {
-        Intent intent = new Intent(getBaseContext(), AboutActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, AboutActivity.class);
         startActivity(intent);
     }
 }

@@ -2,7 +2,6 @@ package com.doandstevensen.lifecollage.ui.search;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
  */
 
 public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.MyViewHolder> {
-    private final Context mContext;
+    private Context mContext;
     private ArrayList<UserResponse> mUsers;
     private SearchRecyclerViewAdapter.ClickListener mClickListener;
 
@@ -65,6 +64,11 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         mClickListener = clickListener;
     }
 
+    public void detach() {
+        mContext = null;
+        mUsers = null;
+        mClickListener = null;
+    }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView textView;

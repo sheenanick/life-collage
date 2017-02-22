@@ -1,9 +1,9 @@
 package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.squareup.picasso.Picasso;
@@ -24,26 +25,20 @@ import java.util.List;
  */
 
 public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<CollageListRecyclerViewAdapter.MyViewHolder> {
-    private final Context mContext;
-    private ArrayList<CollageResponse> mCollages;
-    private ArrayList<PictureResponse> mPictures;
+    private Context mContext;
+    private ArrayList<CollageListResponse> mCollages;
     private CollageListRecyclerViewAdapter.ClickListener mClickListener;
 
     public CollageListRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setData(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
-        mCollages = collages;
-        mPictures = pictures;
-    }
-
-    public void setCollages(ArrayList<CollageResponse> collages) {
+    public void setData(ArrayList<CollageListResponse> collages) {
         mCollages = collages;
     }
 
-    public void setPictures(ArrayList<PictureResponse> pictures) {
-        mPictures = pictures;
+    public void setCollages(ArrayList<CollageListResponse> collages) {
+        mCollages = collages;
     }
 
     @Override
@@ -55,26 +50,18 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final CollageResponse collage = mCollages.get(position);
+        CollageListResponse collageListResponse = mCollages.get(position);
+        final CollageResponse collage = collageListResponse.getCollage();
+        final PictureResponse picture = collageListResponse.getCollagePic();
         final int collageId = collage.getCollageId();
         final String collageName = collage.getTitle();
 
         holder.textView.setText(collageName);
-
-        for (PictureResponse picture : mPictures) {
-            if (picture != null) {
-                if (picture.getCollageId() == collageId) {
-                    Picasso.Builder builder = new Picasso.Builder(mContext);
-                    builder.listener(new Picasso.Listener() {
-                        @Override
-                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                            exception.printStackTrace();
-                        }
-                    });
-                    builder.build().load(picture.getLocation()).into(holder.imageView);
-                    break;
-                }
-            }
+        String location = picture.getLocation();
+        if (location != null) {
+            Picasso.with(mContext)
+                    .load(location)
+                    .into(holder.imageView);
         }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +112,12 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
 
     public void setClickListener(CollageListRecyclerViewAdapter.ClickListener clickListener) {
         mClickListener = clickListener;
+    }
+
+    public void detach() {
+        mContext = null;
+        mCollages = null;
+        mClickListener = null;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
