@@ -76,6 +76,12 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         mAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void updateRecyclerViewPictures(ArrayList<PictureResponse> pictures, int position) {
+        mAdapter.setPictures(pictures);
+        mAdapter.notifyItemInserted(position);
+    }
+
     @OnClick(R.id.fab)
     public void launchCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

@@ -19,7 +19,7 @@
         android:visibility="gone"
         android:gravity="center"
         android:textSize="18sp"
-        android:text="Sorry, there were no results that matched your search." />
+        android:text="@string/no_search_results" />
 
     <TextView
         android:id="@+id/noSearchView"
@@ -29,5 +29,5 @@
         android:visibility="gone"
         android:gravity="center"
         android:textSize="18sp"
-        android:text="Try searching for a user by their username." />
+        android:text="@string/try_searching_message" />
 </RelativeLayout>

@@ -132,7 +132,7 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
                     public void onNext(PictureResponse response) {
                         mView.hideLoadingAnimation();
                         mPictures.add(response);
-                        mView.setRecyclerViewPictures(mPictures);
+                        mView.updateRecyclerViewPictures(mPictures, mPictures.size() - 1);
                         mView.setEmptyViewVisibility(View.GONE);
                     }
                 });

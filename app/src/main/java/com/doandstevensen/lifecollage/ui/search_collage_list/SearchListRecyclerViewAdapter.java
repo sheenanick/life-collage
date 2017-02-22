@@ -47,10 +47,12 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
         final String collageName = collage.getTitle();
         final int collageId = collage.getCollageId();
 
-        holder.textView.setText(collageName);
+        holder.titleTextView.setText(collageName);
         String location = picture.getLocation();
         if (location != null) {
             Picasso.with(mContext).load(location).into(holder.imageView);
+        } else {
+            holder.emptyTextView.setVisibility(View.VISIBLE);
         }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -82,12 +84,14 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView textView;
+        TextView titleTextView;
+        TextView emptyTextView;
 
         MyViewHolder(View view) {
             super(view);
             imageView = (ImageView) view.findViewById(R.id.imageView);
-            textView = (TextView) view.findViewById(R.id.collageTitleTextView);
+            titleTextView = (TextView) view.findViewById(R.id.collageTitleTextView);
+            emptyTextView = (TextView) view.findViewById(R.id.emptyTextView);
         }
     }
 

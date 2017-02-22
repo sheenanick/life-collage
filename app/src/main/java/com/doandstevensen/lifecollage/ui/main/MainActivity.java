@@ -12,6 +12,8 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
+import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
@@ -36,7 +38,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
 
     private MainPresenter mPresenter;
     private MainImageAdapter mAdapter;
-    private ArrayList<PictureResponse> mPictures;
+    private ArrayList<CollageListResponse> mCollages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,18 +66,23 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         gridView.setAdapter(mAdapter);
         gridView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                PictureResponse picture = mPictures.get(position);
+                CollageListResponse collageListResponse = mCollages.get(position);
+
+                CollageResponse collage = collageListResponse.getCollage();
+                PictureResponse picture = collageListResponse.getCollagePic();
+
                 int collageId = picture.getCollageId();
-                String title = picture.getCollageTitle();
+                String title = collage.getTitle();
+
                 navigateToCollage(collageId, title);
             }
         });
     }
 
     @Override
-    public void updateGridView(ArrayList<PictureResponse> pictures) {
-        mPictures = pictures;
-        mAdapter.setPictures(pictures);
+    public void updateGridView(ArrayList<CollageListResponse> collages) {
+        mCollages = collages;
+        mAdapter.setCollages(collages);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -115,7 +122,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         if (mAdapter != null) {
             mAdapter.detach();
         }
-        mPictures = null;
+        mCollages = null;
         super.onDestroy();
     }
 

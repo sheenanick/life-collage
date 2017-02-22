@@ -3,7 +3,6 @@ package com.doandstevensen.lifecollage.ui.collage_list;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +61,8 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
             Picasso.with(mContext)
                     .load(location)
                     .into(holder.imageView);
+        } else {
+            holder.emptyTextView.setVisibility(View.VISIBLE);
         }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -124,12 +125,14 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         ImageView imageView;
         TextView textView;
         ImageView moreIcon;
+        TextView emptyTextView;
 
         MyViewHolder(View view) {
             super(view);
             imageView = (ImageView) view.findViewById(R.id.imageView);
             textView = (TextView) view.findViewById(R.id.collageTitleTextView);
             moreIcon = (ImageView) view.findViewById(R.id.moreIcon);
+            emptyTextView = (TextView) view.findViewById(R.id.emptyTextView);
         }
     }
 

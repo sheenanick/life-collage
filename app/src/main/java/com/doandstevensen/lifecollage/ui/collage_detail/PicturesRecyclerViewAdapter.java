@@ -2,10 +2,12 @@ package com.doandstevensen.lifecollage.ui.collage_detail;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
@@ -32,7 +34,7 @@ public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRe
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item, parent, false);
+                .inflate(R.layout.picture_item, parent, false);
         return new MyViewHolder(itemView);
     }
 

@@ -2,8 +2,10 @@ package com.doandstevensen.lifecollage.ui.search_collage_detail;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
@@ -19,16 +21,21 @@ import butterknife.ButterKnife;
 public class SearchCollageDetailActivity extends BaseActivity implements SearchCollageDetailContract.MvpView {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    @BindView(R.id.emptyView)
+    @BindView(R.id.searchEmptyView)
     TextView mEmptyView;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+
     private SearchCollageDetailPresenter mPresenter;
     private PicturesRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_collage_detail);
+        setContentView(R.layout.activity_collage);
+
         ButterKnife.bind(this);
+        mFab.setVisibility(View.GONE);
 
         enableUpButton();
         initRecyclerViewAdapter();

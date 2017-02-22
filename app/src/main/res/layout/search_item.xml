@@ -24,7 +24,7 @@
             android:layout_marginLeft="8dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
-            android:text="username"/>
+            android:text="@string/username_hint"/>
     </LinearLayout>
 
     <View

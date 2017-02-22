@@ -77,46 +77,6 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                 });
     }
 
-//    public void getPicture(final int position) {
-//        if (position == 0) {
-//            mView.displayLoadingAnimation();
-//        }
-//        int collageId = mCollages.get(position).getCollageId();
-//
-//        mSubscription = mDataManager.getLastPicture(collageId)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .doOnUnsubscribe(new Action0() {
-//                    @Override
-//                    public void call() {
-//                        mSubscription = null;
-//                    }
-//                })
-//                .subscribe(new Subscriber<PictureResponse>() {
-//                    @Override
-//                    public void onCompleted() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        mView.hideLoadingAnimation();
-//                        e.printStackTrace();
-//                    }
-//
-//                    @Override
-//                    public void onNext(PictureResponse pictureResponse) {
-//                        mView.hideLoadingAnimation();
-//                        mPictures.add(pictureResponse);
-//                        if (position == 0) {
-//                            mView.updateRecyclerView(mCollages, mPictures);
-//                        } else {
-//                            mView.insertPicture(mPictures, position);
-//                        }
-//                    }
-//                });
-//    }
-
     @Override
     public void createNewCollage(final String title) {
         mView.displayLoadingAnimation();

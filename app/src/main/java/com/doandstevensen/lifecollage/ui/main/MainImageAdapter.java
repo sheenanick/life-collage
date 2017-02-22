@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.squareup.picasso.Picasso;
 
@@ -18,35 +19,37 @@ import java.util.ArrayList;
 
 public class MainImageAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<PictureResponse> mPictures;
+    private ArrayList<CollageListResponse> mCollages;
 
     public MainImageAdapter(Context c) {
         mContext = c;
     }
 
-    public void setPictures(ArrayList<PictureResponse> pictures) {
-        mPictures = pictures;
+    public void setCollages(ArrayList<CollageListResponse> collages) {
+        mCollages = collages;
     }
 
     public int getCount() {
-        if (mPictures != null) {
-            return mPictures.size();
+        if (mCollages != null) {
+            return mCollages.size();
         } else {
             return 0;
         }
     }
 
     public Object getItem(int position) {
-        return mPictures.get(position);
+        return mCollages.get(position);
     }
 
     public long getItemId(int position) {
-        return mPictures.get(position).getId();
+        return mCollages.get(position).getCollage().getCollageId();
     }
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        PictureResponse picture = mPictures.get(position);
+        CollageListResponse collageListResponse = mCollages.get(position);
+        PictureResponse picture = collageListResponse.getCollagePic();
+
         ImageView imageView;
         Integer height = viewGroup.getWidth() / 3;
 
@@ -70,6 +73,6 @@ public class MainImageAdapter extends BaseAdapter {
 
     public void detach() {
         mContext = null;
-        mPictures = null;
+        mCollages = null;
     }
 }
