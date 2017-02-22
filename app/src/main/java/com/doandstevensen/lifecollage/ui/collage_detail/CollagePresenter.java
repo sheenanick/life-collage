@@ -36,12 +36,12 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
     private int mCollageId;
     private ArrayList<PictureResponse> mPictures = new ArrayList<>();
 
-    public CollagePresenter(CollageContract.MvpView view, Context context, DataManager dataManager, int collageId) {
-        super(view, context, dataManager);
+    public CollagePresenter(CollageContract.MvpView view, Context context, int collageId) {
+        super(view, context);
         mView = view;
         mContext = context;
         mCollageId = collageId;
-        mDataManager = dataManager;
+        mDataManager = new DataManager(context);
         mPublicService = LifeCollageApiService.ServiceCreator.newService();
     }
 
@@ -77,7 +77,8 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
                         if (response.size() > 0) {
                             mView.setRecyclerViewPictures(response);
                             mPictures = response;
-                            mView.setEmptyViewVisibility(View.GONE);
+                        } else {
+                            mView.setEmptyViewVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -131,7 +132,7 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
                     public void onNext(PictureResponse response) {
                         mView.hideLoadingAnimation();
                         mPictures.add(response);
-                        mView.setRecyclerViewPictures(mPictures);
+                        mView.updateRecyclerViewPictures(mPictures, mPictures.size() - 1);
                         mView.setEmptyViewVisibility(View.GONE);
                     }
                 });
@@ -139,6 +140,7 @@ public class CollagePresenter extends BasePresenterClass implements CollageContr
 
     @Override
     public void detach() {
+        detachBase();
         mView = null;
         mContext = null;
         mDataManager = null;

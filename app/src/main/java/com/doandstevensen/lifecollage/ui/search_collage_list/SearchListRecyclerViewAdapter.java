@@ -1,7 +1,6 @@
 package com.doandstevensen.lifecollage.ui.search_collage_list;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.squareup.picasso.Picasso;
@@ -21,22 +21,16 @@ import java.util.ArrayList;
  */
 
 public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchListRecyclerViewAdapter.MyViewHolder> {
-    private final Context mContext;
-    private ArrayList<CollageResponse> mCollages;
-    private ArrayList<PictureResponse> mPictures = new ArrayList<>();
+    private Context mContext;
+    private ArrayList<CollageListResponse> mCollages;
     private SearchListRecyclerViewAdapter.ClickListener mClickListener;
 
     public SearchListRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setData(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
+    public void setData(ArrayList<CollageListResponse> collages) {
         mCollages = collages;
-        mPictures = pictures;
-    }
-
-    public void setPictures(ArrayList<PictureResponse> pictures) {
-        mPictures = pictures;
     }
 
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -47,26 +41,18 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final CollageResponse collage = mCollages.get(position);
+        CollageListResponse collageListResponse = mCollages.get(position);
+        CollageResponse collage = collageListResponse.getCollage();
+        PictureResponse picture = collageListResponse.getCollagePic();
         final String collageName = collage.getTitle();
         final int collageId = collage.getCollageId();
 
-        holder.textView.setText(collageName);
-
-        for (PictureResponse picture : mPictures) {
-            if (picture != null) {
-                if (picture.getCollageId() == collageId) {
-                    Picasso.Builder builder = new Picasso.Builder(mContext);
-                    builder.listener(new Picasso.Listener() {
-                        @Override
-                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                            exception.printStackTrace();
-                        }
-                    });
-                    builder.build().load(picture.getLocation()).into(holder.imageView);
-                    break;
-                }
-            }
+        holder.titleTextView.setText(collageName);
+        String location = picture.getLocation();
+        if (location != null) {
+            Picasso.with(mContext).load(location).into(holder.imageView);
+        } else {
+            holder.emptyTextView.setVisibility(View.VISIBLE);
         }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -90,14 +76,22 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
         mClickListener = clickListener;
     }
 
+    public void detach() {
+        mContext = null;
+        mCollages = null;
+        mClickListener = null;
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView textView;
+        TextView titleTextView;
+        TextView emptyTextView;
 
         MyViewHolder(View view) {
             super(view);
             imageView = (ImageView) view.findViewById(R.id.imageView);
-            textView = (TextView) view.findViewById(R.id.collageTitleTextView);
+            titleTextView = (TextView) view.findViewById(R.id.collageTitleTextView);
+            emptyTextView = (TextView) view.findViewById(R.id.emptyTextView);
         }
     }
 

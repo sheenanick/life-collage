@@ -6,7 +6,6 @@ import android.util.Patterns;
 import android.widget.EditText;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
@@ -40,7 +39,7 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
 
         ButterKnife.bind(this);
 
-        mPresenter = new SignUpPresenter(this, this, new DataManager(this));
+        mPresenter = new SignUpPresenter(this, this);
     }
 
     @OnClick(R.id.signUp)
@@ -108,14 +107,14 @@ public class SignUpActivity extends BaseActivity implements SignUpContract.MvpVi
 
     @Override
     public void navigateToCollageList() {
-        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
+        Intent intent = new Intent(SignUpActivity.this, CollageListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
     @OnClick(R.id.logIn)
     public void navigateToLogIn() {
-        Intent logInIntent = new Intent(getBaseContext(), LogInActivity.class);
+        Intent logInIntent = new Intent(SignUpActivity.this, LogInActivity.class);
         startActivity(logInIntent);
     }
 

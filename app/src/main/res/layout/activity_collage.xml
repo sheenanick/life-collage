@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context="com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity" >
 
     <android.support.v7.widget.RecyclerView
@@ -17,9 +18,21 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_centerInParent="true"
+        android:visibility="gone"
         android:gravity="center"
         android:textSize="20sp"
-        android:text="Take a picture to add to your collage by tapping the camera icon below!" />
+        android:text="@string/take_picture_message" />
+
+    <TextView
+        android:id="@+id/searchEmptyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="@string/empty_collage_message" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -16,9 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.CollageResponse;
-import com.doandstevensen.lifecollage.data.model.PictureResponse;
-import com.doandstevensen.lifecollage.data.remote.DataManager;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
@@ -43,16 +41,12 @@ public class CollageListActivity extends BaseDrawerActivity
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(this);
 
-        DataManager dataManager = new DataManager(this);
-        int currentUserId  = dataManager.getUserData().getUid();
-
-        mPresenter = new CollageListPresenter(this, this, dataManager);
-
         initRecyclerViewAdapter();
         initDrawer();
-
-        mPresenter.loadCollageList(currentUserId);
         setActionBarTitle("My Life Collages");
+
+        mPresenter = new CollageListPresenter(this, this);
+        mPresenter.loadCollageList();
     }
 
     @Override
@@ -70,26 +64,20 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
-        mAdapter.setData(collages, pictures);
+    public void updateRecyclerView(ArrayList<CollageListResponse> collages) {
+        mAdapter.setData(collages);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void insertCollage(ArrayList<CollageResponse> collages, int position) {
+    public void insertCollage(ArrayList<CollageListResponse> collages, int position) {
         mAdapter.setCollages(collages);
         mAdapter.notifyItemInserted(position);
     }
 
     @Override
-    public void insertPicture(ArrayList<PictureResponse> pictures, int position) {
-        mAdapter.setPictures(pictures);
-        mAdapter.notifyItemChanged(position);
-    }
-
-    @Override
-    public void deleteCollage(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures, int position) {
-        mAdapter.setData(collages, pictures);
+    public void deleteCollage(ArrayList<CollageListResponse> collages, int position) {
+        mAdapter.setData(collages);
         mAdapter.notifyItemRemoved(position);
         Toast.makeText(this, "Collage Deleted", Toast.LENGTH_SHORT).show();
     }
@@ -107,7 +95,7 @@ public class CollageListActivity extends BaseDrawerActivity
 
     @Override
     public void navigateToCollage(int collageId, String collageTitle, boolean load) {
-        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
+        Intent intent = new Intent(CollageListActivity.this, CollageActivity.class);
         intent.putExtra("collageTitle", collageTitle);
         intent.putExtra("collageId", collageId);
         intent.putExtra("load", load);
@@ -169,6 +157,9 @@ public class CollageListActivity extends BaseDrawerActivity
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
+        }
+        if (mAdapter != null) {
+            mAdapter.detach();
         }
         super.onDestroy();
     }

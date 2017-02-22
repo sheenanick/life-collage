@@ -7,7 +7,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.util.DialogBuilder;
 
@@ -29,10 +28,9 @@ public class AccountActivity extends BaseDrawerActivity implements AccountContra
         saveEmailButton = (Button) findViewById(R.id.saveEmailButton);
         deleteButton = (Button) findViewById(R.id.deleteButton);
 
-        DataManager dataManager = new DataManager(this);
-        mPresenter = new AccountPresenter(this, this, dataManager);
+        mPresenter = new AccountPresenter(this, this);
+        mPresenter.getEmail();
 
-        setEmail(dataManager.getUserData().getEmail());
         saveEmailButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
 

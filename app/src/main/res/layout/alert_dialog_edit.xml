@@ -3,16 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorAccent"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:paddingRight="24dp"
         android:paddingLeft="24dp"
         android:paddingTop="24dp"
-        android:paddingBottom="20dp"
-        android:text="Create New Collage"/>
+        android:paddingBottom="20dp"/>
     <EditText
         android:id="@+id/collageName"
         android:inputType="textCapWords"
@@ -22,5 +22,5 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:padding="16dp"
-        android:hint="Collage Name" />
+        android:hint="@string/collage_name_hint" />
 </LinearLayout>

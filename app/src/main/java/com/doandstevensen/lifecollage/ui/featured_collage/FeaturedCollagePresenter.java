@@ -21,12 +21,14 @@ import rx.schedulers.Schedulers;
 
 public class FeaturedCollagePresenter implements FeaturedCollageContract.Presenter {
     private FeaturedCollageContract.MvpView mView;
+    private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
     private Subscription mSubscription;
 
     public FeaturedCollagePresenter(FeaturedCollageContract.MvpView view, Context context) {
         mView = view;
+        mContext = context;
         mDataManager = new DataManager(context);
         mService = LifeCollageApiService.ServiceCreator.newService();
     }
@@ -69,8 +71,9 @@ public class FeaturedCollagePresenter implements FeaturedCollageContract.Present
     @Override
     public void detach() {
         mView = null;
+        mContext = null;
         mDataManager = null;
         mService = null;
-        mService = null;
+        mSubscription = null;
     }
 }

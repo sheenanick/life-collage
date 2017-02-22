@@ -8,20 +8,31 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/placeholderimage"/>
+        android:background="@color/colorPrimaryDark"
+        android:scaleType="centerCrop"/>
 
-        <TextView
-            android:id="@+id/collageTitleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_alignParentTop="true"
-            android:background="#B2FFFFFF"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:gravity="center_vertical"
-            android:text="@string/collage_title_text"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"/>
+    <TextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="match_parent"
+        android:layout_height="172dp"
+        android:layout_marginTop="48dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:text="@string/empty_collage_message"/>
+
+    <TextView
+        android:id="@+id/collageTitleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="#B2FFFFFF"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:gravity="center_vertical"
+        android:text="@string/collage_title_text"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"/>
 
 </RelativeLayout>

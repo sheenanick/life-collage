@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -73,8 +72,6 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
             navigateToCollageList();
         } else if (id == R.id.nav_search) {
             navigateToSearch();
-        } else if (id == R.id.nav_pass) {
-
         } else if (id == R.id.nav_account) {
             navigateToAccount();
         } else if (id == R.id.nav_about) {
@@ -97,22 +94,22 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
     }
 
     public void navigateToCollageList() {
-        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, CollageListActivity.class);
         startActivity(intent);
     }
 
     public void navigateToSearch() {
-        Intent intent = new Intent(getBaseContext(), SearchResultsActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, SearchResultsActivity.class);
         startActivity(intent);
     }
 
     public void navigateToAccount() {
-        Intent intent = new Intent(getBaseContext(), AccountActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, AccountActivity.class);
         startActivity(intent);
     }
 
     public void navigateToAbout() {
-        Intent intent = new Intent(getBaseContext(), AboutActivity.class);
+        Intent intent = new Intent(BaseDrawerActivity.this, AboutActivity.class);
         startActivity(intent);
     }
 }

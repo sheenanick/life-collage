@@ -1,5 +1,6 @@
 package com.doandstevensen.lifecollage.data.remote;
 
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
@@ -71,8 +72,8 @@ public interface LifeCollageApiService {
     @GET("public/collage/all")
     Observable<ArrayList<CollageResponse>> getAllCollages();
 
-    @GET("public/collage/user/{userId}")
-    Observable<ArrayList<CollageResponse>> getCollages(@Path("userId") int userId);
+    @GET("public/collage/latestPic/{userId}")
+    Observable<ArrayList<CollageListResponse>> getCollages(@Path("userId") int userId);
 
     @GET("public/collage/{collageId}")
     Observable<CollageResponse> getCollageById(@Path("collageId") int collageId);

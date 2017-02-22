@@ -8,12 +8,12 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
-import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 
 import java.io.File;
@@ -51,10 +51,11 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         initRecyclerViewAdapter();
         setActionBarTitle(collageTitle);
 
-        DataManager dataManager = new DataManager(this);
-        mPresenter = new CollagePresenter(this, getBaseContext(), dataManager, collageId);
+        mPresenter = new CollagePresenter(this, this, collageId);
         if (load) {
             mPresenter.loadCollage();
+        } else {
+            setEmptyViewVisibility(View.VISIBLE);
         }
     }
 
@@ -73,6 +74,12 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     public void setRecyclerViewPictures(ArrayList<PictureResponse> pictures) {
         mAdapter.setPictures(pictures);
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateRecyclerViewPictures(ArrayList<PictureResponse> pictures, int position) {
+        mAdapter.setPictures(pictures);
+        mAdapter.notifyItemInserted(position);
     }
 
     @OnClick(R.id.fab)
@@ -122,6 +129,9 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
+        }
+        if (mAdapter != null) {
+            mAdapter.detach();
         }
         super.onDestroy();
     }

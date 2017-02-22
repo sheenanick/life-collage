@@ -23,4 +23,20 @@
     <string name="delete_title">Delete</string>
     <string name="lorem_ipsum_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="search_text">Search</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_message">Are you sure you would like to delete your account?</string>
+    <string name="edit_collage_title">Edit Collage Title</string>
+    <string name="new_collage_title">New Collage</string>
+    <string name="delete_collage_title">Delete Collage</string>
+    <string name="delete_collage_message">Are you sure you would like to delete this collage?</string>
+    <string name="collage_name_hint">Collage Name</string>
+    <string name="no_search_results">Sorry, there were no results that matched your search.</string>
+    <string name="try_searching_message">Try searching for a user by their username.</string>
+    <string name="take_picture_message">Take a picture to add to your collage by tapping the camera icon below!</string>
+    <string name="change_email_label">Edit Email:</string>
+    <string name="save_change_button">Save Change</string>
+    <string name="delete_account_warning">If you delete your account all of your pictures and collages will be permanently deleted.</string>
+    <string name="delete_account_button">Delete Account</string>
+    <string name="search_bar_title">search</string>
+    <string name="empty_collage_message">This collage is empty.</string>
 </resources>
