@@ -10,6 +10,8 @@ public class PictureResponse {
     private String location;
     private String collageTitle;
 
+    public PictureResponse() { };
+
     public int getId() {
         return id;
     }

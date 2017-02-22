@@ -9,7 +9,9 @@ import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -21,12 +23,14 @@ public class BasePresenterClass {
     private BaseMvpView mView;
     private Context mContext;
     private DataManager mDataManager;
+    private Subscription mSubscription;
+    private LifeCollageApiService mService;
     private ApplicationToken mToken;
 
-    public BasePresenterClass(BaseMvpView view, Context context, DataManager dataManager) {
+    public BasePresenterClass(BaseMvpView view, Context context) {
         mView = view;
         mContext = context;
-        mDataManager = dataManager;
+        mDataManager = new DataManager(context);
     }
 
     public LifeCollageApiService privateService() {
@@ -37,7 +41,7 @@ public class BasePresenterClass {
 
     public void refresh(Throwable e, Runnable callback) {
         if (e.getMessage().contains("401")) {
-            if (getAccessTokenFromRefreshToken(mContext, mToken)) {
+            if (getAccessTokenFromRefreshToken()) {
                 callback.run();
             } else {
                 mView.logout();
@@ -45,15 +49,20 @@ public class BasePresenterClass {
         }
     }
 
-    private boolean getAccessTokenFromRefreshToken(final Context context, ApplicationToken token) {
-        LifeCollageApiService publicService = LifeCollageApiService.ServiceCreator.newService();
-        final DataManager dataManager = new DataManager(context);
-        dataManager.setApiService(publicService);
+    private boolean getAccessTokenFromRefreshToken() {
+        mService = LifeCollageApiService.ServiceCreator.newService();
+        mDataManager.setApiService(mService);
 
-        String refreshToken = token.getRefreshToken();
-        dataManager.refresh(refreshToken)
+        String refreshToken = mToken.getRefreshToken();
+        mSubscription = mDataManager.refresh(refreshToken)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
                 .subscribe(new Subscriber<LogInResponse>() {
                     @Override
                     public void onCompleted() {
@@ -68,7 +77,7 @@ public class BasePresenterClass {
 
                     @Override
                     public void onNext(LogInResponse response) {
-                        dataManager.storeUserToken(response.getToken());
+                        mDataManager.storeUserToken(response.getToken());
                         mRefreshComplete = true;
                     }
                 });
@@ -80,5 +89,18 @@ public class BasePresenterClass {
         User user = new User(response.getId(), response.getUsername(), response.getEmail());
         mDataManager.storeUserToken(token);
         mDataManager.storeUserData(user);
+    }
+
+    public void logout() {
+        mDataManager.clearData();
+    }
+
+    public void detachBase() {
+        mView = null;
+        mContext = null;
+        mDataManager = null;
+        mService = null;
+        mToken = null;
+        mSubscription = null;
     }
 }

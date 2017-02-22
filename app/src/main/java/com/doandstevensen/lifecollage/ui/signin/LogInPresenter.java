@@ -2,9 +2,7 @@ package com.doandstevensen.lifecollage.ui.signin;
 
 import android.content.Context;
 
-import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
-import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
 import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
@@ -22,15 +20,17 @@ import rx.schedulers.Schedulers;
 
 public class LogInPresenter extends BasePresenterClass implements Presenter {
     private LogInContract.MvpView mView;
+    private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
     private Subscription mSubscription;
 
-    public LogInPresenter(LogInContract.MvpView view, Context context, DataManager dataManager) {
-        super(view, context, dataManager);
+    public LogInPresenter(LogInContract.MvpView view, Context context) {
+        super(view, context);
         mView = view;
+        mContext = context;
         mService = LifeCollageApiService.ServiceCreator.newService();
-        mDataManager = dataManager;
+        mDataManager = new DataManager(context);
         mDataManager.setApiService(mService);
     }
 
@@ -71,6 +71,7 @@ public class LogInPresenter extends BasePresenterClass implements Presenter {
     @Override
     public void detach() {
         mView = null;
+        mContext = null;
         mService = null;
         mDataManager = null;
         mSubscription = null;

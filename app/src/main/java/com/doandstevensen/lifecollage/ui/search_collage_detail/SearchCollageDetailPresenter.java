@@ -64,7 +64,8 @@ public class SearchCollageDetailPresenter implements SearchCollageDetailContract
                         mView.hideLoadingAnimation();
                         if (response.size() > 0) {
                             mView.setRecyclerViewPictures(response);
-                            mView.setEmptyViewVisibility(View.GONE);
+                        } else {
+                            mView.setEmptyViewVisibility(View.VISIBLE);
                         }
                     }
                 });

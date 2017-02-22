@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.ui.main;
 
 import android.content.Context;
 
+import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
@@ -20,6 +21,7 @@ import rx.schedulers.Schedulers;
 
 public class MainPresenter implements MainContract.Presenter {
     private MainContract.MvpView mView;
+    private Context mContext;
     private Subscription mSubscription;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
@@ -28,13 +30,23 @@ public class MainPresenter implements MainContract.Presenter {
 
     public MainPresenter(MainContract.MvpView view, Context context) {
         mView = view;
+        mContext = context;
         mDataManager = new DataManager(context);
         mService = LifeCollageApiService.ServiceCreator.newService();
         mDataManager.setApiService(mService);
     }
 
     @Override
-    public void getGridViewUsers() {
+    public void checkIfLoggedIn() {
+        ApplicationToken token = mDataManager.getUserToken();
+        if (token.getAccessToken() != null) {
+            mView.navigateToCollageList();
+        } else {
+            getGridViewUsers();
+        }
+    }
+
+    private void getGridViewUsers() {
        for (int i = 0; i < 6; i++) {
            getPicture(i);
        }
@@ -79,6 +91,7 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void detach() {
         mView = null;
+        mContext = null;
         mDataManager = null;
         mService = null;
         mSubscription = null;

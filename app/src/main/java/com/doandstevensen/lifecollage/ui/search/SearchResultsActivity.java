@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -16,8 +15,8 @@ import android.widget.TextView;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.doandstevensen.lifecollage.data.model.UserResponse;
-import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
+import com.doandstevensen.lifecollage.ui.main.MainActivity;
 import com.doandstevensen.lifecollage.ui.search_collage_list.SearchCollageListActivity;
 
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 public class SearchResultsActivity extends BaseDrawerActivity implements SearchResultsContract.MvpView, SearchRecyclerViewAdapter.ClickListener {
     private RecyclerView mRecyclerView;
     private TextView mEmptyView;
-    private TextView mNoSearchView;
     private SearchResultsContract.Presenter mPresenter;
     private SearchRecyclerViewAdapter mAdapter;
     private User mCurrentUser;
@@ -36,28 +34,31 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mEmptyView = (TextView) findViewById(R.id.emptyView);
-        mNoSearchView = (TextView) findViewById(R.id.noSearchView);
+        TextView noSearchView = (TextView) findViewById(R.id.noSearchView);
 
         mPresenter = new SearchResultsPresenter(this, this);
+        mPresenter.getCurrentUser();
+
         initRecyclerView();
         setActionBarTitle("Search");
-
-        DataManager dataManager = new DataManager(this);
-        mCurrentUser = dataManager.getUserData();
-
-        if (mCurrentUser.getUsername() != null) {
-            initDrawer();
-            setNavViewCheckedItem(R.id.nav_search, true);
-        } else {
-            enableUpButton();
-        }
 
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             mPresenter.search(query);
         } else {
-            mNoSearchView.setVisibility(View.VISIBLE);
+            noSearchView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void setupNav(User currentUser) {
+        mCurrentUser = currentUser;
+        if (currentUser.getUsername() != null) {
+            initDrawer();
+            setNavViewCheckedItem(R.id.nav_search, true);
+        } else {
+            enableUpButton();
         }
     }
 
@@ -66,14 +67,6 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
         super.onResume();
         if (mNavigationView != null) {
             setNavViewCheckedItem(R.id.nav_search, true);
-        }
-    }
-
-    private void enableUpButton() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -119,7 +112,7 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
     }
 
     private void navigateToSearchCollageList(int userId, String username) {
-        Intent intent = new Intent(getBaseContext(), SearchCollageListActivity.class);
+        Intent intent = new Intent(SearchResultsActivity.this, SearchCollageListActivity.class);
         intent.putExtra("userId", userId);
         intent.putExtra("username", username);
         startActivity(intent);
@@ -127,7 +120,8 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        Intent intent = new Intent(SearchResultsActivity.this, MainActivity.class);
+        startActivity(intent);
         return true;
     }
 
@@ -136,6 +130,10 @@ public class SearchResultsActivity extends BaseDrawerActivity implements SearchR
         if (mPresenter != null) {
             mPresenter.detach();
         }
+        if (mAdapter != null) {
+            mAdapter.detach();
+        }
+        mCurrentUser = null;
         super.onDestroy();
     }
 }

@@ -3,6 +3,7 @@ package com.doandstevensen.lifecollage.data.remote;
 import android.content.Context;
 
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.model.LogInResponse;
 import com.doandstevensen.lifecollage.data.model.NewCollageRequest;
@@ -68,7 +69,7 @@ public class DataManager {
         return mApiService.getAllCollages();
     }
 
-    public Observable<ArrayList<CollageResponse>> getCollages(int userId) {
+    public Observable<ArrayList<CollageListResponse>> getCollages(int userId) {
         return mApiService.getCollages(userId);
     }
 

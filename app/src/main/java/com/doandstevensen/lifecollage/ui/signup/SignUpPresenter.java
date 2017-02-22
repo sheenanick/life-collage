@@ -26,15 +26,17 @@ import rx.schedulers.Schedulers;
 
 public class SignUpPresenter extends BasePresenterClass implements SignUpContract.Presenter {
     private SignUpContract.MvpView mView;
+    private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
     private Subscription mSubscription;
 
-    public SignUpPresenter(SignUpContract.MvpView view, Context context, DataManager dataManager) {
-        super(view, context, dataManager);
+    public SignUpPresenter(SignUpContract.MvpView view, Context context) {
+        super(view, context);
         mView = view;
+        mContext = context;
         mService = LifeCollageApiService.ServiceCreator.newService();
-        mDataManager = dataManager;
+        mDataManager = new DataManager(context);
         mDataManager.setApiService(mService);
     }
 
@@ -92,6 +94,7 @@ public class SignUpPresenter extends BasePresenterClass implements SignUpContrac
     @Override
     public void detach() {
         mView = null;
+        mContext = null;
         mService = null;
         mDataManager = null;
         mSubscription = null;
