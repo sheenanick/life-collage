@@ -19,6 +19,7 @@ public interface CollageContract {
 
     interface MvpView extends BaseMvpView {
         void setRecyclerViewPictures(ArrayList<PictureResponse> pictures);
+        void updateRecyclerViewPictures(ArrayList<PictureResponse> pictures, int position);
         void setEmptyViewVisibility(int visibility);
         void logout();
     }
