@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 public class SearchCollageDetailActivity extends BaseActivity implements SearchCollageDetailContract.MvpView {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    @BindView(R.id.emptyView)
+    @BindView(R.id.searchEmptyView)
     TextView mEmptyView;
     @BindView(R.id.fab)
     FloatingActionButton mFab;

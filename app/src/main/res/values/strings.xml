@@ -38,4 +38,5 @@
     <string name="delete_account_warning">If you delete your account all of your pictures and collages will be permanently deleted.</string>
     <string name="delete_account_button">Delete Account</string>
     <string name="search_bar_title">search</string>
+    <string name="empty_collage_message">This collage is empty.</string>
 </resources>
