@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
 
@@ -19,7 +20,15 @@ public class DialogBuilder {
 
     public static Dialog DeleteCollageDialogFragment(Context context, final DialogBuilder.DialogClickListener listener, final int collageId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(R.layout.alert_dialog_delete_collage)
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.alert_dialog_delete, null);
+
+        TextView title = (TextView) view.findViewById(R.id.title);
+        title.setText("Delete Collage");
+        TextView message = (TextView) view.findViewById(R.id.message);
+        message.setText("Are you sure you would like to delete this collage?");
+
+        builder.setView(view)
                 .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         listener.onDeleteCollagePositiveClick(collageId);
@@ -35,7 +44,13 @@ public class DialogBuilder {
 
     public static Dialog NewCollageDialogFragment(Context context, final DialogBuilder.DialogClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(R.layout.alert_dialog_new_collage)
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.alert_dialog_edit, null);
+
+        TextView title = (TextView) view.findViewById(R.id.title);
+        title.setText("New Collage");
+
+        builder.setView(view)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Dialog dialogView = (Dialog) dialog;
@@ -52,14 +67,18 @@ public class DialogBuilder {
         return builder.create();
     }
 
-    public static Dialog UpdateCollageDialogFragment(Context context, final DialogBuilder.DialogClickListener listener, final String title, final int collageId) {
+    public static Dialog UpdateCollageDialogFragment(Context context, final DialogBuilder.DialogClickListener listener, final String collageTitle, final int collageId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.alert_dialog_update_collage, null);
+        View view = inflater.inflate(R.layout.alert_dialog_edit, null);
+
+        TextView dialogTitle = (TextView) view.findViewById(R.id.title);
+        dialogTitle.setText("Edit Collage Title");
         mEditText = (EditText) view.findViewById(R.id.collageName);
-        mEditText.setText(title);
+        mEditText.setText(collageTitle);
+
         builder.setView(view)
-                .setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+                .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String title = mEditText.getText().toString();
                         listener.onUpdateCollagePositiveClick(title, collageId);
@@ -75,7 +94,15 @@ public class DialogBuilder {
 
     public static Dialog DeleteAccountDialogFragment(Context context, final DialogBuilder.AccountDialogListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(R.layout.alert_dialog_delete_account)
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.alert_dialog_delete, null);
+
+        TextView title = (TextView) view.findViewById(R.id.title);
+        title.setText("Delete Account");
+        TextView message = (TextView) view.findViewById(R.id.message);
+        message.setText("Are you sure you would like to delete your account?");
+
+        builder.setView(view)
                 .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         listener.onDialogPositiveClick();

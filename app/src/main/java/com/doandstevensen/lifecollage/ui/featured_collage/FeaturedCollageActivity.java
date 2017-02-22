@@ -2,8 +2,10 @@ package com.doandstevensen.lifecollage.ui.featured_collage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
@@ -21,15 +23,19 @@ public class FeaturedCollageActivity extends BaseActivity implements FeaturedCol
     RecyclerView mRecyclerView;
     @BindView(R.id.emptyView)
     TextView mEmptyView;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+
     private FeaturedCollagePresenter mPresenter;
     private PicturesRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_collage_detail);
+        setContentView(R.layout.activity_collage);
 
         ButterKnife.bind(this);
+        mFab.setVisibility(View.GONE);
 
         initRecyclerViewAdapter();
         mPresenter = new FeaturedCollagePresenter(this, this);
