@@ -7,8 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.CollageResponse;
-import com.doandstevensen.lifecollage.data.model.PictureResponse;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
 import com.doandstevensen.lifecollage.ui.search_collage_detail.SearchCollageDetailActivity;
 
@@ -29,8 +28,9 @@ public class SearchCollageListActivity extends BaseActivity implements SearchCol
         setContentView(R.layout.activity_search_collage_list);
         ButterKnife.bind(this);
 
-        mPresenter = new SearchCollageListPresenter(this, this);
+        enableUpButton();
         initRecyclerViewAdapter();
+        mPresenter = new SearchCollageListPresenter(this, this);
 
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
@@ -61,19 +61,14 @@ public class SearchCollageListActivity extends BaseActivity implements SearchCol
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<CollageResponse> collages, ArrayList<PictureResponse> pictures) {
-        mAdapter.setData(collages, pictures);
+    public void updateRecyclerView(ArrayList<CollageListResponse> collages) {
+        mAdapter.setData(collages);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void insertPicture(ArrayList<PictureResponse> pictures, int position) {
-
-    }
-
-    @Override
     public void navigateToSearchCollage(int collageId, String collageTitle) {
-        Intent intent = new Intent(getBaseContext(), SearchCollageDetailActivity.class);
+        Intent intent = new Intent(SearchCollageListActivity.this, SearchCollageDetailActivity.class);
         intent.putExtra("collageTitle", collageTitle);
         intent.putExtra("collageId", collageId);
         startActivity(intent);
@@ -89,6 +84,9 @@ public class SearchCollageListActivity extends BaseActivity implements SearchCol
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
+        }
+        if (mAdapter != null) {
+            mAdapter.detach();
         }
         super.onDestroy();
     }

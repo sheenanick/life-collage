@@ -30,6 +30,7 @@ public class SearchCollageDetailActivity extends BaseActivity implements SearchC
         setContentView(R.layout.activity_search_collage_detail);
         ButterKnife.bind(this);
 
+        enableUpButton();
         initRecyclerViewAdapter();
         mPresenter = new SearchCollageDetailPresenter(this, this);
 
@@ -69,6 +70,9 @@ public class SearchCollageDetailActivity extends BaseActivity implements SearchC
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
+        }
+        if (mAdapter != null) {
+            mAdapter.detach();
         }
         super.onDestroy();
     }

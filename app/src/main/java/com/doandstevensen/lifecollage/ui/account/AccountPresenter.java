@@ -20,13 +20,21 @@ import rx.schedulers.Schedulers;
 
 public class AccountPresenter extends BasePresenterClass implements AccountContract.Presenter {
     private AccountContract.MvpView mView;
+    private Context mContext;
     private DataManager mDataManager;
     private Subscription mSubscription;
 
-    public AccountPresenter(AccountContract.MvpView view, Context context, DataManager dataManager) {
-        super(view, context, dataManager);
+    public AccountPresenter(AccountContract.MvpView view, Context context) {
+        super(view, context);
         mView = view;
-        mDataManager = dataManager;
+        mContext = context;
+        mDataManager = new DataManager(context);
+    }
+
+    @Override
+    public void getEmail() {
+        String email = mDataManager.getUserData().getEmail();
+        mView.setEmail(email);
     }
 
     @Override
@@ -113,8 +121,10 @@ public class AccountPresenter extends BasePresenterClass implements AccountContr
 
     @Override
     public void detach() {
+        detachBase();
         mView = null;
         mDataManager = null;
         mSubscription = null;
+        mContext = null;
     }
 }

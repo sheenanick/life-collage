@@ -26,15 +26,17 @@ import rx.schedulers.Schedulers;
 
 public class SignUpPresenter extends BasePresenterClass implements SignUpContract.Presenter {
     private SignUpContract.MvpView mView;
+    private Context mContext;
     private DataManager mDataManager;
     private LifeCollageApiService mService;
     private Subscription mSubscription;
 
-    public SignUpPresenter(SignUpContract.MvpView view, Context context, DataManager dataManager) {
-        super(view, context, dataManager);
+    public SignUpPresenter(SignUpContract.MvpView view, Context context) {
+        super(view, context);
         mView = view;
+        mContext = context;
         mService = LifeCollageApiService.ServiceCreator.newService();
-        mDataManager = dataManager;
+        mDataManager = new DataManager(context);
         mDataManager.setApiService(mService);
     }
 
@@ -82,37 +84,8 @@ public class SignUpPresenter extends BasePresenterClass implements SignUpContrac
 
                 @Override
                 public void onNext(LogInResponse logInResponse) {
-                    logIn(email, password);
-                }
-            });
-    }
-
-    private void logIn(String email, String password) {
-        mSubscription = mDataManager.logIn(email, password)
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnUnsubscribe(new Action0() {
-                @Override
-                public void call() {
-                    mSubscription = null;
-                }
-            })
-            .subscribe(new Subscriber<LogInResponse>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    e.printStackTrace();
                     mView.hideLoadingAnimation();
-                }
-
-                @Override
-                public void onNext(LogInResponse logInResponse) {
                     storeData(logInResponse);
-                    mView.hideLoadingAnimation();
                     mView.navigateToCollageList();
                 }
             });
@@ -121,6 +94,7 @@ public class SignUpPresenter extends BasePresenterClass implements SignUpContrac
     @Override
     public void detach() {
         mView = null;
+        mContext = null;
         mService = null;
         mDataManager = null;
         mSubscription = null;

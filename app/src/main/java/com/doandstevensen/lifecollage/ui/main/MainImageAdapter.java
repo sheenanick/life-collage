@@ -49,14 +49,27 @@ public class MainImageAdapter extends BaseAdapter {
         PictureResponse picture = mPictures.get(position);
         ImageView imageView;
         Integer height = viewGroup.getWidth() / 3;
+
         if (view == null) {
             imageView = new ImageView(mContext);
             imageView.setLayoutParams(new GridView.LayoutParams(height, height));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else {
             imageView = (ImageView) view;
         }
-        Picasso.with(mContext).load(picture.getLocation()).into(imageView);
+
+        if (height > 0) {
+            Picasso.with(mContext)
+                    .load(picture.getLocation())
+                    .resize(height, height)
+                    .centerCrop()
+                    .into(imageView);
+        }
+
         return imageView;
+    }
+
+    public void detach() {
+        mContext = null;
+        mPictures = null;
     }
 }

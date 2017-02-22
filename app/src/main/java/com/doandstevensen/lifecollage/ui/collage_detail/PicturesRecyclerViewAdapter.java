@@ -1,7 +1,6 @@
 package com.doandstevensen.lifecollage.ui.collage_detail;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +18,7 @@ import java.util.ArrayList;
  */
 
 public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRecyclerViewAdapter.MyViewHolder> {
-
-    private final Context mContext;
+    private Context mContext;
     private ArrayList<PictureResponse> mPictures = new ArrayList<>();
 
     public PicturesRecyclerViewAdapter(Context context) {
@@ -42,14 +40,7 @@ public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRe
     public void onBindViewHolder(MyViewHolder holder, int position) {
         PictureResponse photo = mPictures.get(position);
         final String url = photo.getLocation();
-        Picasso.Builder builder = new Picasso.Builder(mContext);
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-            }
-        });
-        builder.build().load(url).into(holder.imageView);
+        Picasso.with(mContext).load(url).into(holder.imageView);
     }
 
     @Override
@@ -59,6 +50,11 @@ public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRe
         } else {
             return 0;
         }
+    }
+
+    public void detach() {
+        mContext = null;
+        mPictures = null;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

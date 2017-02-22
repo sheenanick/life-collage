@@ -40,10 +40,6 @@ public class FeaturedCollageActivity extends BaseActivity implements FeaturedCol
         setActionBarTitle(collageTitle);
 
         mPresenter.loadCollage(collageId);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     public void initRecyclerViewAdapter() {
@@ -74,6 +70,9 @@ public class FeaturedCollageActivity extends BaseActivity implements FeaturedCol
     public void onDestroy() {
         if (mPresenter != null) {
             mPresenter.detach();
+        }
+        if (mAdapter != null) {
+            mAdapter.detach();
         }
         super.onDestroy();
     }

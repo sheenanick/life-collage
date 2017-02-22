@@ -12,19 +12,14 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
-import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.collage_detail.CollageActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.featured_collage.FeaturedCollageActivity;
-import com.doandstevensen.lifecollage.ui.search_collage_detail.SearchCollageDetailActivity;
-import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
+import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -38,7 +33,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
     LinearLayout linearLayout;
     @BindView(R.id.searchView)
     SearchView searchView;
-    public static final String TAG = MainActivity.class.getSimpleName();
+
     private MainPresenter mPresenter;
     private MainImageAdapter mAdapter;
     private ArrayList<PictureResponse> mPictures;
@@ -49,17 +44,11 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        DataManager dataManager = new DataManager(this);
-        ApplicationToken token = dataManager.getUserToken();
-        if (token.getAccessToken() != null) {
-            navigateToCollageList();
-        }
-
         initSearchView();
         setupGridViewAdapter();
 
         mPresenter = new MainPresenter(this, this);
-        mPresenter.getGridViewUsers();
+        mPresenter.checkIfLoggedIn();
     }
 
     private void initSearchView() {
@@ -72,7 +61,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
     public void setupGridViewAdapter() {
         mAdapter = new MainImageAdapter(this);
         gridView.setAdapter(mAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 PictureResponse picture = mPictures.get(position);
                 int collageId = picture.getCollageId();
@@ -98,7 +87,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
 
     @Override
     public void navigateToCollageList() {
-        Intent intent = new Intent(getBaseContext(), CollageListActivity.class);
+        Intent intent = new Intent(MainActivity.this, CollageListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
@@ -119,9 +108,13 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
 
     @Override
     public void onDestroy() {
-        if(mPresenter != null) {
+        if (mPresenter != null) {
             mPresenter.detach();
         }
+        if (mAdapter != null) {
+            mAdapter.detach();
+        }
+        mPictures = null;
         super.onDestroy();
     }
 
