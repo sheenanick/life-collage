@@ -9,7 +9,7 @@ import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
@@ -29,8 +29,8 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity implements MainContract.MvpView {
     @BindView(R.id.gridView)
     GridView gridView;
-    @BindView(R.id.linearLayout)
-    LinearLayout linearLayout;
+    @BindView(R.id.appName)
+    TextView appName;
     @BindView(R.id.searchView)
     SearchView searchView;
 
@@ -44,6 +44,7 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        setFont(appName);
         initSearchView();
         setupGridViewAdapter();
 

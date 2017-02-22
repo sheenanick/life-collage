@@ -4,6 +4,7 @@
     android:id="@+id/activity_search_collage_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context="com.doandstevensen.lifecollage.ui.search_collage_detail.SearchCollageDetailActivity">
 
     <android.support.v7.widget.RecyclerView
