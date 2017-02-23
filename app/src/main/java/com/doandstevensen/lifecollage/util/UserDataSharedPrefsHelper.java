@@ -3,6 +3,8 @@ package com.doandstevensen.lifecollage.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -11,6 +13,7 @@ import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.google.gson.Gson;
 
+import static android.R.attr.width;
 import static com.doandstevensen.lifecollage.Constants.SCREEN_HEIGHT;
 import static com.doandstevensen.lifecollage.Constants.SCREEN_PREFS;
 import static com.doandstevensen.lifecollage.Constants.SCREEN_WIDTH;
@@ -71,33 +74,34 @@ public class UserDataSharedPrefsHelper {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
 
-        Point size = new Point();
-        display.getSize(size);
+        DisplayMetrics outMetrics = new DisplayMetrics ();
+        display.getMetrics(outMetrics);
 
-        int width = size.x;
-        int height = size.y;
+        float density  = mContext.getResources().getDisplayMetrics().density;
+        float dpHeight = outMetrics.heightPixels / density;
+        float dpWidth  = outMetrics.widthPixels / density;
 
-        editor.putInt(SCREEN_WIDTH, width);
-        editor.putInt(SCREEN_HEIGHT, height);
+        editor.putFloat(SCREEN_WIDTH, dpHeight);
+        editor.putFloat(SCREEN_HEIGHT, dpWidth);
         editor.commit();
     }
 
     public Integer getScreenWidth() {
         SharedPreferences sharedPrefs = mContext.getSharedPreferences(Constants.SCREEN_PREFS, Context.MODE_PRIVATE);
-        Integer width = -1;
+        float width = -1;
         if (sharedPrefs.contains(SCREEN_WIDTH)) {
-            width = sharedPrefs.getInt(SCREEN_WIDTH, -1);
+            width = sharedPrefs.getFloat(SCREEN_WIDTH, -1);
         }
-        return width;
+        return (int) width;
     }
 
     public Integer getScreenHeight() {
         SharedPreferences sharedPrefs = mContext.getSharedPreferences(Constants.SCREEN_PREFS, Context.MODE_PRIVATE);
-        Integer height = -1;
+        float height = -1;
         if (sharedPrefs.contains(SCREEN_HEIGHT)) {
-            height = sharedPrefs.getInt(SCREEN_HEIGHT, -1);
+            height = sharedPrefs.getFloat(SCREEN_HEIGHT, -1);
         }
-        return height;
+        return (int) height;
     }
 
     public void clearData() {
