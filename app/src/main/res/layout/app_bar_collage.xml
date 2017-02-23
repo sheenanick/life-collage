@@ -6,7 +6,7 @@
     android:fitsSystemWindows="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context="com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity">
+    tools:mContext="com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

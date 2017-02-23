@@ -215,14 +215,11 @@ public class BluetoothConnectionService {
 
         //FIXME This is where we should change what we read
         public void run() {
-            byte[] buffer = new byte[1024]; //buffer store fro stream
-            int bytes;
+            int id;
 
             while (true) {
                 try {
-                    bytes = mInputStream.read(buffer);
-                    String stringId = new String(buffer, 0, bytes);
-                    int id = Integer.parseInt(stringId);
+                    id = mInputStream.read();
 
                     mSubscription = mDataManager.updateCollageOwner(id)
                             .subscribeOn(Schedulers.io())
@@ -258,11 +255,10 @@ public class BluetoothConnectionService {
         }
 
         //FIXME This is where we change what we write
-        public void write(byte[] bytes) {
-            String text = new String(bytes, Charset.defaultCharset());
-            Log.d(TAG, "write: Writing to outputstream: " + text);
+        public void write(int id) {
+            Log.d(TAG, "write: Writing to outputstream: " + id);
             try {
-                mOutStream.write(bytes);
+                mOutStream.write(id);
             } catch (IOException e) {
                 Log.e(TAG, "write: Error writing bytes to output stream" + e.getMessage());
             }
@@ -284,11 +280,11 @@ public class BluetoothConnectionService {
         mConnectedThread.start();
     }
 
-     public void write(byte[] out) {
+     public void write(int id) {
          ConnectedThread r;
 
          Log.d(TAG, "write: Write Called");
-         mConnectedThread.write(out);
+         mConnectedThread.write(id);
      }
 }
 

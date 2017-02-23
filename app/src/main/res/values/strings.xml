@@ -35,7 +35,7 @@
     <string name="take_picture_message">Take a picture to add to your collage by tapping the camera icon below!</string>
     <string name="change_email_label">Edit Email:</string>
     <string name="save_change_button">Save Change</string>
-    <string name="delete_account_warning">If you delete your account all of your pictures and collages will be permanently deleted.</string>
+    <string name="delete_account_warning">If you delete your account all of your pictures and mCollages will be permanently deleted.</string>
     <string name="delete_account_button">Delete Account</string>
     <string name="search_bar_title">search</string>
     <string name="empty_collage_message">This collage is empty.</string>

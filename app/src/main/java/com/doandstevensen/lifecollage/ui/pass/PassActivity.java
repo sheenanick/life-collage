@@ -13,21 +13,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.remote.DataManager;
-import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
+import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseDrawerActivity;
 import com.doandstevensen.lifecollage.util.BluetoothConnectionService;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
-public class PassActivity extends BaseDrawerActivity implements AdapterView.OnItemClickListener {
+public class PassActivity extends BaseDrawerActivity implements PassContract.MvpView, AdapterView.OnItemClickListener {
     public static final String TAG = PassActivity.class.getSimpleName();
 
     Button toggleBluetoothButton;
@@ -35,10 +36,15 @@ public class PassActivity extends BaseDrawerActivity implements AdapterView.OnIt
     Button discoverDevicesButton;
     Button sendButton;
     Button startConnectionButton;
-
-    EditText messageEditText;
+    int collageId;
 
     ListView mDeviceListView;
+
+    Spinner mCollageSpinner;
+
+    private PassPresenter mPresenter;
+    private CollageSpinnerAdapter mAdapter;
+
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothConnectionService mBluetoothConnection;
@@ -62,9 +68,8 @@ public class PassActivity extends BaseDrawerActivity implements AdapterView.OnIt
         toggleDiscoverabilityButton = (Button) findViewById(R.id.toggleDiscoverable);
         discoverDevicesButton = (Button) findViewById(R.id.discoverDevicesButton);
         sendButton = (Button) findViewById(R.id.sendButton);
+        mCollageSpinner = (Spinner) findViewById(R.id.collageSpinner);
         startConnectionButton = (Button) findViewById(R.id.connectionButton);
-
-        messageEditText = (EditText) findViewById(R.id.messageEditText);
 
         mDeviceListView = (ListView) findViewById(R.id.lvNewDevices);
 
@@ -114,6 +119,35 @@ public class PassActivity extends BaseDrawerActivity implements AdapterView.OnIt
                 send();
             }
         });
+
+        initSpinnerAdapter();
+        initDrawer();
+        setActionBarTitle("Pass Collages");
+        mPresenter = new PassPresenter(this, this);
+        Log.d(TAG, "Yay onCreate: " + mPresenter);
+        mPresenter.loadCollageList();
+    }
+
+    public void initSpinnerAdapter() {
+        mAdapter = new CollageSpinnerAdapter(this, android.R.layout.simple_spinner_item);
+        mCollageSpinner.setAdapter(mAdapter);
+        mCollageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                collageId = mAdapter.getCollageId(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                Toast.makeText(PassActivity.this, "Nothing Selected", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void updateSpinner(ArrayList<CollageListResponse> collages) {
+        mAdapter.setCollages(collages);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void startConnection() {
@@ -277,8 +311,7 @@ public class PassActivity extends BaseDrawerActivity implements AdapterView.OnIt
 
     public void send() {
         //TODO This is what we change to retrieve the collage id
-        byte[] bytes = "115".getBytes(Charset.defaultCharset());
-        mBluetoothConnection.write(bytes);
+        mBluetoothConnection.write(collageId);
     }
 
     private void checkBTPermissions() {
@@ -297,19 +330,33 @@ public class PassActivity extends BaseDrawerActivity implements AdapterView.OnIt
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy: called");
-        super.onDestroy();
         try {
             unregisterReceiver(mBroadcastReceiver1);
         } catch (RuntimeException e) {
-            Log.i(TAG, "onDestroy: No receiver1 to unregister");
+            Log.i(TAG, "onDestroy: not unregistering Receiver 1 since it was never registerer");
         }
         try {
             unregisterReceiver(mBroadcastReceiver2);
         } catch (RuntimeException e) {
-            Log.i(TAG, "onDestroy: No receiver2 to unregister");
+            Log.i(TAG, "onDestroy: not unregistering Receiver 2 since it was never registerer");
         }
-        unregisterReceiver(mBroadcastReceiver3);
-        unregisterReceiver(mBroadcastReceiver4);
+        try {
+            unregisterReceiver(mBroadcastReceiver3);
+        } catch (RuntimeException e) {
+            Log.i(TAG, "onDestroy: not unregistering Receiver 3 since it was never registerer");
+        }
+        try {
+            unregisterReceiver(mBroadcastReceiver4);
+        } catch (RuntimeException e) {
+            Log.i(TAG, "onDestroy: not unregistering Receiver 4 since it was never registerer");
+        }
+        if (mPresenter != null) {
+            mPresenter.detach();
+        }
+        if (mAdapter != null) {
+            mAdapter.detach();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -325,15 +372,14 @@ public class PassActivity extends BaseDrawerActivity implements AdapterView.OnIt
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
             Log.d(TAG, "onItemClick: Trying to pair with " + deviceName);
-            Toast.makeText(PassActivity.this, "Attempting to pair with " + deviceName, Toast.LENGTH_LONG).show();
-            mBTDevices.get(i).createBond();
+            Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
             mBTDevice = mBTDevices.get(i);
+            if(!bondedDevices.contains(mBTDevice)) {
+                mBTDevice.createBond();
+            }
             mBluetoothConnection = new BluetoothConnectionService(PassActivity.this);
         } else {
             Log.d(TAG, "onItemClick: Not proceeding with pairing");
         }
     }
-
-
-
 }

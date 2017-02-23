@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.doandstevensen.lifecollage.ui.pass.PassActivity">
+    tools:mContext="com.doandstevensen.lifecollage.ui.pass.PassActivity">
 
     <Button
         android:id="@+id/toggleBluetoothButton"
@@ -39,26 +39,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
+    <TextView
         android:layout_below="@+id/connectionButton"
-        android:id="@+id/messageEditText"
+        android:id="@+id/collageSpinnerLabel"
+        android:text="Collage To Pass:"
+        android:textSize="15dp"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"/>
+        android:layout_height="wrap_content" />
+
+    <Spinner
+        android:layout_below="@id/collageSpinnerLabel"
+        android:id="@+id/collageSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <ListView
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/collageSpinner"
+        android:layout_above="@+id/sendButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lvNewDevices"/>
 
     <Button
-        android:layout_below="@+id/messageEditText"
+        android:layout_alignParentBottom="true"
         android:id="@+id/sendButton"
         android:text="Send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <ListView
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/sendButton"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/lvNewDevices"/>
 
 </RelativeLayout>
