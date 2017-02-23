@@ -24,6 +24,8 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
     private Context mContext;
     private ArrayList<CollageListResponse> mCollages;
     private SearchListRecyclerViewAdapter.ClickListener mClickListener;
+    private int mWidth;
+    private static final int HEIGHT = 220;
 
     public SearchListRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -31,6 +33,10 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
 
     public void setData(ArrayList<CollageListResponse> collages) {
         mCollages = collages;
+    }
+
+    public void setWidth(int width) {
+        mWidth = width;
     }
 
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -50,7 +56,11 @@ public class SearchListRecyclerViewAdapter extends RecyclerView.Adapter<SearchLi
         holder.titleTextView.setText(collageName);
         String location = picture.getLocation();
         if (location != null) {
-            Picasso.with(mContext).load(location).into(holder.imageView);
+            Picasso.with(mContext)
+                    .load(location)
+                    .resize(mWidth, HEIGHT)
+                    .centerCrop()
+                    .into(holder.imageView);
         } else {
             holder.emptyTextView.setVisibility(View.VISIBLE);
         }

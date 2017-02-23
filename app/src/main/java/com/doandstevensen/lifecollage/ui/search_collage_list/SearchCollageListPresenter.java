@@ -37,6 +37,7 @@ public class SearchCollageListPresenter implements SearchCollageListContract.Pre
     @Override
     public void loadCollageList(int userId) {
         mView.displayLoadingAnimation();
+        final int width = mDataManager.getScreenWidth();
         mSubscription = mDataManager.getCollages(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -62,7 +63,7 @@ public class SearchCollageListPresenter implements SearchCollageListContract.Pre
                     public void onNext(ArrayList<CollageListResponse> collages) {
                         mView.hideLoadingAnimation();
                         mCollages = collages;
-                        mView.updateRecyclerView(collages);
+                        mView.updateRecyclerView(collages, width);
                     }
                 });
     }

@@ -10,7 +10,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.UUID;
 
 /**
@@ -22,9 +21,10 @@ public class BluetoothService {
     private static final String TAG = "BLUETOOTH_SERVICE";
 
     private Context mContext;
-    private static BluetoothAdapter mBluetoothAdapter;
-    private static ConnectedThread mConnectedThread;
-    private static BluetoothServiceListener mListener;
+    private BluetoothAdapter mBluetoothAdapter;
+    private ConnectThread mConnectThread;
+    private ConnectedThread mConnectedThread;
+    private BluetoothServiceListener mListener;
 
     public BluetoothService(Context context, BluetoothServiceListener listener) {
         mContext = context;
@@ -32,7 +32,7 @@ public class BluetoothService {
         mListener = listener;
     }
 
-    public static class AcceptThread extends Thread {
+    private class AcceptThread extends Thread {
         private final BluetoothServerSocket mmServerSocket;
 
         public AcceptThread() {
@@ -41,7 +41,6 @@ public class BluetoothService {
                 tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("Life Collage", MY_UUID);
             } catch (IOException e) {
                 Log.e(TAG, "Socket's listen() method failed", e);
-                mListener.makeToast("Error occurred");
             }
             mmServerSocket = tmp;
         }
@@ -54,7 +53,6 @@ public class BluetoothService {
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
                     Log.e(TAG, "Socket's accept() method failed", e);
-                    mListener.makeToast("Error occurred");
                     break;
                 }
 
@@ -82,7 +80,7 @@ public class BluetoothService {
         }
     }
 
-    public static class ConnectThread extends Thread {
+    private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
 
         public ConnectThread(BluetoothDevice device) {
@@ -92,12 +90,13 @@ public class BluetoothService {
                 tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
                 Log.e(TAG, "Socket's create() method failed", e);
-                mListener.makeToast("Error occurred");
             }
             mmSocket = tmp;
         }
 
         public void run() {
+            Log.d(TAG, "connecting");
+
             mBluetoothAdapter.cancelDiscovery();
 
             try {
@@ -122,20 +121,18 @@ public class BluetoothService {
         }
     }
 
-    private static void manageMyConnectedSocket(BluetoothSocket socket) {
+    private void manageMyConnectedSocket(BluetoothSocket socket) {
         mConnectedThread = new ConnectedThread(socket);
-        mConnectedThread.run();
+        mConnectedThread.start();
     }
 
-    public static class ConnectedThread extends Thread {
+    private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
         private byte[] mmBuffer;
 
         public ConnectedThread(BluetoothSocket socket) {
-            mListener.makeToast("Connected");
-
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -144,13 +141,11 @@ public class BluetoothService {
                 tmpIn = socket.getInputStream();
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when creating input stream", e);
-                mListener.makeToast("Error occurred");
             }
             try {
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when creating output stream", e);
-                mListener.makeToast("Error occurred");
             }
 
             mmInStream = tmpIn;
@@ -158,16 +153,16 @@ public class BluetoothService {
         }
 
         public void run() {
-            mmBuffer = new byte[1024];
-            int numBytes;
+            Log.d(TAG, "connected");
+
+            int id;
 
             while (true) {
                 try {
-                    numBytes = mmInStream.read(mmBuffer);
-                    String incomingMessage = new String(mmBuffer, 0, numBytes);
+                    id = mmInStream.read();
 
-                    mListener.incomingMessage(incomingMessage);
-                    Log.d(TAG, "Incoming message: " + incomingMessage);
+                    mListener.incomingMessage(id);
+                    Log.d(TAG, "Incoming message: " + id);
 
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
@@ -176,14 +171,13 @@ public class BluetoothService {
             }
         }
 
-        public void write(byte[] bytes) {
+        public void write(int id) {
+            Log.d(TAG, "writing");
             try {
-                mmOutStream.write(bytes);
-                String text = new String(bytes, Charset.defaultCharset());
-                Log.d(TAG, "write: Writing to outputstream: " + text);
+                mmOutStream.write(id);
+                Log.d(TAG, "write: Writing to outputstream: " + id);
 
             } catch (IOException e) {
-                mListener.makeToast("Error occurred when sending data");
                 Log.e(TAG, "Error occurred when sending data", e);
             }
 
@@ -198,13 +192,26 @@ public class BluetoothService {
         }
     }
 
-    public void write(byte[] out) {
-        mConnectedThread.write(out);
+    public void write(int id) {
+        mConnectedThread.write(id);
+    }
+
+    public void connectThread(BluetoothDevice device) {
+        mConnectThread = new ConnectThread(device);
+        mConnectThread.start();
+    }
+
+    public void acceptThread() {
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+        AcceptThread acceptThread = new AcceptThread();
+        acceptThread.start();
     }
 
     interface BluetoothServiceListener {
-        void incomingMessage(String message);
-        void makeToast(String message);
+        void incomingMessage(int message);
         void showProgressDialog();
         void hideProgressDialog();
     }

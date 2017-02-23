@@ -39,4 +39,6 @@
     <string name="delete_account_button">Delete Account</string>
     <string name="search_bar_title">search</string>
     <string name="empty_collage_message">This collage is empty.</string>
+    <string name="received_collage_dialog_title">You Received a Collage!</string>
+    <string name="received_collage_dialog_message">Check your collage list to see your new collage. Add a picture and pass it on.</string>
 </resources>

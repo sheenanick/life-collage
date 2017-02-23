@@ -2,11 +2,18 @@ package com.doandstevensen.lifecollage.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.doandstevensen.lifecollage.Constants;
 import com.doandstevensen.lifecollage.data.model.ApplicationToken;
 import com.doandstevensen.lifecollage.data.model.User;
 import com.google.gson.Gson;
+
+import static com.doandstevensen.lifecollage.Constants.SCREEN_HEIGHT;
+import static com.doandstevensen.lifecollage.Constants.SCREEN_PREFS;
+import static com.doandstevensen.lifecollage.Constants.SCREEN_WIDTH;
 
 /**
  * Created by Sheena on 2/9/17.
@@ -55,6 +62,42 @@ public class UserDataSharedPrefsHelper {
             token = gson.fromJson(jsonToken, ApplicationToken.class);
         }
         return token;
+    }
+
+    public void storeScreenSize() {
+        SharedPreferences sharedPrefs = mContext.getSharedPreferences(SCREEN_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        Point size = new Point();
+        display.getSize(size);
+
+        int width = size.x;
+        int height = size.y;
+
+        editor.putInt(SCREEN_WIDTH, width);
+        editor.putInt(SCREEN_HEIGHT, height);
+        editor.commit();
+    }
+
+    public Integer getScreenWidth() {
+        SharedPreferences sharedPrefs = mContext.getSharedPreferences(Constants.SCREEN_PREFS, Context.MODE_PRIVATE);
+        Integer width = -1;
+        if (sharedPrefs.contains(SCREEN_WIDTH)) {
+            width = sharedPrefs.getInt(SCREEN_WIDTH, -1);
+        }
+        return width;
+    }
+
+    public Integer getScreenHeight() {
+        SharedPreferences sharedPrefs = mContext.getSharedPreferences(Constants.SCREEN_PREFS, Context.MODE_PRIVATE);
+        Integer height = -1;
+        if (sharedPrefs.contains(SCREEN_HEIGHT)) {
+            height = sharedPrefs.getInt(SCREEN_HEIGHT, -1);
+        }
+        return height;
     }
 
     public void clearData() {

@@ -64,7 +64,8 @@ public class CollageListActivity extends BaseDrawerActivity
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<CollageListResponse> collages) {
+    public void updateRecyclerView(ArrayList<CollageListResponse> collages, int width) {
+        mAdapter.setWidth(width);
         mAdapter.setData(collages);
         mAdapter.notifyDataSetChanged();
     }

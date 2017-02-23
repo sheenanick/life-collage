@@ -6,13 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import rx.Subscriber;
@@ -31,7 +29,8 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
     private DataManager mDataManager;
     private BluetoothService mBluetoothService;
     private BluetoothAdapter mBluetoothAdapter;
-    private BroadcastReceiver mReceiver;
+    private BroadcastReceiver mScanReceiver;
+    private final BroadcastReceiver mDiscoverabilityReceiver;
     private Subscription mSubscription;
     private ArrayList<BluetoothDevice> mDevices = new ArrayList<>();
 
@@ -43,7 +42,7 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
 
         mBluetoothService = new BluetoothService(context, this);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mReceiver = new BroadcastReceiver() {
+        mScanReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -54,6 +53,26 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
                         mDevices.add(device);
                         mView.setRecyclerViewDevices(mDevices);
                     }
+                }
+            }
+        };
+
+        mDiscoverabilityReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+
+                if (action.equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
+                    int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
+
+                    switch (mode) {
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                            mView.discoverable(false);
+                            break;
+                        default:
+                            mView.discoverable(true);
+                    }
+
                 }
             }
         };
@@ -83,29 +102,30 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
 
         mBluetoothAdapter.startDiscovery();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        mContext.registerReceiver(mReceiver, filter);
+        mContext.registerReceiver(mScanReceiver, filter);
+    }
+
+    @Override
+    public void registerForDiscoverable() {
+        IntentFilter intentFilter = new IntentFilter(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        mContext.registerReceiver(mDiscoverabilityReceiver,intentFilter);
     }
 
     public void connectThread(BluetoothDevice device) {
-        BluetoothService.ConnectThread connectThread = new BluetoothService.ConnectThread(device);
-        connectThread.run();
+        mBluetoothService.connectThread(device);
     }
 
-    @Override
     public void acceptThread() {
-        BluetoothService.AcceptThread acceptThread = new BluetoothService.AcceptThread();
-        acceptThread.run();
+        mBluetoothService.acceptThread();
     }
 
     @Override
-    public void write(String collageId) {
-        byte[] bytes = collageId.getBytes(Charset.defaultCharset());
-        mBluetoothService.write(bytes);
+    public void write(int collageId) {
+        mBluetoothService.write(collageId);
     }
 
     @Override
-    public void incomingMessage(String message) {
-        Integer collageId = Integer.parseInt(message);
+    public void incomingMessage(int collageId) {
         mDataManager.setApiService(privateService());
         mSubscription = mDataManager.updateCollageOwner(collageId)
                 .subscribeOn(Schedulers.io())
@@ -135,11 +155,6 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
     }
 
     @Override
-    public void makeToast(String message) {
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void showProgressDialog() {
         mView.displayLoadingAnimation();
     }
@@ -152,8 +167,8 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
     @Override
     public void detach() {
         detachBase();
-        if (mReceiver != null) {
-            mContext.unregisterReceiver(mReceiver);
+        if (mScanReceiver != null) {
+            mContext.unregisterReceiver(mScanReceiver);
         }
         mContext = null;
         mView = null;

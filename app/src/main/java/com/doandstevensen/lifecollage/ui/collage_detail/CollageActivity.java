@@ -69,6 +69,8 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(10);
+        recyclerView.setDrawingCacheEnabled(true);
     }
 
     public void setRecyclerViewPictures(ArrayList<PictureResponse> pictures) {

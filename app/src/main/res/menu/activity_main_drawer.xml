@@ -11,6 +11,10 @@
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/search_text" />
         <item
+            android:id="@+id/nav_pass"
+            android:icon="@drawable/ic_send_black_24dp"
+            android:title="Pass" />
+        <item
             android:id="@+id/nav_account"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/account_text" />

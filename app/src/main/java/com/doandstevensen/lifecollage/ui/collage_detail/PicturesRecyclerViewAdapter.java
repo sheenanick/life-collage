@@ -2,15 +2,14 @@ package com.doandstevensen.lifecollage.ui.collage_detail;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,9 +21,11 @@ import java.util.ArrayList;
 public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRecyclerViewAdapter.MyViewHolder> {
     private Context mContext;
     private ArrayList<PictureResponse> mPictures = new ArrayList<>();
+    private DataManager mDataManager;
 
     public PicturesRecyclerViewAdapter(Context context) {
         mContext = context;
+        mDataManager = new DataManager(context);
     }
 
     public void setPictures(ArrayList<PictureResponse> pictures) {
@@ -42,7 +43,15 @@ public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRe
     public void onBindViewHolder(MyViewHolder holder, int position) {
         PictureResponse photo = mPictures.get(position);
         final String url = photo.getLocation();
-        Picasso.with(mContext).load(url).into(holder.imageView);
+
+        int width = mDataManager.getScreenWidth();
+        int height = mDataManager.getScreenHeight();
+
+        Picasso.with(mContext)
+                .load(url)
+                .resize(width, height)
+                .centerCrop()
+                .into(holder.imageView);
     }
 
     @Override

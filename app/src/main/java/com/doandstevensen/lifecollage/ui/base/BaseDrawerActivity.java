@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.ui.about.AboutActivity;
 import com.doandstevensen.lifecollage.ui.account.AccountActivity;
+import com.doandstevensen.lifecollage.ui.pass.PassActivity;
 import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
 import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
 
@@ -72,6 +73,8 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
             navigateToCollageList();
         } else if (id == R.id.nav_search) {
             navigateToSearch();
+        } else if (id == R.id.nav_pass) {
+            navigateToPass();
         } else if (id == R.id.nav_account) {
             navigateToAccount();
         } else if (id == R.id.nav_about) {
@@ -82,6 +85,11 @@ public class BaseDrawerActivity extends BaseActivity implements NavigationView.O
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void navigateToPass() {
+        Intent intent = new Intent(BaseDrawerActivity.this, PassActivity.class);
+        startActivity(intent);
     }
 
     @Override

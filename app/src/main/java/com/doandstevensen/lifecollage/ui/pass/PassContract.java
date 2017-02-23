@@ -17,13 +17,15 @@ public interface PassContract {
         void isBluetoothCapable();
         void bluetoothEnabled();
         void registerForBroadcasts();
+        void registerForDiscoverable();
         void connectThread(BluetoothDevice device);
         void acceptThread();
-        void write(String collageId);
+        void write(int collageId);
     }
 
     interface MvpView extends BaseMvpView {
         void disableView();
+        void discoverable(boolean discoverable);
         void setRecyclerViewDevices(ArrayList<BluetoothDevice> devices);
         void enableBluetooth();
         void checkBTPermissions();

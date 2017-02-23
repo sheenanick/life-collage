@@ -45,6 +45,7 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
         mView.displayLoadingAnimation();
 
         int userId = mDataManager.getUserData().getUid();
+        final int width = mDataManager.getScreenWidth();
         mDataManager.setApiService(mPublicService);
 
         mSubscription = mDataManager.getCollages(userId)
@@ -72,7 +73,7 @@ public class CollageListPresenter extends BasePresenterClass implements CollageL
                     public void onNext(ArrayList<CollageListResponse> collages) {
                         mView.hideLoadingAnimation();
                         mCollages = collages;
-                        mView.updateRecyclerView(collages);
+                        mView.updateRecyclerView(collages, width);
                     }
                 });
     }

@@ -84,6 +84,9 @@ public interface LifeCollageApiService {
     @PUT("private/collage")
     Observable<CollageResponse> updateCollage(@Body UpdateCollageRequest request);
 
+    @PUT("private/collage/updateOwner/{collageId}")
+    Observable<CollageResponse> updateCollageOwner(@Path("collageId") int collageId);
+
     @DELETE("private/collage/{collageId}")
     Observable<CollageResponse> deleteCollageById(@Path("collageId") int collageId);
 
