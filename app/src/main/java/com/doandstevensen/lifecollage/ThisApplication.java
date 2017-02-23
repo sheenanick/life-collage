@@ -1,7 +1,6 @@
 package com.doandstevensen.lifecollage;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 

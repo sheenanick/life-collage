@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.ui.pass;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +17,13 @@ import java.util.ArrayList;
  * Created by Sheena on 2/22/17.
  */
 
-public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
+public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.MyViewHolder> {
     private Context mContext;
     private ArrayList<BluetoothDevice> mDevices;
-    private RecyclerViewAdapter.ClickListener mClickListener;
+    private DeviceListAdapter.ClickListener mClickListener;
+    private int selectedPosition = 0;
 
-    public RecyclerViewAdapter(Context context) {
+    public DeviceListAdapter(Context context) {
         mContext = context;
     }
 
@@ -30,14 +32,15 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
     }
 
     @Override
-    public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DeviceListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.device_list, parent, false);
-        return new RecyclerViewAdapter.MyViewHolder(itemView);
+        return new DeviceListAdapter.MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(DeviceListAdapter.MyViewHolder holder, final int position) {
+        holder.itemView.setBackgroundColor(Color.WHITE);
         final BluetoothDevice device = mDevices.get(position);
 
         final String deviceName = device.getName();
@@ -46,6 +49,10 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                notifyItemChanged(selectedPosition);
+                view.setBackgroundColor(Color.GRAY);
+                selectedPosition = position;
+
                 mClickListener.onUserClick(device);
             }
         });
@@ -60,7 +67,7 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
         }
     }
 
-    public void setClickListener(RecyclerViewAdapter.ClickListener clickListener) {
+    public void setClickListener(DeviceListAdapter.ClickListener clickListener) {
         mClickListener = clickListener;
     }
 
