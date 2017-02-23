@@ -85,6 +85,10 @@ public class DataManager {
         return mApiService.updateCollage(request);
     }
 
+    public Observable<CollageResponse> updateCollageOwner(int collageId) {
+        return mApiService.updateCollageOwner(collageId);
+    }
+
     public Observable<CollageResponse> deleteCollageById(int collageId) {
         return mApiService.deleteCollageById(collageId);
     }
