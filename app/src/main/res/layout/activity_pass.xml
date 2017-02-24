@@ -21,9 +21,10 @@
     <Button
         android:id="@+id/discoverable"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:background="@color/colorPrimaryDark"
-        android:text="Make My Device Discoverable"/>
+        android:text="Make My Device Discoverable"
+        style="@style/Widget.AppCompat.Button" />
 
     <TextView
         android:id="@+id/scan_label"
@@ -36,9 +37,11 @@
     <Button
         android:id="@+id/scan"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:background="@color/colorPrimaryDark"
-        android:text="Scan for devices"/>
+        android:text="Scan for devices"
+        style="@style/Widget.AppCompat.Button"
+        android:elevation="0dp" />
 
     <TextView
         android:id="@+id/recycler_label"
@@ -57,7 +60,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="100dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/devices_recycler_view"
@@ -84,7 +87,7 @@
     <Spinner
         android:id="@+id/collage_spinner"
         android:layout_width="match_parent"
-        android:layout_height="48dp" />
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/pass_collage"

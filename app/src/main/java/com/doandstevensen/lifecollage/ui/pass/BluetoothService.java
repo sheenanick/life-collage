@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,7 +131,6 @@ public class BluetoothService {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-        private byte[] mmBuffer;
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -193,7 +193,12 @@ public class BluetoothService {
     }
 
     public void write(int id) {
-        mConnectedThread.write(id);
+        try {
+            mConnectedThread.write(id);
+            //TODO add cancel method?
+        } catch (NullPointerException e) {
+            Log.d(TAG, "write: mConnectedThread is null");
+        }
     }
 
     public void connectThread(BluetoothDevice device) {
