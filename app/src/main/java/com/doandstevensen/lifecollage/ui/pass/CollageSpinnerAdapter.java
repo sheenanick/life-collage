@@ -1,10 +1,14 @@
 package com.doandstevensen.lifecollage.ui.pass;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
@@ -19,7 +23,6 @@ public class CollageSpinnerAdapter extends ArrayAdapter<CollageResponse> {
     public static final String TAG = CollageSpinnerAdapter.class.getSimpleName();
 
     private Context mContext;
-
     private ArrayList<CollageListResponse> mCollages;
 
     public CollageSpinnerAdapter(Context mContext, int textViewResourceId) {
@@ -39,24 +42,15 @@ public class CollageSpinnerAdapter extends ArrayAdapter<CollageResponse> {
         }
     }
 
-    public CollageResponse getCollage(int position) {
-        return mCollages.get(position).getCollage();
-    }
-
     public int getCollageId(int position) {
         return mCollages.get(position).getCollage().getCollageId();
     }
-
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         TextView label = new TextView(mContext);
-
-        label.setTextSize(15);
-        label.setGravity(Gravity.CENTER);
-        label.setTextColor(Color.BLACK);
         label.setText(mCollages.get(position).getCollage().getTitle());
 
         return label;
@@ -65,10 +59,9 @@ public class CollageSpinnerAdapter extends ArrayAdapter<CollageResponse> {
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         TextView label = new TextView(mContext);
-        label.setTextSize(15);
-        label.setGravity(Gravity.CENTER);
-        label.setTextColor(Color.BLACK);
         label.setText(mCollages.get(position).getCollage().getTitle());
+        label.setPadding(16, 4, 4, 16);
+        label.setTextSize(15);
 
         return label;
     }

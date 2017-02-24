@@ -21,7 +21,7 @@
     <string name="collage_title_text">Collage Title</string>
     <string name="edit_title">Edit</string>
     <string name="delete_title">Delete</string>
-    <string name="lorem_ipsum_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="about_message">Life Collage is the result of DevelopmentNow’s Velocity program. Velocity is a 5 week incubator for Junior Developers. In this iteration of Velocity, Caleb Stevenson and Sheena Do decided to build Life Collage. Life Collage is a picture and lifestyle app. It allows users to take pictures and add them to a collage. There are no tags, captions or comments, because we believe the pictures should speak for themselves. Users can also search for other users and view their collages. Now, we’ve all seen this type of app before. The thing that sets Life Collage apart is the ability to pass collages from one user to another. This means if Kate passes her collage to Jon, she is entrusting its care to him. Jon now becomes the owner of that collage. Jon can add pictures to the collage until he decides to pass it off to Sarah. And so on and so forth. The other interesting thing about passing is that you actually have to be close enough to the other user in order to pass the collage. <p>We hope you enjoy the app!</p><p>- Sheena &amp; Caleb</p></string>
     <string name="search_text">Search</string>
     <string name="delete_account">Delete Account</string>
     <string name="delete_account_message">Are you sure you would like to delete your account?</string>
@@ -41,4 +41,5 @@
     <string name="empty_collage_message">This collage is empty.</string>
     <string name="received_collage_dialog_title">You Received a Collage!</string>
     <string name="received_collage_dialog_message">Check your collage list to see your new collage. Add a picture and pass it on.</string>
+    <string name="pass_title">Pass</string>
 </resources>

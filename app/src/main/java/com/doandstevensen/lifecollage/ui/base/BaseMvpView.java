@@ -9,6 +9,8 @@ import android.widget.TextView;
 public interface BaseMvpView {
     boolean displayLoadingAnimation();
     void hideLoadingAnimation();
+    boolean displayConnectingAnimation();
+    void hideConnectingAnimation();
     void enableUpButton();
     void setActionBarTitle(String title);
     void setFont(TextView view);

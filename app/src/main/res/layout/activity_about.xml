@@ -15,5 +15,5 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/lorem_ipsum_text"/>
+        android:text="@string/about_message"/>
 </RelativeLayout>

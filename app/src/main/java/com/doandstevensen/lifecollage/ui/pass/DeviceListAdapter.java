@@ -21,7 +21,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.My
     private Context mContext;
     private ArrayList<BluetoothDevice> mDevices;
     private DeviceListAdapter.ClickListener mClickListener;
-    private int selectedPosition = 0;
+    private int selectedPosition = -1;
 
     public DeviceListAdapter(Context context) {
         mContext = context;
@@ -49,7 +49,9 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.My
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyItemChanged(selectedPosition);
+                if (selectedPosition > -1) {
+                    notifyItemChanged(selectedPosition);
+                }
                 view.setBackgroundColor(Color.GRAY);
                 selectedPosition = position;
 

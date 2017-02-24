@@ -1,6 +1,7 @@
 package com.doandstevensen.lifecollage.ui.collage_list;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;

@@ -2,6 +2,7 @@ package com.doandstevensen.lifecollage.ui.pass;
 
 import android.bluetooth.BluetoothDevice;
 
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseMvpView;
 import com.doandstevensen.lifecollage.ui.base.BasePresenter;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 public interface PassContract {
     interface Presenter extends BasePresenter {
         void isBluetoothCapable();
+        void loadCollageList();
+        void loadDevices();
         void bluetoothEnabled();
         void registerForBroadcasts();
         void registerForDiscoverable();
@@ -27,6 +30,7 @@ public interface PassContract {
         void disableView();
         void discoverable(boolean discoverable);
         void setRecyclerViewDevices(ArrayList<BluetoothDevice> devices);
+        void updateSpinner(ArrayList<CollageListResponse> collages);
         void enableBluetooth();
         void checkBTPermissions();
         void collageReceived(CollageResponse collage);

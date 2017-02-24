@@ -6,7 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
 import com.doandstevensen.lifecollage.data.model.CollageResponse;
 import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
@@ -24,6 +27,7 @@ import rx.schedulers.Schedulers;
  */
 
 public class PassPresenter extends BasePresenterClass implements PassContract.Presenter, BluetoothService.BluetoothServiceListener {
+    private static final String TAG = "PASS_PRESENTER";
     private Context mContext;
     private PassContract.MvpView mView;
     private DataManager mDataManager;
@@ -68,14 +72,73 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
                     switch (mode) {
                         case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
                             mView.discoverable(false);
+                            Log.d(TAG, "mDiscoverabilityReceiver: Discoverability Enabled.");
                             break;
-                        default:
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
                             mView.discoverable(true);
+                            Log.d(TAG, "mDiscoverabilityReceiver: Discoverability Disabled. Able to receive connections.");
+                            break;
+                        case BluetoothAdapter.SCAN_MODE_NONE:
+                            mView.discoverable(true);
+                            Log.d(TAG, "mDiscoverabilityReceiver: Discoverability Disabled. Not able to receive connections.");
+                            break;
+                        case BluetoothAdapter.STATE_CONNECTING:
+                            mView.displayConnectingAnimation();
+                            Log.d(TAG, "mDiscoverabilityReceiver: Connecting....");
+                            break;
+                        case BluetoothAdapter.STATE_CONNECTED:
+                            mView.hideConnectingAnimation();
+                            Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "mDiscoverabilityReceiver: Connected.");
+                            break;
                     }
 
                 }
             }
         };
+    }
+
+    @Override
+    public void loadDevices() {
+        if (mBluetoothAdapter.isEnabled()) {
+            registerForBroadcasts();
+        }
+    }
+
+    @Override
+    public void loadCollageList() {
+        mView.displayLoadingAnimation();
+
+        int userId = mDataManager.getUserData().getUid();
+        mDataManager.setApiService(privateService());
+
+        mSubscription = mDataManager.getCollages(userId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mSubscription = null;
+                    }
+                })
+                .subscribe(new Subscriber<ArrayList<CollageListResponse>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideLoadingAnimation();
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<CollageListResponse> collages) {
+                        mView.hideLoadingAnimation();
+                        mView.updateSpinner(collages);
+                    }
+                });
     }
 
     @Override
@@ -126,32 +189,38 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
 
     @Override
     public void incomingMessage(int collageId) {
-        mDataManager.setApiService(privateService());
-        mSubscription = mDataManager.updateCollageOwner(collageId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnUnsubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mSubscription = null;
-                    }
-                })
-                .subscribe(new Subscriber<CollageResponse>() {
-                    @Override
-                    public void onCompleted() {
+        if (collageId == 254) {
+            Log.d("PassPresenter", "collage sent");
+        } else {
+            mDataManager.setApiService(privateService());
+            mSubscription = mDataManager.updateCollageOwner(collageId)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnUnsubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            mSubscription = null;
+                        }
+                    })
+                    .subscribe(new Subscriber<CollageResponse>() {
+                        @Override
+                        public void onCompleted() {
 
-                    }
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                            mBluetoothService.write(-2);
+                            e.printStackTrace();
+                        }
 
-                    @Override
-                    public void onNext(CollageResponse collage) {
-                        mView.collageReceived(collage);
-                    }
-                });
+                        @Override
+                        public void onNext(CollageResponse collage) {
+                            mView.collageReceived(collage);
+                            mBluetoothService.write(-1);
+                        }
+                    });
+        }
     }
 
     @Override
