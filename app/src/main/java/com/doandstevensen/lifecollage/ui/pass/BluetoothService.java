@@ -193,10 +193,11 @@ public class BluetoothService {
     }
 
     public void write(int id) {
-        if (mConnectedThread == null && mConnectThread == null) {
-            
-        }
+        try {
             mConnectedThread.write(id);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     public void connectThread(BluetoothDevice device) {

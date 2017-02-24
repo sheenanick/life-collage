@@ -39,7 +39,6 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     private PicturesRecyclerViewAdapter mAdapter;
     private Timer mTimer = new Timer();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
