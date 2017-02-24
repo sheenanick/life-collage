@@ -69,7 +69,6 @@ public class PassActivity extends BaseDrawerActivity implements PassContract.Mvp
         mPresenter = new PassPresenter(this, this);
         mPresenter.isBluetoothCapable();
         mPresenter.loadCollageList();
-        mPresenter.loadDevices();
     }
 
     @Override

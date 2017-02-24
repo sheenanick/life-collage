@@ -195,7 +195,6 @@ public class BluetoothService {
     public void write(int id) {
         try {
             mConnectedThread.write(id);
-            //TODO add cancel method?
         } catch (NullPointerException e) {
             Log.d(TAG, "write: mConnectedThread is null");
         }

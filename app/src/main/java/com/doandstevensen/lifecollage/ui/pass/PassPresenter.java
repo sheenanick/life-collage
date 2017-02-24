@@ -236,8 +236,10 @@ public class PassPresenter extends BasePresenterClass implements PassContract.Pr
     @Override
     public void detach() {
         detachBase();
-        if (mScanReceiver != null) {
+        try {
             mContext.unregisterReceiver(mScanReceiver);
+        } catch (RuntimeException e) {
+            Log.d(TAG, "detach: mScanReceiver was never registered");
         }
         mContext = null;
         mView = null;
