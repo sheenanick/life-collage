@@ -81,8 +81,8 @@ public class UserDataSharedPrefsHelper {
         float dpHeight = outMetrics.heightPixels / density;
         float dpWidth  = outMetrics.widthPixels / density;
 
-        editor.putFloat(SCREEN_WIDTH, dpHeight);
-        editor.putFloat(SCREEN_HEIGHT, dpWidth);
+        editor.putFloat(SCREEN_HEIGHT, dpHeight);
+        editor.putFloat(SCREEN_WIDTH, dpWidth);
         editor.commit();
     }
 

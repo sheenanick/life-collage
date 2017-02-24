@@ -47,6 +47,7 @@ public class BluetoothService {
         }
 
         public void run() {
+            Log.d(TAG, "run: accepting...");
             BluetoothSocket socket = null;
 
             while (true) {
@@ -59,7 +60,6 @@ public class BluetoothService {
 
                 if (socket != null) {
                     manageMyConnectedSocket(socket);
-
                     try {
                         mmServerSocket.close();
                     } catch (IOException e) {
@@ -193,11 +193,10 @@ public class BluetoothService {
     }
 
     public void write(int id) {
-        try {
-            mConnectedThread.write(id);
-        } catch (NullPointerException e) {
-            Log.d(TAG, "write: mConnectedThread is null");
+        if (mConnectedThread == null && mConnectThread == null) {
+            
         }
+            mConnectedThread.write(id);
     }
 
     public void connectThread(BluetoothDevice device) {

@@ -21,11 +21,9 @@ import java.util.ArrayList;
 public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRecyclerViewAdapter.MyViewHolder> {
     private Context mContext;
     private ArrayList<PictureResponse> mPictures = new ArrayList<>();
-    private DataManager mDataManager;
 
     public PicturesRecyclerViewAdapter(Context context) {
         mContext = context;
-        mDataManager = new DataManager(context);
     }
 
     public void setPictures(ArrayList<PictureResponse> pictures) {
@@ -44,13 +42,8 @@ public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRe
         PictureResponse photo = mPictures.get(position);
         final String url = photo.getLocation();
 
-        int width = mDataManager.getScreenWidth();
-        int height = mDataManager.getScreenHeight();
-
         Picasso.with(mContext)
                 .load(url)
-                .resize(width, height)
-                .centerCrop()
                 .into(holder.imageView);
     }
 

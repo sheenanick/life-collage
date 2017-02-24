@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +37,8 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     private CollagePresenter mPresenter;
     private String mCurrentPhotoPath;
     private PicturesRecyclerViewAdapter mAdapter;
+    private Timer mTimer = new Timer();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +84,21 @@ public class CollageActivity extends BaseActivity implements CollageContract.Mvp
     @Override
     public void updateRecyclerViewPictures(ArrayList<PictureResponse> pictures, int position) {
         mAdapter.setPictures(pictures);
-        mAdapter.notifyItemInserted(position);
+        final int mPosition = position;
+            mTimer.schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.notifyItemInserted(mPosition);
+                            }
+                        });
+                    }
+                },
+                1000
+        );
     }
 
     @OnClick(R.id.fab)

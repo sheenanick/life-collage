@@ -39,21 +39,23 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.My
     }
 
     @Override
-    public void onBindViewHolder(DeviceListAdapter.MyViewHolder holder, final int position) {
-//        holder.itemView.setBackgroundColor(Color.WHITE);
+    public void onBindViewHolder(DeviceListAdapter.MyViewHolder holder, int position) {
+        holder.itemView.setBackgroundColor(Color.WHITE);
         final BluetoothDevice device = mDevices.get(position);
 
         final String deviceName = device.getName();
         holder.textView.setText(deviceName);
 
+        final int adapterPosition = holder.getAdapterPosition();
+
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (selectedPosition > -1) {
-//                    notifyItemChanged(selectedPosition);
-//                }
-//                view.setBackgroundColor(Color.GRAY);
-//                selectedPosition = position;
+                if (selectedPosition > -1) {
+                    notifyItemChanged(selectedPosition);
+                }
+                view.setBackgroundColor(Color.GRAY);
+                selectedPosition = adapterPosition;
 
                 mClickListener.onUserClick(device);
             }

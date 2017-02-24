@@ -34,10 +34,8 @@ public class CollageSpinnerAdapter extends ArrayAdapter<CollageResponse> {
 
     public int getCount() {
         if (mCollages == null) {
-            Log.d(TAG, "getCount: NULL!");
             return 0;
         } else {
-            Log.d(TAG, "getCount: NOT NULL!");
             return mCollages.size();
         }
     }
@@ -52,7 +50,7 @@ public class CollageSpinnerAdapter extends ArrayAdapter<CollageResponse> {
 
         TextView label = new TextView(mContext);
         label.setText(mCollages.get(position).getCollage().getTitle());
-
+        label.setTextSize(20);
         return label;
     }
 
@@ -61,7 +59,8 @@ public class CollageSpinnerAdapter extends ArrayAdapter<CollageResponse> {
         TextView label = new TextView(mContext);
         label.setText(mCollages.get(position).getCollage().getTitle());
         label.setPadding(16, 4, 4, 16);
-        label.setTextSize(15);
+        label.setTextSize(20);
+        label.setGravity(Gravity.CENTER);
 
         return label;
     }
