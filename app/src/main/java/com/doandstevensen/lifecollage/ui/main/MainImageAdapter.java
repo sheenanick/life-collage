@@ -7,13 +7,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.doandstevensen.lifecollage.data.model.Picture;
-import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import io.realm.RealmList;
 
 /**
  * Created by Sheena on 2/3/17.
@@ -21,42 +19,60 @@ import io.realm.RealmList;
 
 public class MainImageAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<User> mFeaturedUsers;
+    private ArrayList<CollageListResponse> mCollages;
 
-    public MainImageAdapter(Context c, ArrayList<User> users) {
+    public MainImageAdapter(Context c) {
         mContext = c;
-        mFeaturedUsers = users;
+    }
+
+    public void setCollages(ArrayList<CollageListResponse> collages) {
+        mCollages = collages;
     }
 
     public int getCount() {
-        return mFeaturedUsers.size();
+        if (mCollages != null) {
+            return mCollages.size();
+        } else {
+            return 0;
+        }
     }
 
     public Object getItem(int position) {
-        return null;
+        return mCollages.get(position);
     }
 
     public long getItemId(int position) {
-        return 0;
+        return mCollages.get(position).getCollage().getCollageId();
     }
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
+        CollageListResponse collageListResponse = mCollages.get(position);
+        PictureResponse picture = collageListResponse.getCollagePic();
+
         ImageView imageView;
         Integer height = viewGroup.getWidth() / 3;
+
         if (view == null) {
             imageView = new ImageView(mContext);
             imageView.setLayoutParams(new GridView.LayoutParams(height, height));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else {
             imageView = (ImageView) view;
         }
 
-        User user = mFeaturedUsers.get(position);
-        RealmList<Picture> pictures = user.getCollages().get(0).getPictures();
-        Picture picture = pictures.get(0);
+        if (height > 0) {
+            Picasso.with(mContext)
+                    .load(picture.getLocation())
+                    .resize(height, height)
+                    .centerCrop()
+                    .into(imageView);
+        }
 
-        Picasso.with(mContext).load(picture.getPath()).into(imageView);
         return imageView;
+    }
+
+    public void detach() {
+        mContext = null;
+        mCollages = null;
     }
 }

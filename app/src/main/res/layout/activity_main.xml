@@ -4,6 +4,8 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.doandstevensen.lifecollage.ui.main.MainActivity">
 
     <GridView
@@ -13,6 +15,7 @@
         android:numColumns="3"/>
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/gridView"
@@ -26,29 +29,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/colorPrimary"
-            android:textSize="32sp"
+            android:textColor="@color/colorText"
+            android:textSize="36sp"
             android:text="@string/app_name"/>
 
         <TextView
             android:id="@+id/tagline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="32dp"
             android:gravity="center"
-            android:textSize="18sp"
-            android:text="lorem ipsum lorem ipsum lorem ipsum"/>
+            android:textSize="20sp"
+            android:text="Lorem ipsum lorem ipsum"/>
 
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="80dp"
-            android:layout_marginRight="80dp"
-            android:drawableLeft="@drawable/ic_search_black_24dp"
-            android:drawableStart="@drawable/ic_search_black_24dp"
-            android:hint="@string/search_for_users_hint"
-            android:textSize="18sp"/>
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

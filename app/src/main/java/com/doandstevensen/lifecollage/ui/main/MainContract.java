@@ -1,12 +1,11 @@
 package com.doandstevensen.lifecollage.ui.main;
 
-import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseMvpView;
 import com.doandstevensen.lifecollage.ui.base.BasePresenter;
 
 import java.util.ArrayList;
-
-import io.realm.RealmResults;
 
 /**
  * Created by Sheena on 2/3/17.
@@ -14,15 +13,13 @@ import io.realm.RealmResults;
 
 public interface MainContract {
     interface Presenter extends BasePresenter {
-        void getGridViewUsers();
-        void searchUsers();
-
+        void checkIfLoggedIn();
     }
 
     interface MvpView extends BaseMvpView {
-        void setupGridViewAdapter(ArrayList<User> featuredUsers);
-        void setupSearchAdapter(RealmResults<User> users);
-        void navigateToCollage(String uid);
+        void setupGridViewAdapter();
+        void updateGridView(ArrayList<CollageListResponse> collages);
+        void navigateToCollageList();
         void navigateToSignUp();
         void navigateToLogIn();
     }

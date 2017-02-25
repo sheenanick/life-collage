@@ -1,24 +1,35 @@
 package com.doandstevensen.lifecollage.data.model;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by Sheena on 1/30/17.
  */
 
-public class User extends RealmObject {
-    @PrimaryKey
-    private String uid;
+public class User {
+    private int uid;
     private String username;
-    private RealmList<Collage> collages = new RealmList<>();
+    private String email;
+
+    public User() {}
+
+    public User(int uid, String username, String email) {
+        this.uid = uid;
+        this.username = username;
+        this.email = email;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getUid() {
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getUid() {
         return uid;
     }
 
@@ -26,12 +37,7 @@ public class User extends RealmObject {
         return username;
     }
 
-    public RealmList<Collage> getCollages() {
-        return collages;
+    public String getEmail() {
+        return email;
     }
-
-    public void addCollage(Collage collage) {
-        collages.add(collage);
-    }
-
 }

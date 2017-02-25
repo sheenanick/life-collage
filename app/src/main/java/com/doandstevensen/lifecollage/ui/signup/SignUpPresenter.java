@@ -1,70 +1,102 @@
 package com.doandstevensen.lifecollage.ui.signup;
 
-import com.doandstevensen.lifecollage.ThisApplication;
-import com.doandstevensen.lifecollage.data.model.Collage;
-import com.doandstevensen.lifecollage.data.model.Picture;
-import com.doandstevensen.lifecollage.data.model.User;
+import android.content.Context;
 
-import io.realm.ObjectServerError;
-import io.realm.Realm;
-import io.realm.SyncCredentials;
-import io.realm.SyncUser;
+import com.doandstevensen.lifecollage.data.model.LogInResponse;
+import com.doandstevensen.lifecollage.data.model.ServerResponse;
+import com.doandstevensen.lifecollage.data.model.SignUpRequest;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
+import com.doandstevensen.lifecollage.data.remote.LifeCollageApiService;
+import com.doandstevensen.lifecollage.ui.base.BasePresenterClass;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Sheena on 2/2/17.
  */
 
-public class SignUpPresenter implements SignUpContract.Presenter {
-    private SignUpContract.MvpView mSignUpMvpView;
-    private Realm mRealm;
+public class SignUpPresenter extends BasePresenterClass implements SignUpContract.Presenter {
+    private SignUpContract.MvpView mView;
+    private Context mContext;
+    private DataManager mDataManager;
+    private LifeCollageApiService mService;
+    private Subscription mSubscription;
 
-    public SignUpPresenter(SignUpContract.MvpView view) {
-        mSignUpMvpView = view;
+    public SignUpPresenter(SignUpContract.MvpView view, Context context) {
+        super(view, context);
+        mView = view;
+        mContext = context;
+        mService = LifeCollageApiService.ServiceCreator.newService();
+        mDataManager = new DataManager(context);
+        mDataManager.setApiService(mService);
     }
 
     @Override
-    public void signUp(final String username, String password) {
-        mSignUpMvpView.displayLoadingAnimation();
-        SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), ThisApplication.AUTH_URL, new SyncUser.Callback() {
-            @Override
-            public void onSuccess(SyncUser user) {
-                mSignUpMvpView.hideLoadingAnimation();
-                createUserObject(user, username);
-                mSignUpMvpView.navigateToMain(user.getIdentity());
-            }
-            @Override
-            public void onError(ObjectServerError error) {
-                mSignUpMvpView.hideLoadingAnimation();
-                mSignUpMvpView.showSignUpError("Username already exists");
-            }
-        });
-    }
+    public void signUp(String firstName, String lastName, final String email, String username, final String password) {
+        mView.displayLoadingAnimation();
+        SignUpRequest request = new SignUpRequest(firstName, lastName, email, username, password);
+        mSubscription = mDataManager.signUp(request)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnUnsubscribe(new Action0() {
+                @Override
+                public void call() {
+                    mSubscription = null;
+                }
+            })
+            .subscribe(new Subscriber<LogInResponse>() {
+                @Override
+                public void onCompleted() {
 
-    private void createUserObject(final SyncUser currentUser, final String username) {
-        mRealm = Realm.getDefaultInstance();
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm){
-                User user = realm.createObject(User.class, currentUser.getIdentity());
-                user.setUsername(username);
+                }
 
-                Collage collage = new Collage();
-                collage.setName("Test Collage");
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                    mView.hideLoadingAnimation();
 
-                Picture picture = new Picture("https://source.unsplash.com/random");
-                collage.addPicture(picture);
-                collage.addPicture(picture);
+                    if (e instanceof HttpException) {
+                        ResponseBody body = ((HttpException) e).response().errorBody();
+                        String error = null;
+                        try {
+                            error = body.string();
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
 
-                user.addCollage(collage);
-            }
-        });
+                        if (error != null) {
+                            Gson gson = new Gson();
+                            ServerResponse response = gson.fromJson(error, ServerResponse.class);
+                            String devMessage = response.getDevMessage();
+                            mView.showSignUpError(devMessage);
+                        }
+                    }
+                }
+
+                @Override
+                public void onNext(LogInResponse logInResponse) {
+                    mView.hideLoadingAnimation();
+                    storeData(logInResponse);
+                    mView.navigateToCollageList();
+                }
+            });
     }
 
     @Override
     public void detach() {
-        mSignUpMvpView = null;
-        if (mRealm != null) {
-            mRealm.close();
-        }
+        mView = null;
+        mContext = null;
+        mService = null;
+        mDataManager = null;
+        mSubscription = null;
     }
 }

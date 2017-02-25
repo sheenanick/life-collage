@@ -1,80 +1,102 @@
 package com.doandstevensen.lifecollage.ui.main;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.doandstevensen.lifecollage.R;
-import com.doandstevensen.lifecollage.data.model.User;
+import com.doandstevensen.lifecollage.data.model.CollageListResponse;
+import com.doandstevensen.lifecollage.data.model.CollageResponse;
+import com.doandstevensen.lifecollage.data.model.PictureResponse;
 import com.doandstevensen.lifecollage.ui.base.BaseActivity;
-import com.doandstevensen.lifecollage.ui.collage.CollageActivity;
-import com.doandstevensen.lifecollage.ui.login.LogInActivity;
-import com.doandstevensen.lifecollage.ui.main.MainContract.MvpView;
+import com.doandstevensen.lifecollage.ui.collage_list.CollageListActivity;
+import com.doandstevensen.lifecollage.ui.featured_collage.FeaturedCollageActivity;
+import com.doandstevensen.lifecollage.ui.search.SearchResultsActivity;
+import com.doandstevensen.lifecollage.ui.signin.LogInActivity;
 import com.doandstevensen.lifecollage.ui.signup.SignUpActivity;
-import com.doandstevensen.lifecollage.util.RealmUserManager;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.RealmResults;
 
-public class MainActivity extends BaseActivity implements MainContract.MvpView, MainSearchAdapter.ClickListener {
+public class MainActivity extends BaseActivity implements MainContract.MvpView {
     @BindView(R.id.gridView)
     GridView gridView;
-    @BindView(R.id.autoCompleteTextView)
-    AutoCompleteTextView autoCompleteTextView;
+    @BindView(R.id.appName)
+    TextView appName;
+    @BindView(R.id.searchView)
+    SearchView searchView;
 
     private MainPresenter mPresenter;
+    private MainImageAdapter mAdapter;
+    private ArrayList<CollageListResponse> mCollages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
 
-        mPresenter = new MainPresenter(this);
-        mPresenter.getGridViewUsers();
-        mPresenter.searchUsers();
+        setFont(appName);
+        initSearchView();
+        setupGridViewAdapter();
 
-        String currentUserId = RealmUserManager.getCurrentUserId();
-        if (currentUserId != null) {
-            navigateToCollage(currentUserId);
-        }
-
+        mPresenter = new MainPresenter(this, this);
+        mPresenter.checkIfLoggedIn();
     }
 
-    public void setupGridViewAdapter(final ArrayList<User> featuredUsers) {
-        gridView.setAdapter(new MainImageAdapter(this, featuredUsers));
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                String uid = featuredUsers.get(position).getUid();
-                navigateToCollage(uid);
+    private void initSearchView() {
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        ComponentName cn = new ComponentName(this, SearchResultsActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+        searchView.setIconifiedByDefault(false);
+    }
+
+    public void setupGridViewAdapter() {
+        mAdapter = new MainImageAdapter(this);
+        gridView.setAdapter(mAdapter);
+        gridView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                CollageListResponse collageListResponse = mCollages.get(position);
+
+                CollageResponse collage = collageListResponse.getCollage();
+                PictureResponse picture = collageListResponse.getCollagePic();
+
+                int collageId = picture.getCollageId();
+                String title = collage.getTitle();
+
+                navigateToCollage(collageId, title);
             }
         });
     }
 
-    public void setupSearchAdapter(RealmResults<User> users) {
-        MainSearchAdapter adapter = new MainSearchAdapter(this, users);
-        autoCompleteTextView.setAdapter(adapter);
-        adapter.setClickListener(this);
+    @Override
+    public void updateGridView(ArrayList<CollageListResponse> collages) {
+        mCollages = collages;
+        mAdapter.setCollages(collages);
+        mAdapter.notifyDataSetChanged();
     }
 
-    public void clearSearchView() {
-        autoCompleteTextView.setText("");
+    private void navigateToCollage(int collageId, String title) {
+        Intent intent = new Intent(MainActivity.this, FeaturedCollageActivity.class);
+        intent.putExtra("collageTitle", title);
+        intent.putExtra("collageId", collageId);
+        startActivity(intent);
     }
-
 
     @Override
-    public void navigateToCollage(String uid) {
-        Intent intent = new Intent(getBaseContext(), CollageActivity.class);
-        intent.putExtra("uid", uid);
+    public void navigateToCollageList() {
+        Intent intent = new Intent(MainActivity.this, CollageListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
@@ -94,17 +116,14 @@ public class MainActivity extends BaseActivity implements MainContract.MvpView, 
 
     @Override
     public void onDestroy() {
-        if(mPresenter != null) {
+        if (mPresenter != null) {
             mPresenter.detach();
         }
+        if (mAdapter != null) {
+            mAdapter.detach();
+        }
+        mCollages = null;
         super.onDestroy();
     }
 
-    @Override
-    public void onUserClick(String uuid) {
-        clearSearchView();
-        Intent intent = new Intent(this, CollageActivity.class);
-        intent.putExtra("uid", uuid);
-        startActivity(intent);
-    }
 }
