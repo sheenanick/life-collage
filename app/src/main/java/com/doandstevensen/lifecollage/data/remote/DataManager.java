@@ -37,6 +37,8 @@ public class DataManager {
         mApiService = service;
     }
 
+
+    //ACCESS API SERVICE
     public Observable<LogInResponse> signUp(SignUpRequest request) {
         return mApiService.signUp(request);
     }
@@ -85,10 +87,28 @@ public class DataManager {
         return mApiService.updateCollage(request);
     }
 
+    public Observable<CollageResponse> updateCollageOwner(int collageId) {
+        return mApiService.updateCollageOwner(collageId);
+    }
+
     public Observable<CollageResponse> deleteCollageById(int collageId) {
         return mApiService.deleteCollageById(collageId);
     }
 
+    public Observable<ArrayList<PictureResponse>> getAllPictures(int collageId) {
+        return mApiService.getAllPictures(collageId);
+    }
+
+    public Observable<PictureResponse> getLastPicture(int collageId) {
+        return mApiService.getLastPicture(collageId);
+    }
+
+    public Observable<PictureResponse> postPicture(int collageId, NewPictureRequest request) {
+        return mApiService.postPicture(collageId, request);
+    }
+
+
+    //ACCESS SHARED PREFS HELPER
     public void storeUserData(User user) {
         mHelper.storeUserData(user);
     }
@@ -105,20 +125,19 @@ public class DataManager {
         return mHelper.getUserToken();
     }
 
+    public void storeScreenSize() {
+        mHelper.storeScreenSize();
+    }
+
+    public Integer getScreenWidth() {
+        return mHelper.getScreenWidth();
+    }
+
+    public Integer getScreenHeight() {
+        return mHelper.getScreenHeight();
+    }
+
     public void clearData() {
         mHelper.clearData();
     }
-
-    public Observable<ArrayList<PictureResponse>> getAllPictures(int collageId) {
-        return mApiService.getAllPictures(collageId);
-    }
-
-    public Observable<PictureResponse> getLastPicture(int collageId) {
-        return mApiService.getLastPicture(collageId);
-    }
-
-    public Observable<PictureResponse> postPicture(int collageId, NewPictureRequest request) {
-        return mApiService.postPicture(collageId, request);
-    }
-
 }

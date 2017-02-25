@@ -2,8 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.doandstevensen.lifecollage">
 
+    <uses-feature android:name="android.hardware.bluetooth" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
 
     <application
         android:name=".ThisApplication"
@@ -54,14 +60,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".ui.search_collage_list.SearchCollageListActivity">
-        </activity>
-        <activity android:name=".ui.search_collage_detail.SearchCollageDetailActivity">
-        </activity>
+        <activity android:name=".ui.search_collage_list.SearchCollageListActivity"></activity>
+        <activity android:name=".ui.search_collage_detail.SearchCollageDetailActivity"></activity>
         <activity android:name=".ui.featured_collage.FeaturedCollageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -82,6 +87,8 @@
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
 
+        <activity android:name=".ui.pass.PassActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

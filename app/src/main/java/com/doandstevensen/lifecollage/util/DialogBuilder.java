@@ -21,7 +21,7 @@ public class DialogBuilder {
     public static Dialog DeleteCollageDialogFragment(Context context, final DialogBuilder.DialogClickListener listener, final int collageId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.alert_dialog_delete, null);
+        View view = inflater.inflate(R.layout.alert_dialog_text, null);
 
         TextView title = (TextView) view.findViewById(R.id.title);
         title.setText(R.string.delete_collage_title);
@@ -95,7 +95,7 @@ public class DialogBuilder {
     public static Dialog DeleteAccountDialogFragment(Context context, final DialogBuilder.AccountDialogListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.alert_dialog_delete, null);
+        View view = inflater.inflate(R.layout.alert_dialog_text, null);
 
         TextView title = (TextView) view.findViewById(R.id.title);
         title.setText(R.string.delete_account);
@@ -112,6 +112,23 @@ public class DialogBuilder {
                     public void onClick(DialogInterface dialog, int id) {
                         listener.onDialogNegativeClick();
                     }
+                });
+        return builder.create();
+    }
+
+    public static Dialog ReceivedCollageDialogFragment(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.alert_dialog_text, null);
+
+        TextView title = (TextView) view.findViewById(R.id.title);
+        title.setText(R.string.received_collage_dialog_title);
+        TextView message = (TextView) view.findViewById(R.id.message);
+        message.setText(R.string.received_collage_dialog_message);
+
+        builder.setView(view)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) { }
                 });
         return builder.create();
     }

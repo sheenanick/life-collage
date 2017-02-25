@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_pass"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.doandstevensen.lifecollage.ui.pass.PassActivity">
+
+    <LinearLayout
+        android:id="@+id/pass_linear_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/receive_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="If you want to be able to receive a collage:"/>
+
+        <Button
+            android:id="@+id/discoverable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:text="Pass to me!"
+            style="@style/Widget.AppCompat.Button" />
+
+        <TextView
+            android:id="@+id/scan_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:text="Scan for nearby devices to connect with:"/>
+
+        <Button
+            android:id="@+id/scan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:text="Look Around!"
+            style="@style/Widget.AppCompat.Button"
+            android:elevation="0dp" />
+
+        <TextView
+            android:id="@+id/recycler_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:text="Select a device to connect to pass a collage:"/>
+
+        <View
+            android:id="@+id/horizontalDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
+            android:background="?android:attr/dividerHorizontal" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_below="@+id/pass_linear_layout"
+        android:layout_above="@+id/spinner_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/devices_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/no_devices_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="No devices available. Scan for devices."/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/spinner_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/collage_spinner"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:text="Select a collage to pass:"/>
+
+    <Spinner
+        android:id="@+id/collage_spinner"
+        android:layout_above="@+id/pass_collage"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:id="@+id/pass_collage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textColor="@android:color/white"
+        android:text="Pass Collage"/>
+
+</RelativeLayout>

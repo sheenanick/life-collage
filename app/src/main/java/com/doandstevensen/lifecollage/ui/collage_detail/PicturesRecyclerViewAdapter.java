@@ -2,15 +2,14 @@ package com.doandstevensen.lifecollage.ui.collage_detail;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.doandstevensen.lifecollage.R;
 import com.doandstevensen.lifecollage.data.model.PictureResponse;
+import com.doandstevensen.lifecollage.data.remote.DataManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -42,7 +41,10 @@ public class PicturesRecyclerViewAdapter extends RecyclerView.Adapter<PicturesRe
     public void onBindViewHolder(MyViewHolder holder, int position) {
         PictureResponse photo = mPictures.get(position);
         final String url = photo.getLocation();
-        Picasso.with(mContext).load(url).into(holder.imageView);
+
+        Picasso.with(mContext)
+                .load(url)
+                .into(holder.imageView);
     }
 
     @Override

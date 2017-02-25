@@ -27,6 +27,8 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
     private Context mContext;
     private ArrayList<CollageListResponse> mCollages;
     private CollageListRecyclerViewAdapter.ClickListener mClickListener;
+    private int mWidth;
+    private static final int HEIGHT = 220;
 
     public CollageListRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -38,6 +40,10 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
 
     public void setCollages(ArrayList<CollageListResponse> collages) {
         mCollages = collages;
+    }
+
+    public void setWidth(int width) {
+        mWidth = width;
     }
 
     @Override
@@ -56,10 +62,12 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         final String collageName = collage.getTitle();
 
         holder.textView.setText(collageName);
-        String location = picture.getLocation();
+        final String location = picture.getLocation();
         if (location != null) {
             Picasso.with(mContext)
                     .load(location)
+                    .resize(mWidth, HEIGHT)
+                    .centerCrop()
                     .into(holder.imageView);
         } else {
             holder.emptyTextView.setVisibility(View.VISIBLE);
@@ -68,7 +76,7 @@ public class CollageListRecyclerViewAdapter extends RecyclerView.Adapter<Collage
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClickListener.onCollageClick(collageId, collageName, true);
+                mClickListener.onCollageClick(collageId, collageName, location != null);
             }
         });
 

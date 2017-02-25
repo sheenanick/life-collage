@@ -19,7 +19,7 @@ public interface CollageListContract {
     }
 
     interface MvpView extends BaseDrawerMvpView {
-        void updateRecyclerView(ArrayList<CollageListResponse> collages);
+        void updateRecyclerView(ArrayList<CollageListResponse> collages, int width);
         void insertCollage(ArrayList<CollageListResponse> collages, int position);
         void deleteCollage(ArrayList<CollageListResponse> collages, int position);
         void updateCollageTitle(int position, Object payload);

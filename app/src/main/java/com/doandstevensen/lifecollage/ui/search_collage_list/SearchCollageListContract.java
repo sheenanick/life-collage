@@ -16,7 +16,7 @@ public interface SearchCollageListContract {
     }
 
     interface MvpView extends BaseMvpView {
-        void updateRecyclerView(ArrayList<CollageListResponse> collages);
+        void updateRecyclerView(ArrayList<CollageListResponse> collages, int width);
         void navigateToSearchCollage(int collageId, String collageTitle);
     }
 }

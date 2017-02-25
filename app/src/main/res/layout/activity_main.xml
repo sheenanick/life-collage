@@ -40,7 +40,7 @@
             android:layout_marginBottom="32dp"
             android:gravity="center"
             android:textSize="20sp"
-            android:text="Lorem ipsum lorem ipsum"/>
+            android:text="@string/tagline"/>
 
         <android.support.v7.widget.SearchView
             android:id="@+id/searchView"

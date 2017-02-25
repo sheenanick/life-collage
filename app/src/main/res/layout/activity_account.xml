@@ -16,7 +16,7 @@
         android:id="@+id/emailLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:text="@string/change_email_label"/>
     <EditText
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:text="@string/delete_account_warning"/>
     <Button

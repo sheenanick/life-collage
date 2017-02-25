@@ -61,7 +61,8 @@ public class SearchCollageListActivity extends BaseActivity implements SearchCol
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<CollageListResponse> collages) {
+    public void updateRecyclerView(ArrayList<CollageListResponse> collages, int width) {
+        mAdapter.setWidth(width);
         mAdapter.setData(collages);
         mAdapter.notifyDataSetChanged();
     }

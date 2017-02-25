@@ -13,6 +13,7 @@ import com.doandstevensen.lifecollage.ui.main.MainActivity;
 
 public class BaseActivity extends AppCompatActivity implements BaseMvpView{
     private ProgressDialog mProgressDialog;
+    private ProgressDialog mConnectingDialog;
     private BasePresenterClass mPresenter;
 
     @Override
@@ -25,6 +26,9 @@ public class BaseActivity extends AppCompatActivity implements BaseMvpView{
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("Loading...");
         mProgressDialog.setCancelable(false);
+
+        mConnectingDialog = new ProgressDialog(this);
+        mConnectingDialog.setMessage("Connecting...");
     }
 
     @Override
@@ -36,6 +40,17 @@ public class BaseActivity extends AppCompatActivity implements BaseMvpView{
     @Override
     public void hideLoadingAnimation() {
         mProgressDialog.dismiss();
+    }
+
+    @Override
+    public boolean displayConnectingAnimation() {
+        mConnectingDialog.show();
+        return false;
+    }
+
+    @Override
+    public void hideConnectingAnimation() {
+        mConnectingDialog.dismiss();
     }
 
     @Override
