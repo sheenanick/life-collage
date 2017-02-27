@@ -5,7 +5,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.doandstevensen.lifecollage"
+        applicationId "com.doandstevenson.lifecollage"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1

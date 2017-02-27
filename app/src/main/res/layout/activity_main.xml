@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context="com.doandstevensen.lifecollage.ui.main.MainActivity">
+    tools:context="com.doandstevenson.lifecollage.ui.main.MainActivity">
 
     <GridView
         android:id="@+id/gridView"
